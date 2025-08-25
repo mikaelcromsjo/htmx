@@ -1,0 +1,127 @@
+<h2 class="text-xl font-bold mb-4">Customer: {{ customer.name }}</h2>
+
+<form 
+    hx-post="{{url_for('update_customer', customer_id=customer.id)}}" 
+    hx-target="#customer-container" 
+    hx-ext="json-enc"
+    hx-swap="innerHTML"
+    id="customerForm">
+
+    <!-- Name -->
+    <div class="mb-2">
+        <label class="block font-semibold">Name</label>
+        <input type="text" id="name" name="name" data-save="true" value="{{ customer.name }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- ID -->
+    <div class="mb-2">
+        <label class="block font-semibold">ID</label>
+        <input type="text" id="user_id" name="user_id" data-save="true" value="{{ customer.user_id }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-2">
+        <label class="block font-semibold">Email</label>
+        <input type="email" id="email" name="email" data-save="true" value="{{ customer.email }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Phone -->
+    <div class="mb-2">
+        <label class="block font-semibold">Phone</label>
+        <input type="text" id="phone" name="phone" data-save="true" value="{{ customer.phone }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Location -->
+    <div class="mb-2">
+        <label class="block font-semibold">Location</label>
+        <input type="text" id="location" name="location" data-save="true" value="{{ customer.location }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Personality Types -->
+    <div class="mb-2">
+        <label class="block font-semibold mb-1">Personality Types</label>
+        <div class="flex flex-wrap gap-2">
+            {% for pt in personality_types %}
+            <label class="flex items-center space-x-1">
+                <input type="checkbox" class="personalityType" id="pt_{{ pt }}" name="personalityType" data-save="true" value="{{ pt }}"
+                    {% if pt in customer.personalityType %}checked{% endif %} />
+                <span>{{ pt }}</span>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="mb-2">
+        <label class="block font-semibold mb-1">Categories</label>
+        <select id="categories" name="categories" data-save="true" class="border p-1 w-full" multiple>
+            {% for main_cat, subcats in categories.items() %}
+            <optgroup label="{{ main_cat }}">
+                {% for sub in subcats %}
+                <option value="{{ main_cat }}:{{ sub }}"
+                    {% if main_cat ~ ':' ~ sub in customer.categories %}selected{% endif %}>
+                    {{ sub }}
+                </option>
+                {% endfor %}
+            </optgroup>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Comment -->
+    <div class="mb-2">
+        <label class="block font-semibold">Comment</label>
+        <textarea id="comment" name="comment" data-save="true" class="border p-1 w-full">{{ customer.comment }}</textarea>
+    </div>
+
+    <!-- Organisation -->
+    <div class="mb-2">
+        <label class="block font-semibold">Organisation</label>
+        <input type="text" id="organisation" name="organisation" data-save="true" value="{{ customer.organisation }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Sub Caller -->
+    <div class="mb-2">
+        <label class="block font-semibold">Sub Caller</label>
+        <input type="text" id="sub_caller" name="sub_caller" data-save="true" value="{{ customer.sub_caller }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Tags -->
+    <div class="mb-2">
+        <label class="block font-semibold">Tags (comma separated)</label>
+        <input type="text" id="tags" name="tags" data-save="true" value="{{ customer.tags | join(', ') }}" class="border p-1 w-full"/>
+    </div>
+
+    <div class="flex justify-end mt-4">
+        <button type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
+    </div>
+</form>
+
+<script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+
+<script>
+document.getElementById('customerForm').addEventListener('htmx:configRequest', (event) => {
+    const form = event.target;
+    const data = {};
+
+    form.querySelectorAll('[data-save="true"]').forEach(el => {
+        if (el.type === 'checkbox') {
+            if (!data[el.name]) data[el.name] = [];
+            if (el.checked) data[el.name].push(el.value);
+        } else if (el.tagName === 'SELECT' && el.multiple) {
+            data[el.name] = Array.from(el.selectedOptions).map(o => o.value);
+        } else {
+            data[el.name] = el.value;
+        }
+    });
+
+    // Override the request to send proper JSON
+    event.detail.fetchConfig = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    };
+});
+</script>

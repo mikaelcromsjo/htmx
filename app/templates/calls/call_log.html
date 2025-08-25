@@ -1,0 +1,9 @@
+<ul class="list-disc pl-5">
+    {% for call in calls %}
+    <li>
+        {{ call.date }} - {{ call.notes }}
+    </li>
+    {% else %}
+    <li class="text-gray-500">No calls recorded.</li>
+    {% endfor %}
+</ul>

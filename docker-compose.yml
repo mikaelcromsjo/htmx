@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    container_name: fastapi_htmx_dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app               # source code
+      - app_db:/dbdata       # database goes here
+    environment:
+      - DATABASE_URL=sqlite:////dbdata/app.db
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  app_db:

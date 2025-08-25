@@ -1,0 +1,61 @@
+# FastAPI CRM Prototype
+
+A lightweight **one-page CRM-like web application** built with:
+
+- **Backend:** FastAPI  
+- **Database:** SQLite + SQLAlchemy ORM  
+- **Templates:** Jinja2 + [HTMX](https://htmx.org/) + [Alpine.js](https://alpinejs.dev/)  
+- **Styling:** [TailwindCSS](https://tailwindcss.com/) via CDN  
+- **Scope:** Development prototype only (Customers, Events, Call Center, Alarms)
+
+---
+
+## 🚀 Features
+
+- Customer and Event management  
+- Call Center workflow simulation  
+- Alarm system (linked to Customers & Events)  
+- Interactive UI using HTMX + Alpine.js (no full-page reloads)  
+- Simple, single-page design for rapid prototyping  
+
+---
+
+## 📦 Installation
+
+### 1. Clone repository
+```bash
+git clone https://github.com/your-username/fastapi-crm-prototype.git
+cd fastapi-crm-prototype
+2. Create virtual environment (or use Docker)
+bash
+Copy
+Edit
+python -m venv venv
+source venv/bin/activate  # Linux / macOS
+venv\Scripts\activate     # Windows
+(Optional: You can also build/run using Docker if a Dockerfile is provided.)
+
+3. Install dependencies
+bash
+Copy
+Edit
+pip install -r requirements.txt
+4. Initialize SQLite database
+bash
+Copy
+Edit
+# Basic DB creation
+python scripts/init_db.py
+
+# (Optional) If using Alembic migrations:
+alembic upgrade head
+▶️ Running the App
+Start the FastAPI server with Uvicorn:
+
+bash
+Copy
+Edit
+uvicorn main:app --reload
+By default the app will be available at:
+
+👉 http://127.0.0.1:8000

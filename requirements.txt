@@ -1,0 +1,22 @@
+# Web framework
+fastapi
+
+# ASGI server for running FastAPI
+uvicorn[standard]
+
+# Template engine for rendering HTML (used with HTMX + Alpine.js frontend)
+jinja2
+
+# SQL toolkit and ORM for database interactions
+sqlalchemy
+
+# Async database support (works well with FastAPI + SQLAlchemy + SQLite)
+databases
+
+# Database migrations (optional but recommended for schema evolution)
+alembic
+
+# Data validation and settings management (integrates tightly with FastAPI)
+pydantic
+
+python-multipart

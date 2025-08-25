@@ -1,0 +1,15 @@
+<div>
+    <h2 class="text-xl font-bold mb-2">{{ customer.name }}</h2>
+    <p>Email: {{ customer.email }}</p>
+    <p>Phone: {{ customer.phone }}</p>
+
+    <div class="mt-4">
+        <h3 class="font-semibold">Call Log</h3>
+        <div id="call-log" hx-get="{{ url_for('calls.call_log', id=customer.id) }}" hx-trigger="load"></div>
+    </div>
+
+    <div class="mt-4">
+        <h3 class="font-semibold">Events</h3>
+        <div id="events-list" hx-get="{{ url_for('calls.events_list', id=customer.id) }}" hx-trigger="load"></div>
+    </div>
+</div>

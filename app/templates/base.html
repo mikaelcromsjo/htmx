@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ modalOpen: false }" x-cloak>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- TailwindCSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- HTMX and Alpine.js from /static -->
+    <script src="{{ url_for('static', path='htmx.min.js') }}"></script>
+    <script src="{{ url_for('static', path='alpine.min.js') }}" defer></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <!-- Header / Navigation -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold">My CRM</h1>
+            <nav class="space-x-4">
+                <button 
+                    class="px-3 py-2 rounded hover:bg-gray-200"
+                    hx-get="{{ url_for('customers.list') }}"
+                    hx-target="#content"
+                    hx-push-url="true">
+                    Customers
+                </button>
+                <button 
+                    class="px-3 py-2 rounded hover:bg-gray-200"
+                    hx-get="{{ url_for('events.list') }}"
+                    hx-target="#content"
+                    hx-push-url="true">
+                    Events
+                </button>
+                <button 
+                    class="px-3 py-2 rounded hover:bg-gray-200"
+                    hx-get="{{ url_for('calls.dashboard') }}"
+                    hx-target="#content"
+                    hx-push-url="true">
+                    Call Center
+                </button>
+                <button 
+                    class="px-3 py-2 rounded hover:bg-gray-200"
+                    hx-get="{{ url_for('alarms.list') }}"
+                    hx-target="#content"
+                    hx-push-url="true">
+                    Alarms
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl mx-auto p-4 w-full">
+        <div id="content" class="bg-white rounded shadow p-4">
+            {% block content %}
+            <p class="text-gray-500">Select a section from the navigation above.</p>
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- Global Modal Container -->
+    <div 
+        x-show="modalOpen"
+        x-transition
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded shadow-xl w-1/2 relative">
+            <button @click="modalOpen = false" 
+                    class="absolute top-2 right-2 text-gray-500 hover:text-black">
+                ✕
+            </button>
+            <!-- HTMX swaps modal contents here -->
+            <div id="modal-container"></div>
+        </div>
+    </div>
+
+    <!-- HTMX Hook: auto-open modal on swap -->
+    <script>
+        document.body.addEventListener("htmx:afterSwap", (e) => {
+            if (e.detail.target.id === "modal-container") {
+                document.querySelector('html').__x.$data.modalOpen = true;
+            }
+        });
+    </script>
+</body>
+</html>

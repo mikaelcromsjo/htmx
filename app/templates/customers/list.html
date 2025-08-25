@@ -1,0 +1,30 @@
+
+<div id="customer-container">
+<table class="table-auto w-full border">
+    <thead>
+        <tr>
+            <th class="px-2 py-1 border">ID</th>
+            <th class="px-2 py-1 border">Name</th>
+            <th class="px-2 py-1 border">Email</th>
+            <th class="px-2 py-1 border">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for customer in customers %}
+        <tr hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}"          
+            hx-target="#customer-container"
+            hx-trigger="click"
+            class="cursor-pointer hover:bg-gray-100">
+            <td class="px-2 py-1 border">{{ customer.id }}</td>
+            <td class="px-2 py-1 border">{{ customer.name }}</td>
+            <td class="px-2 py-1 border">{{ customer.email }}</td>
+            <td class="px-2 py-1 border">View/Edit</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<button hx-get="/customers/new" hx-target="#customer-container">New Customer</button>
+</div>
+
+
