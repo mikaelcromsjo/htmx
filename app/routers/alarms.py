@@ -11,11 +11,7 @@ from app.models.models import Customer, Event
 from app.models.base import Base
 from fastapi.templating import Jinja2Templates
 from app.models.models import Alarm
-
-# ------------------------------------------------------
-# Templates
-# ------------------------------------------------------
-templates = Jinja2Templates(directory="app/templates")
+from app.templates import templates
 
 
 

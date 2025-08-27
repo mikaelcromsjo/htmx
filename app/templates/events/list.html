@@ -1,23 +1,30 @@
-<table class="table-auto w-full border">
-    <thead>
-        <tr>
-            <th class="px-2 py-1 border">ID</th>
-            <th class="px-2 py-1 border">Title</th>
-            <th class="px-2 py-1 border">Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for event in events %}
-        <tr hx-get="{{ url_for('events.modal', id=event.id) }}"
-            hx-target="#modal-container"
-            hx-trigger="click"
-            class="cursor-pointer hover:bg-gray-100">
-            <td class="px-2 py-1 border">{{ event.id }}</td>
-            <td class="px-2 py-1 border">{{ event.title }}</td>
-            <td class="px-2 py-1 border">{{ event.date }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div id="event-container">
+    <table class="table-auto w-full border">
+        <thead>
+            <tr>
+                <th class="px-2 py-1 border">ID</th>
+                <th class="px-2 py-1 border">Name</th>
+                <th class="px-2 py-1 border">Start Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr hx-get="{{ url_for('event_detail', event_id=event.id) }}" hx-target="#event-container"
+                hx-trigger="click" class="cursor-pointer hover:bg-gray-100">
+                <td class="px-2 py-1 border">{{ event.id }}</td>
+                <td class="px-2 py-1 border">{{ event.name }}</td>
+                <td class="px-2 py-1 border">{{ event.start_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-<div id="modal-container"></div>
+    <div class="mt-2 flex gap-2">
+
+        <button hx-get="/events/new" hx-target="#event-container"
+            class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+            New Event
+        </button>
+    </div>
+
+</div>

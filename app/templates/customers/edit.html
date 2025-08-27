@@ -1,69 +1,93 @@
-<h2 class="text-xl font-bold mb-4">Customer: {{ customer.name }}</h2>
+<h2 class="text-xl font-bold mb-4">
+  Customer: {{ customer.first_name }} {{ customer.last_name }}
+</h2>
 
-<form 
-    hx-post="{{url_for('update_customer', customer_id=customer.id)}}" 
-    hx-target="#customer-container" 
+<form
+    hx-post="{{ url_for('edit') }}"
+    hx-target="#customer-container"
     hx-ext="json-enc"
+    hx-headers='{"Content-Type": "application/json"}'
     hx-swap="innerHTML"
-    id="customerForm">
+    id="customerForm"
+    hx-on="htmx:configRequest: (evt) => {
+        const data = evt.detail.parameters;
+        for (const key in data) {
+            if (data[key] === '') data[key] = null;
+        }
+    }"
+>
 
-    <!-- Name -->
+    {% if customer.id %}
+    <!-- ID -->
+    <div class="mb-2 hidden">
+        <label class="block font-semibold">ID</label>
+        <input type="text" name="id" value="{{ customer.id }}" class="border p-1 w-full"/>
+    </div>
+    {% endif %}
+
+    <!-- First Name -->
     <div class="mb-2">
-        <label class="block font-semibold">Name</label>
-        <input type="text" id="name" name="name" data-save="true" value="{{ customer.name }}" class="border p-1 w-full"/>
+        <label class="block font-semibold">First Name</label>
+        <input type="text" name="first_name" value="{{ customer.first_name or '' }}" class="border p-1 w-full"/>
     </div>
 
-    <!-- ID -->
+    <!-- Last Name -->
     <div class="mb-2">
-        <label class="block font-semibold">ID</label>
-        <input type="text" id="user_id" name="user_id" data-save="true" value="{{ customer.user_id }}" class="border p-1 w-full"/>
+        <label class="block font-semibold">Last Name</label>
+        <input type="text" name="last_name" value="{{ customer.last_name or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- User ID -->
+    <div class="mb-2">
+        <label class="block font-semibold">User ID</label>
+        <input type="text" name="user_id" value="{{ customer.user_id or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Code Name -->
+    <div class="mb-2">
+        <label class="inline-flex items-center">
+            <input type="checkbox" name="code_name" value="1" {% if customer.code_name %}checked{% endif %} class="mr-2"/>
+            Code Name
+        </label>
     </div>
 
     <!-- Email -->
     <div class="mb-2">
         <label class="block font-semibold">Email</label>
-        <input type="email" id="email" name="email" data-save="true" value="{{ customer.email }}" class="border p-1 w-full"/>
+        <input type="email" name="email" value="{{ customer.email or '' }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Phone -->
     <div class="mb-2">
         <label class="block font-semibold">Phone</label>
-        <input type="text" id="phone" name="phone" data-save="true" value="{{ customer.phone }}" class="border p-1 w-full"/>
+        <input type="text" name="phone" value="{{ customer.phone or '' }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Location -->
     <div class="mb-2">
         <label class="block font-semibold">Location</label>
-        <input type="text" id="location" name="location" data-save="true" value="{{ customer.location }}" class="border p-1 w-full"/>
+        <input type="text" name="location" value="{{ customer.location or '' }}" class="border p-1 w-full"/>
     </div>
 
-    <!-- Personality Types -->
+    <!-- Contributes -->
     <div class="mb-2">
-        <label class="block font-semibold mb-1">Personality Types</label>
-        <div class="flex flex-wrap gap-2">
-            {% for pt in personality_types %}
-            <label class="flex items-center space-x-1">
-                <input type="checkbox" class="personalityType" id="pt_{{ pt }}" name="personalityType" data-save="true" value="{{ pt }}"
-                    {% if pt in customer.personalityType %}checked{% endif %} />
-                <span>{{ pt }}</span>
-            </label>
-            {% endfor %}
-        </div>
+        <label class="block font-semibold">Contributes</label>
+        <select name="contributes" class="border p-1 w-full">
+            <option value="" {% if customer.contributes is none %}selected{% endif %}>Select...</option>
+            <option value="1" {% if customer.contributes == 1 %}selected{% endif %}>No contributions</option>
+            <option value="2" {% if customer.contributes == 2 %}selected{% endif %}>Contributes</option>
+            <option value="3" {% if customer.contributes == 3 %}selected{% endif %}>Silver</option>
+            <option value="4" {% if customer.contributes == 4 %}selected{% endif %}>Gold</option>
+        </select>
     </div>
 
-    <!-- Categories -->
+    <!-- Caller -->
     <div class="mb-2">
-        <label class="block font-semibold mb-1">Categories</label>
-        <select id="categories" name="categories" data-save="true" class="border p-1 w-full" multiple>
-            {% for main_cat, subcats in categories.items() %}
-            <optgroup label="{{ main_cat }}">
-                {% for sub in subcats %}
-                <option value="{{ main_cat }}:{{ sub }}"
-                    {% if main_cat ~ ':' ~ sub in customer.categories %}selected{% endif %}>
-                    {{ sub }}
-                </option>
-                {% endfor %}
-            </optgroup>
+        <label class="block font-semibold">Caller</label>
+        <select name="caller" class="border p-1 w-full">
+            <option value="" {% if customer.caller is none %}selected{% endif %}>Select...</option>
+            {% for caller in callers %}
+              <option value="{{ caller.id }}" {% if customer.caller == caller.id %}selected{% endif %}>{{ caller.name }}</option>
             {% endfor %}
         </select>
     </div>
@@ -71,57 +95,105 @@
     <!-- Comment -->
     <div class="mb-2">
         <label class="block font-semibold">Comment</label>
-        <textarea id="comment" name="comment" data-save="true" class="border p-1 w-full">{{ customer.comment }}</textarea>
-    </div>
-
-    <!-- Organisation -->
-    <div class="mb-2">
-        <label class="block font-semibold">Organisation</label>
-        <input type="text" id="organisation" name="organisation" data-save="true" value="{{ customer.organisation }}" class="border p-1 w-full"/>
+        <textarea name="comment" class="border p-1 w-full">{{ customer.comment or '' }}</textarea>
     </div>
 
     <!-- Sub Caller -->
     <div class="mb-2">
         <label class="block font-semibold">Sub Caller</label>
-        <input type="text" id="sub_caller" name="sub_caller" data-save="true" value="{{ customer.sub_caller }}" class="border p-1 w-full"/>
+        <input type="text" name="sub_caller" value="{{ customer.sub_caller or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Organisations -->
+    <div class="mb-2">
+        <label class="block font-semibold">Organisations</label>
+        <select name="organisations" multiple class="border p-1 w-full">
+            {% for org in organisations %}
+                <option value="{{ org.id }}"
+                    {% if org.id|string in customer.organisations %}selected{% endif %}>
+                    {{ org.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Categories -->
+    <div class="mb-2">
+        <label class="block font-semibold">Categories</label>
+        <select name="categories" multiple class="border p-1 w-full">
+          {% for cid, cat in categories.items() %}
+            <optgroup label="{{ cat.name }}">
+              {% for iid, item in cat.get('items', {}).items() %}
+                <option value="{{ iid }}" {% if iid in customer.categories %}selected{% endif %}>
+                  {{ item }}
+                </option>
+              {% endfor %}
+            </optgroup>
+          {% endfor %}
+        </select>
+    </div>
+
+    <!-- Personality Type -->
+    <div class="mb-2">
+        <label class="block font-semibold">Personality Type</label>
+        <select name="personality_type" class="border p-1 w-full">
+            <option value="" {% if customer.personality_type is none %}selected{% endif %}>Select...</option>
+            <option value="0" {% if customer.personality_type == 0 %}selected{% endif %}>Unknown</option>
+            <option value="1" {% if customer.personality_type == 1 %}selected{% endif %}>Yellow</option>
+            <option value="2" {% if customer.personality_type == 2 %}selected{% endif %}>Blue</option>
+            <option value="3" {% if customer.personality_type == 3 %}selected{% endif %}>Red</option>
+            <option value="4" {% if customer.personality_type == 4 %}selected{% endif %}>Green</option>
+        </select>
+    </div>
+
+    <!-- Boolean Preferences -->
+    <div class="mb-2">
+        <label class="inline-flex items-center">
+            <input type="checkbox" name="controlled" {% if customer.controlled %}checked{% endif %} class="mr-2"/>
+            Controlled
+        </label>
+    </div>
+    <div class="mb-2">
+        <label class="inline-flex items-center">
+            <input type="checkbox" name="likes_parties" {% if customer.likes_parties %}checked{% endif %} class="mr-2"/>
+            Likes Parties
+        </label>
+    </div>
+    <div class="mb-2">
+        <label class="inline-flex items-center">
+            <input type="checkbox" name="likes_politics" {% if customer.likes_politics %}checked{% endif %} class="mr-2"/>
+            Likes Politics
+        </label>
+    </div>
+    <div class="mb-2">
+        <label class="inline-flex items-center">
+            <input type="checkbox" name="likes_lectures" {% if customer.likes_lectures %}checked{% endif %} class="mr-2"/>
+            Likes Lectures
+        </label>
+    </div>
+    <div class="mb-2">
+        <label class="inline-flex items-center">
+            <input type="checkbox" name="likes_activism" {% if customer.likes_activism %}checked{% endif %} class="mr-2"/>
+            Likes Activism
+        </label>
     </div>
 
     <!-- Tags -->
     <div class="mb-2">
         <label class="block font-semibold">Tags (comma separated)</label>
-        <input type="text" id="tags" name="tags" data-save="true" value="{{ customer.tags | join(', ') }}" class="border p-1 w-full"/>
+        <input type="text" name="tags" value="{{ customer.tags | default('') }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Extra JSON -->
+    <div class="mb-2">
+        <label class="block font-semibold">Extra (JSON)</label>
+        <textarea name="extra" class="border p-1 w-full">{{ customer.extra | default('{}') }}</textarea>
     </div>
 
     <div class="flex justify-end mt-4">
         <button type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
     </div>
+
 </form>
 
 <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
-
-<script>
-document.getElementById('customerForm').addEventListener('htmx:configRequest', (event) => {
-    const form = event.target;
-    const data = {};
-
-    form.querySelectorAll('[data-save="true"]').forEach(el => {
-        if (el.type === 'checkbox') {
-            if (!data[el.name]) data[el.name] = [];
-            if (el.checked) data[el.name].push(el.value);
-        } else if (el.tagName === 'SELECT' && el.multiple) {
-            data[el.name] = Array.from(el.selectedOptions).map(o => o.value);
-        } else {
-            data[el.name] = el.value;
-        }
-    });
-
-    // Override the request to send proper JSON
-    event.detail.fetchConfig = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    };
-});
-</script>

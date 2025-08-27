@@ -15,6 +15,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from starlette.middleware.sessions import SessionMiddleware
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import text
@@ -34,6 +36,8 @@ logger = logging.getLogger(__name__)
 
 # --- FastAPI app setup ---
 app = FastAPI(title="HTMX + Alpine.js Prototype")
+app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
+
 
 # Function to list tables
 def list_tables():

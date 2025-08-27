@@ -11,6 +11,8 @@
     <!-- HTMX and Alpine.js from /static -->
     <script src="{{ url_for('static', path='htmx.min.js') }}"></script>
     <script src="{{ url_for('static', path='alpine.min.js') }}" defer></script>
+
+
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
@@ -75,13 +77,6 @@
         </div>
     </div>
 
-    <!-- HTMX Hook: auto-open modal on swap -->
-    <script>
-        document.body.addEventListener("htmx:afterSwap", (e) => {
-            if (e.detail.target.id === "modal-container") {
-                document.querySelector('html').__x.$data.modalOpen = true;
-            }
-        });
-    </script>
+
 </body>
 </html>

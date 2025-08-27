@@ -5,7 +5,7 @@
         <div id="customer-list">
             {% for customer in customers %}
             <div class="p-2 border-b cursor-pointer hover:bg-gray-100"
-                 hx-get="{{ url_for('calls.customer_info', id=customer.id) }}"
+                 hx-get="{{ url_for('calls.customer_info', customer_id=customer.id) }}"
                  hx-target="#customer-info"
                  hx-trigger="click">
                 {{ customer.name }}
@@ -13,9 +13,38 @@
             {% endfor %}
         </div>
     </div>
-
-    <!-- Right: dynamic customer info -->
-    <div class="w-2/3 p-4 overflow-y-auto" id="customer-info">
-        <p class="text-gray-500">Select a customer to view details.</p>
+   <!-- Left: previous calls -->
+    <div class="w-1/3 border-r p-4 overflow-y-auto">
+        <h2 class="font-bold text-lg mb-2">Call Log</h2>
+        <div id="customer-list">
+            {% for call in calls %}
+            <div class="p-2 border-b cursor-pointer hover:bg-gray-100"
+                 hx-get="{{ url_for('calls.call_info', call_id=call.id) }}"
+                 hx-target="#call-info"
+                 hx-trigger="click">
+                {{ call.date }}
+            </div>
+            {% endfor %}
+        </div>
     </div>
+
+
+
+    <div class="w-2/3 p-4 overflow-y-auto" id="customer-info">
+        Customer Info
+        <p class="text-gray-500"></p>
+    </div>
+
+    <div class="w-2/3 p-4 overflow-y-auto" id="call-info">
+        Call Info
+        <p class="text-gray-500"></p>
+    </div>
+
+    <div class="w-2/3 p-4 overflow-y-auto" id="call-box">
+        Call Box
+        
+        <p class="text-gray-500"></p>
+    </div>
+
 </div>
+

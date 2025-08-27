@@ -1,40 +1,53 @@
 # app/routers/calls.py
 
-from fastapi import APIRouter, Depends, Request, Form
+from fastapi import APIRouter, Depends, Request, Form, Query
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
+from pydantic import BaseModel, Field
 
 from app.database import get_db
-from app import models
-from app.main import templates  # Jinja2Templates instance
+from app.templates import templates
 
-router = APIRouter(
-    prefix="/calls",
-    tags=["calls"],
-)
+
+from app.models.models import Customer, Calls
+from app.functions.helpers import render
+from app.functions.customers import get_selected_ids, get_customers, SelectedIDs
+
+
+router = APIRouter(prefix="/calls", tags=["calls"])
+
+class CallsUpdate(BaseModel):
+    customer_id: int
+    timestamp: Optional[datetime] = None
+    status: Optional[List] = []
+    note: Optional[str] = None
 
 
 # ---------------------------
 # Dashboard View
 # ---------------------------
-@router.get("/dashboard", response_class=HTMLResponse, name="calls.dashboard")
-def call_center_dashboard(request: Request, db: Session = Depends(get_db)):
-    """
-    Render the main call center dashboard.
-    """
-    # Example: you might load some stats here
-    total_calls = db.query(models.Call).count()
-    total_events = db.query(models.CustomerEvent).count()
 
-    return templates.TemplateResponse(
+
+
+@router.api_route("/dashboard", methods=["GET", "POST"], response_class=HTMLResponse, name="calls.dashboard")
+def call_center_dashboard(
+    request: Request,
+    selected_ids: Optional[SelectedIDs] = None,
+    db: Session = Depends(get_db),
+):
+    """
+    Single route to render the call center dashboard for both GET and POST.
+    """
+    ids = get_selected_ids(request, selected_ids)
+    customers = get_customers(db, ids)
+
+    calls = [Calls.empty()]
+
+    return render(
         "calls/dashboard.html",
-        {
-            "request": request,
-            "total_calls": total_calls,
-            "total_events": total_events,
-        },
+        {"request": request, "customers": customers, "calls": calls},  # Adjust filter as needed
     )
 
 
@@ -45,8 +58,10 @@ def call_center_dashboard(request: Request, db: Session = Depends(get_db)):
 def select_customer(customer_id: int, request: Request, db: Session = Depends(get_db)):
     """
     Select a customer (e.g., open their detail view in dashboard).
+
     """
-    customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
+
+    customer = db.query(Customer).filter(Customer.id == int(customer_id)).first()
     if not customer:
         return HTMLResponse("<div>Customer not found</div>", status_code=404)
 
@@ -59,18 +74,35 @@ def select_customer(customer_id: int, request: Request, db: Session = Depends(ge
 # ---------------------------
 # Customer Info Fragment
 # ---------------------------
-@router.get("/customer/{customer_id}/info", response_class=HTMLResponse)
+@router.get("/customer/{customer_id}/info", response_class=HTMLResponse, name="calls.customer_info")
 def customer_info(customer_id: int, request: Request, db: Session = Depends(get_db)):
     """
     Return HTMX fragment with customer details.
     """
-    customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
+    customer = db.query(Customer).filter(Customer.id == int(customer_id)).first()
     if not customer:
         return HTMLResponse("<div>Customer not found</div>", status_code=404)
 
     return templates.TemplateResponse(
-        "calls/fragments/customer_info.html",
+        "calls/customer_info.html",
         {"request": request, "customer": customer},
+    )
+
+# ---------------------------
+# Call Info Fragment
+# ---------------------------
+@router.get("/calls/{call_id}/info", response_class=HTMLResponse, name="calls.call_info")
+def call_info(call_id: int, request: Request, db: Session = Depends(get_db)):
+    """
+    Return HTMX fragment with call details.
+    """
+    call = db.query(Call).filter(Call.id == int(call_id)).first()
+    if not call:
+        return HTMLResponse("<div>Customer not found</div>", status_code=404)
+
+    return templates.TemplateResponse(
+        "calls/call_info.html",
+        {"request": request, "call": call},
     )
 
 
