@@ -17,7 +17,7 @@ RUN mkdir -p /dbdata
 # Copy project files (still overridden by volume in docker-compose)
 COPY . .
 
-EXPOSE 8000
+EXPOSE 8010
 
 # Run uvicorn in reload mode for dev
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8010", "--reload"]
