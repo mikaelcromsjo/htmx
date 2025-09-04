@@ -6,8 +6,21 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import sqltypes as satypes
 from datetime import datetime, timezone
 
+from pydantic import BaseModel, Field
+from pydantic import BaseModel, field_validator
 
 from app.database import Base
+from typing import List, Optional
+from typing import List, Optional, Dict, Any
+
+
+
+# Py Models
+
+class Update(BaseModel):
+    class Config:
+        extra = "allow"
+
 
 # models set up customer routes# ------------------------------------------------------
 # SQLAlchemy Calls model
@@ -148,6 +161,32 @@ class Customer(BaseMixin, Base):
     tags = Column(JSON, default=[])
     extra = Column(JSON, default={})
 
+#
+
+class CustomerUpdate(BaseModel):
+    first_name: str
+    last_name: str
+    user_id: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    location: Optional[str] = None
+    comment: Optional[str] = None
+    sub_caller: Optional[str] = None
+    organisations: Optional[List[str]] = []      # Multi-select → list
+    personality_type: Optional[int] = None       # Dropdown → int
+    contributes: Optional[int] = None            # Dropdown → int
+    caller: Optional[int] = None                 # Dropdown → int
+    controlled: Optional[bool] = False           # Checkbox → bool
+    likes_parties: Optional[bool] = False        # Checkbox → bool
+    likes_politics: Optional[bool] = False
+    likes_lectures: Optional[bool] = False
+    likes_activism: Optional[bool] = False
+    categories: Optional[List[str]] = []         # Multi-select → list
+    tags: Optional[str] = ""                      # Comma-separated → list in populate()
+    extra: Optional[str] = "{}"                   # JSON string → dict in populate()
+    code_name: Optional[bool] = False            # Checkbox → bool    
+
+
 # -----------------------------
 # SQLAlchemy ORM Event model
 # -----------------------------
@@ -156,8 +195,38 @@ class Event(BaseMixin, Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
+    price = Column(Integer, nullable=True)
     description = Column(String, nullable=True)
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=True)
-    type = Column(JSON, default=[])
+
+    type_parties = Column(Boolean, default=False)
+    type_politics = Column(Boolean, default=False)
+    type_lectures = Column(Boolean, default=False)
+    type_activism = Column(Boolean, default=False)
+    extra_external = Column(Boolean, default=False)
+    extra_non_political = Column(Boolean, default=False)
+    extra_visilble_all = Column(Boolean, default=False)
+
     extra = Column(JSON, nullable=True)
+
+class EventUpdate(BaseModel):
+    name: str
+    price: Optional[int] = None
+    description: Optional[str] = None
+    start_date: datetime
+    end_date: Optional[datetime] = None
+
+    type_parties: bool = False
+    type_politics: bool = False
+    type_lectures: bool = False
+    type_activism: bool = False
+    extra_external: bool = False
+    extra_non_political: bool = False
+    extra_visilble_all: bool = False
+
+
+#    extra: Optional[Dict[str, Any]] = None
+
+    class Config:
+        orm_mode = True

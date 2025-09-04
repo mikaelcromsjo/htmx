@@ -14,41 +14,16 @@ from app.database import get_db
 from app.functions.helpers import render
 from app.templates import templates
 from app.data.constants import categories, organisations
-from app.models.models import Customer
+from app.models.models import Customer, CustomerUpdate
 from app.functions.helpers import populate
 
-class Update(BaseModel):
-    class Config:
-        extra = "allow"
+from app.models.models import Update
 
-class CustomerUpdate(BaseModel):
-    first_name: str
-    last_name: str
-    user_id: str
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    location: Optional[str] = None
-    comment: Optional[str] = None
-    sub_caller: Optional[str] = None
-    organisations: Optional[List[str]] = []      # Multi-select → list
-    personality_type: Optional[int] = None       # Dropdown → int
-    contributes: Optional[int] = None            # Dropdown → int
-    caller: Optional[int] = None                 # Dropdown → int
-    controlled: Optional[bool] = False           # Checkbox → bool
-    likes_parties: Optional[bool] = False        # Checkbox → bool
-    likes_politics: Optional[bool] = False
-    likes_lectures: Optional[bool] = False
-    likes_activism: Optional[bool] = False
-    categories: Optional[List[str]] = []         # Multi-select → list
-    tags: Optional[str] = ""                      # Comma-separated → list in populate()
-    extra: Optional[str] = "{}"                   # JSON string → dict in populate()
-    code_name: Optional[bool] = False            # Checkbox → bool    
 
 # -------------------------------------------------
 # Router & Templates Setup
 # -------------------------------------------------
 router = APIRouter(prefix="/customers", tags=["customers"])
-
 
 # -------------------------------------------------
 # List Customers
@@ -84,8 +59,6 @@ def customer_new(
 ):
 
     customer = Customer.empty()
-
-
     return templates.TemplateResponse(
         "customers/edit.html",
         {
@@ -97,7 +70,7 @@ def customer_new(
         }
     )
 
-@router.post("/edit", name="edit", response_class=HTMLResponse)
+@router.post("/customer", name="upsert_customer", response_class=HTMLResponse)
 async def upsert_customer(
     request: Request,
     update_data: Update,
@@ -136,7 +109,7 @@ async def upsert_customer(
     )
 
 
-@router.get("/get/{customer_id}", response_class=HTMLResponse)
+@router.get("/customer/{customer_id}", response_class=HTMLResponse)
 def customer_detail(
     request: Request,
     customer_id: str,
@@ -187,8 +160,8 @@ def customer_detail(
          
 
 # DELETE customer
-@router.post("/delete/{customer_id}", name="customer_delete")
-def customer_delete(customer_id: str, db: Session = Depends(get_db)):
+@router.post("/delete/{customer_id}", name="delete_customer")
+def delete_customer(customer_id: str, db: Session = Depends(get_db)):
     customer = db.query(Customer).filter(Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")

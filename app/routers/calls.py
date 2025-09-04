@@ -11,7 +11,7 @@ from app.database import get_db
 from app.templates import templates
 
 
-from app.models.models import Customer, Calls
+from app.models.models import Customer, Calls, Event
 from app.functions.helpers import render
 from app.functions.customers import get_selected_ids, get_customers, SelectedIDs
 
@@ -31,7 +31,7 @@ class CallsUpdate(BaseModel):
 
 
 
-@router.api_route("/dashboard", methods=["GET", "POST"], response_class=HTMLResponse, name="calls.dashboard")
+@router.api_route("/dashboard", methods=["GET", "POST"], response_class=HTMLResponse, name="calls_dashboard")
 def call_center_dashboard(
     request: Request,
     selected_ids: Optional[SelectedIDs] = None,
@@ -43,11 +43,16 @@ def call_center_dashboard(
     ids = get_selected_ids(request, selected_ids)
     customers = get_customers(db, ids)
 
+    customers = get_customers(db, ids)
+
     calls = [Calls.empty()]
+
+    query = db.query(Event)
+    events = query.all()
 
     return render(
         "calls/dashboard.html",
-        {"request": request, "customers": customers, "calls": calls},  # Adjust filter as needed
+        {"request": request, "customers": customers, "calls": calls, "events": events }, 
     )
 
 

@@ -5,12 +5,30 @@
     <title>{% block title %}Dashboard{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- TailwindCSS from CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/output.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/bootstrap.min.css') }}">
 
     <!-- HTMX and Alpine.js from /static -->
     <script src="{{ url_for('static', path='htmx.min.js') }}"></script>
     <script src="{{ url_for('static', path='alpine.min.js') }}" defer></script>
+
+    <!-- Local Bootstrap JS -->
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Configure Tailwind
+    tailwind.config = {
+      theme: {
+        extend: {},
+      },
+      plugins: [daisyui],
+    }
+
+    // DaisyUI CDN
+    const daisyui = window.daisyui
+  </script>
+  <!-- DaisyUI CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/daisyui@2.72.1/dist/full.js"></script>
 
 
 </head>
@@ -19,25 +37,25 @@
     <!-- Header / Navigation -->
     <header class="bg-white shadow">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <h1 class="text-xl font-bold">My CRM</h1>
+            <h1 class="text-xl font-bold">Call Center</h1>
             <nav class="space-x-4">
                 <button 
                     class="px-3 py-2 rounded hover:bg-gray-200"
-                    hx-get="{{ url_for('customers.list') }}"
+                    hx-get="{{ url_for('customers_list') }}"
                     hx-target="#content"
                     hx-push-url="true">
                     Customers
                 </button>
                 <button 
                     class="px-3 py-2 rounded hover:bg-gray-200"
-                    hx-get="{{ url_for('events.list') }}"
+                    hx-get="{{ url_for('events_list') }}"
                     hx-target="#content"
                     hx-push-url="true">
                     Events
                 </button>
                 <button 
                     class="px-3 py-2 rounded hover:bg-gray-200"
-                    hx-get="{{ url_for('calls.dashboard') }}"
+                    hx-get="{{ url_for('calls_dashboard') }}"
                     hx-target="#content"
                     hx-push-url="true">
                     Call Center
@@ -78,5 +96,36 @@
     </div>
 
 
+        <!-- Popup div -->
+<div id="popup" 
+     style="display:none; position:fixed; top:10px; left:50%; transform:translateX(-50%); 
+            background:#333; color:#fff; padding:10px 20px; border-radius:5px; z-index:1000;">
+</div>
+
+
 </body>
 </html>
+
+
+
+
+<script>
+function showPopup(evt) {
+    let response = evt.detail.xhr.responseText;
+    try {
+        let data = JSON.parse(response);
+
+        // Show popup
+        let popup = document.getElementById('popup');
+        popup.innerText = data.detail;
+        popup.style.display = 'block';
+
+        setTimeout(() => popup.style.display = 'none', 2000);
+        
+    } catch(err) {
+        console.error("Invalid JSON from server:", response);
+    }
+}
+</script>
+
+<script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>

@@ -1,0 +1,8 @@
+{
+  "name": "fastapi-tailwind",
+  "version": "1.0.0",
+  "devDependencies": {
+    "tailwindcss": "^4.3.2",
+    "daisyui": "^3.3.0"
+  }
+}

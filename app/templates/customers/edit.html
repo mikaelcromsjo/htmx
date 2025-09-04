@@ -3,7 +3,7 @@
 </h2>
 
 <form
-    hx-post="{{ url_for('edit') }}"
+    hx-post="{{ url_for('upsert_customer') }}"
     hx-target="#customer-container"
     hx-ext="json-enc"
     hx-headers='{"Content-Type": "application/json"}'

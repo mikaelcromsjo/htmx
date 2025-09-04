@@ -1,0 +1,31 @@
+# Use Python 3.11 as base
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies + Node.js
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl build-essential sqlite3 ca-certificates \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install Node.js dependencies (Tailwind + DaisyUI)
+COPY package.json package-lock.json ./
+RUN npm install
+
+# Create database folder
+RUN mkdir -p /dbdata
+
+# Copy project files
+COPY . .
+
+# Expose FastAPI port
+EXPOSE 8000
+
+# Build Tailwind CSS once and then run FastAPI
+CMD sh -c "npx tailwindcss -i ./app/static/css/tailwind.css -o ./app/static/css/output.css --minify && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
