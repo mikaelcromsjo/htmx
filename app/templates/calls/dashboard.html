@@ -1,3 +1,10 @@
+<div id="customer-calls"
+     hx-get="/calls/customers"
+     :hx-vals="{ customer_id: $store.customer.id }"
+     hx-trigger="load-customer"
+     hx-swap="none">
+</div>
+
 <div class="container-fluid border">
     <!-- Row 1 -->
     <div class="row border-bottom" style="height: 40vh;">
@@ -5,18 +12,17 @@
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             <div class="fw-semibold">Customers</div>
             <div id="customer-list" class="flex-grow-1 overflow-auto mt-2" x-data>
-                {% for customer in customers %}
-                <div class="p-2 border-bottom cursor-pointer" 
-                    :class="{
-                            'bg-success bg-opacity-25 fw-bold text-success': $store.customer.id === {{ customer.id }},
-                            'bg-white fw-normal text-dark': $store.customer.id !== {{ customer.id }}
-                        }" 
-                    @click="" 
-                    hx-get="{{ url_for('customer_detail_calls', customer_id=customer.id) }}"
-                    hx-trigger="click" hx-swap="none">
-                    {{ customer.first_name }}
-                </div>
-                {% endfor %}
+{% for customer in customers %}
+<div class="p-2 border-bottom cursor-pointer"
+     :class="{
+        'bg-success bg-opacity-25 fw-bold text-success': $store.customer.id === {{ customer.id }},
+        'bg-white fw-normal text-dark': $store.customer.id !== {{ customer.id }}
+     }"
+     @click="$store.customer.id = {{ customer.id }}; htmx.trigger('#customer-calls', 'load-customer')"
+     hx-swap="none">
+  {{ customer.first_name }}
+</div>
+{% endfor %}
             </div>
         </div>
 
@@ -146,8 +152,14 @@
                     </button>
                 </div>
             </div>
-<form hx-post="{{ url_for('save_call') }}" hx-ext="json-enc" hx-swap="none"
->
+<form id="save-form"
+      hx-post="{{ url_for('save_call') }}"
+      hx-ext="json-enc"
+      hx-swap="none"
+      hx-on::afterRequest="
+        if(event.detail.successful){
+          htmx.trigger('body', 'refresh-customer-calls');
+        }">
                 Call Comment
                 <div>
                     <textarea name="call_comment" date-save="true" class="form-control mb-2" rows="3"></textarea>
