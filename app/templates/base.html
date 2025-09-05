@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="/static/css/output.css">
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
 
+    <!-- TailwindCSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
     <!-- HTMX and Alpine.js from /static -->
     <script src="/static/htmx.min.js"></script>
     <script src="/static/alpine.min.js" defer></script>
@@ -15,20 +19,6 @@
     <!-- Local Bootstrap JS -->
     <script src="/static/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    // Configure Tailwind
-    tailwind.config = {
-      theme: {
-        extend: {},
-      },
-      plugins: [daisyui],
-    }
-
-    // DaisyUI CDN
-    const daisyui = window.daisyui
-  </script>
-  <!-- DaisyUI CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/daisyui@2.72.1/dist/full.js"></script>
 
 
 </head>
@@ -96,36 +86,44 @@
     </div>
 
 
-        <!-- Popup div -->
+<!-- Popup div -->
 <div id="popup" 
      style="display:none; position:fixed; top:10px; left:50%; transform:translateX(-50%); 
-            background:#333; color:#fff; padding:10px 20px; border-radius:5px; z-index:1000;">
+            background:#333; color:#fff; padding:10px 20px; border-radius:5px; z-index:1000;
+            transition: opacity 0.3s ease;">
 </div>
-
-
-</body>
-</html>
-
-
-
 
 <script>
 function showPopup(evt) {
-    let response = evt.detail.xhr.responseText;
+    let xhr = evt.detail.xhr;
+    let contentType = xhr.getResponseHeader('Content-Type') || '';
+
+    // Only parse JSON responses
+    if (!contentType.includes('application/json')) return;
+
     try {
-        let data = JSON.parse(response);
+        let data = JSON.parse(xhr.responseText);
+        if (!data.detail) return;
 
         // Show popup
         let popup = document.getElementById('popup');
         popup.innerText = data.detail;
+        popup.style.opacity = '1';
         popup.style.display = 'block';
 
-        setTimeout(() => popup.style.display = 'none', 2000);
-        
+        // Hide after 2 seconds with fade
+        setTimeout(() => {
+            popup.style.opacity = '0';
+            setTimeout(() => popup.style.display = 'none', 300);
+        }, 2000);
+
     } catch(err) {
-        console.error("Invalid JSON from server:", response);
+        console.error("Invalid JSON from server:", xhr.responseText);
     }
 }
+
+// Attach to all HTMX requests globally
+document.body.addEventListener('htmx:afterRequest', showPopup);
 </script>
 
 <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>

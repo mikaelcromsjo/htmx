@@ -1,6 +1,7 @@
 # app/routers/calls.py
 
 from fastapi import APIRouter, Depends, Request, Form, Query
+from fastapi.responses import JSONResponse
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from datetime import datetime
@@ -11,18 +12,13 @@ from app.database import get_db
 from app.templates import templates
 
 
-from app.models.models import Customer, Calls, Event
+from app.models.models import Customer, Call, Event
 from app.functions.helpers import render
 from app.functions.customers import get_selected_ids, get_customers, SelectedIDs
 
 
 router = APIRouter(prefix="/calls", tags=["calls"])
 
-class CallsUpdate(BaseModel):
-    customer_id: int
-    timestamp: Optional[datetime] = None
-    status: Optional[List] = []
-    note: Optional[str] = None
 
 
 # ---------------------------
@@ -42,11 +38,8 @@ def call_center_dashboard(
     """
     ids = get_selected_ids(request, selected_ids)
     customers = get_customers(db, ids)
-
-    customers = get_customers(db, ids)
-
-    calls = [Calls.empty()]
-
+    query = db.query(Call)
+    calls = query.all()
     query = db.query(Event)
     events = query.all()
 
@@ -55,6 +48,155 @@ def call_center_dashboard(
         {"request": request, "customers": customers, "calls": calls, "events": events }, 
     )
 
+
+
+# -----------------------------
+# Customer Details and call list (HTMX fragment)
+# -----------------------------
+
+
+@router.get("/customer/{customer_id}", name="customer_detail_calls", response_class=HTMLResponse)
+def customer_detail_calls(
+    request: Request,
+    customer_id: str,
+    db: Session = Depends(get_db)
+):
+    
+    customer = db.query(Customer).filter(Customer.id == int(customer_id)).first()
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    
+    customer = (
+        db.query(Customer)
+        .filter(Customer.id == customer_id)
+        .first()
+    )
+
+
+    print("customer", customer.to_dict())
+    print("id", customer_id)
+
+    calls = db.query(Call).filter(Call.customer_id == int(customer_id)).all()
+    print("call")
+
+    print("calls", calls)
+
+    return templates.TemplateResponse(
+        "calls/details_calls.html",
+        {
+            "request": request, 
+            "customer": customer, 
+            "calls": calls
+        }
+    )
+
+
+# -----------------------------
+# List Calls (HTMX fragment)
+# -----------------------------
+
+
+@router.get("/customer/{customer_id}", response_class=HTMLResponse)
+def customer_calls(
+    request: Request,
+    customer_id: str,
+    list: str | None = Query(default=None),
+    db: Session = Depends(get_db)
+):
+    print("List calls")    
+    # Capture all query parameters as a dict
+    query_params = dict(request.query_params)
+
+    calls = db.query(Call).filter(Call.caller_id == int(customer_id)).all()
+
+    return templates.TemplateResponse(
+        "calls/call_log.html",
+        {"request": request, "calls": calls},
+    )
+
+@router.get("/", response_class=HTMLResponse, name="events_list")
+def events_list(
+    request: Request,
+    filter: Optional[str] = None,
+    db: Session = Depends(get_db),
+):
+    query = select(Event)
+    if filter:
+        query = query.where(Event.name.contains(filter))
+    events = db.execute(query).scalars().all()
+    return templates.TemplateResponse(
+        "events/list.html", {"request": request, "events": events}
+    )
+
+
+
+# ---------------------------
+# Call Details
+# ---------------------------
+
+
+@router.get("/call/{call_id}", response_class=HTMLResponse)
+def call_details(
+    request: Request,
+    call_id: str,
+    db: Session = Depends(get_db)
+):
+    
+    call = db.query(Call).filter(Call.id == int(call_id)).first()
+    if not call:
+        raise HTTPException(status_code=404, detail="Call not found")
+    
+    call = (
+        db.query(Call)
+        .filter(Call.id == call_id)
+        .first()
+    )
+
+    # Render short template
+    return templates.TemplateResponse(
+        "call/info.html",
+        {
+            "request": request, 
+            "call": call, 
+            "call_id": call_id, 
+        }
+    )
+
+
+# ---------------------------
+# Update Customer Call Data
+# ---------------------------
+
+from app.models.models import Update
+from app.models.models import Call, CallCreate
+from app.functions.helpers import populate
+
+
+@router.post("/call/save", name="save_call", response_class=HTMLResponse)
+async def save_call(
+    request: Request,
+    update_data: Update,
+    db: Session = Depends(get_db),
+):
+    
+#    Call.__table__.drop(bind=db.get_bind(), checkfirst=True)
+
+    call = Call()
+    print(update_data.model_dump())
+
+    # Populate DB model dynamically
+    call = populate(update_data.model_dump(exclude_unset=True), call, CallCreate)
+    call.call_date = datetime.now()
+
+
+    db.add(call)
+    db.commit()
+    db.refresh(call)
+
+    return JSONResponse(content={"detail": "Call saved successfully"})
+
+
+# Autogenerated
 
 # ---------------------------
 # Select a Customer for Call Center

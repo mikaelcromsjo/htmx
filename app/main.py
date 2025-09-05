@@ -35,7 +35,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # --- FastAPI app setup ---
-app = FastAPI(title="HTMX + Alpine.js Prototype")
+app = FastAPI(title="HTMX + Alpine.js Prototype", debug=True)
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
 
@@ -79,7 +79,8 @@ def on_startup():
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Jinja2 templates (HTML pages/fragments)
-templates = Jinja2Templates(directory="app/templates")
+from app.templates import templates
+
 
 
 # --- Routers ---

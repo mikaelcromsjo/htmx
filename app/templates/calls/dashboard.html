@@ -4,14 +4,16 @@
         <!-- Customers Column -->
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             <div class="fw-semibold">Customers</div>
-            <div id="customer-list" class="flex-grow-1 overflow-auto mt-2" x-data="{ selectedCustomer: null }">
+            <div id="customer-list" class="flex-grow-1 overflow-auto mt-2" x-data>
                 {% for customer in customers %}
-                <div class="p-2 border-bottom cursor-pointer" :class="{
-                        'bg-success bg-opacity-25 fw-bold text-success': selectedCustomer === {{ customer.id }},
-                        'bg-white fw-normal text-dark': selectedCustomer !== {{ customer.id }}
-                     }" @click="selectedCustomer = {{ customer.id }}"
-                    hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short"
-                    hx-target="#customer-info">
+                <div class="p-2 border-bottom cursor-pointer" 
+                    :class="{
+                            'bg-success bg-opacity-25 fw-bold text-success': $store.customer.id === {{ customer.id }},
+                            'bg-white fw-normal text-dark': $store.customer.id !== {{ customer.id }}
+                        }" 
+                    @click="" 
+                    hx-get="{{ url_for('customer_detail_calls', customer_id=customer.id) }}"
+                    hx-trigger="click" hx-swap="none">
                     {{ customer.first_name }}
                 </div>
                 {% endfor %}
@@ -21,15 +23,20 @@
         <!-- Customer Info Column -->
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             <div class="fw-semibold">Customer Info</div>
-            <div id="customer-info" class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
-                {% for info in customer_details %}
-                <div class="p-1">{{ info }}</div>
-                {% endfor %}
+
+            <div class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
+                <div id="customer-info">
+                    {% for info in customer_details %}
+                    <div class="p-1">{{ info }}</div>
+                    {% endfor %}
+                </div>
+
             </div>
 
             <div class="mt-2">
                 Comment
-                <textarea class="form-control mt-1" x-model="$store.customer.comment" rows="3"></textarea>
+                <textarea class="form-control mt-1" x-model="$store.customer.comment" rows="3"
+                    @input="$store.customer.comment = $event.target.value"></textarea>
             </div>
         </div>
 
@@ -78,8 +85,12 @@
     <div class="row" style="height:40vh;">
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             Calls
-            <div class="flex-grow-1 overflow-auto mt-2 border p-2" style="background:#f8f9fa;">
-                <!-- Calls content goes here -->
+            <div class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
+                <div id="calls">
+                    {% for call_date in customer_calls %}
+                    <div class="p-1">{{ call_date }}</div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
 
@@ -99,36 +110,75 @@
                         <span x-text="type.charAt(0).toUpperCase() + type.slice(1)"></span>
                     </label>
                 </template>
+                <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox">
+                    <span>Fix</span>
+                </label>
+
             </div>
             <!-- Event Options -->
             <div class="d-flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light">
-                    <label class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" x-model="Alpine.store('eventFilters')[type]">
-                        <span x-text="type.charAt(0).toUpperCase() + type.slice(1)">Parties</span>
-                    </label>                
-            </div>
+                <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox">
+                    <span>Interested</span>
+                </label>
+                <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox">
+                    <span>Not interested</span>
+                </label>
+                <label class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox">
+                    <span>Payed</span>
+                </label>
+                <!-- Hidden datetime input with Tailwind button trigger -->
 
-            Call Comment
-            <div>
-                <textarea class="form-control mb-2" x-model="$store.customer.comment" rows="3"></textarea>
-            </div>
-            <div>
-                <!-- Call Button -->
-                <button class="btn btn-primary me-2 mb-2">Call</button>
+                <input type="datetime-local" name="alarm_date" data-save="true" class="absolute w-0 h-0 opacity-0"
+                    id="alarm_input">
 
-                <!-- Option Selector -->
-                <select class="form-select d-inline-block w-auto me-2 mb-2">
-                    <option value="answered">answered</option>
-                    <option value="no-answer">no answer</option>
-                    <option value="wrong-person">wrong person</option>
-                </select>
 
-                <!-- Save Button -->
-                <button class="btn btn-success mb-2">Save</button>
+
+                <div class="mb-2 relative">
+
+                    <button type="button"
+                        class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                        onclick="document.getElementById('alarm_input').showPicker()">
+                        Call Back
+                    </button>
+                </div>
             </div>
-            <div class="flex-grow-1 overflow-auto mt-2 border p-2" style="background:#f8f9fa;">
-                <!-- Additional scrollable content if needed -->
-            </div>
+<form hx-post="{{ url_for('save_call') }}" hx-ext="json-enc" hx-swap="none"
+>
+                Call Comment
+                <div>
+                    <textarea name="call_comment" date-save="true" class="form-control mb-2" rows="3"></textarea>
+                </div>
+                <div>
+
+                    <input data-save="true" type="hidden" name="caller" value="1">
+                    <input type="hidden" name="customer_id" :value="$store.customer.id" x-data>
+
+                    <!-- Radio Button Options -->
+                    <div class="d-inline-block me-2 mb-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" date-save="true" type="radio" name="response" id="answered"
+                                value="answered">
+                            <label class="form-check-label" for="answered">Answered</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" date-save="true" type="radio" name="response" id="no-answer"
+                                value="no-answer">
+                            <label class="form-check-label" for="no-answer">No answer</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" date-save="true" type="radio" name="response"
+                                id="wrong-person" value="wrong-person">
+                            <label class="form-check-label" for="wrong-person">Wrong person</label>
+                        </div>
+                    </div>
+                    <!-- Save Button -->
+                    <button type="submit" class="btn btn-success mb-2">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -142,6 +192,13 @@
     });
 
     Alpine.store('customer', {
-        comment: ""
+        comment: "",
+        id: "",
     });
+
+    Alpine.store('call', {
+        comment: "",
+        id: "",
+    });
+
 </script>

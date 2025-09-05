@@ -1,32 +1,32 @@
-<p><strong>Name:</strong> {{ event.name }}</p>
+<div class="mb-2"><strong>Name:</strong> {{ event.name }}</div>
 
 {% if event.price is not none and event.price > 0 %}
-<p><strong>Price:</strong> {{ event.price }} SEK</p>
+<div class="mb-2"><strong>Price:</strong> {{ event.price }} SEK</div>
 {% endif %}
 
 {% if event.description %}
-<p><strong>Description:</strong> {{ event.description }}</p>
+<div class="mb-2"><strong>Description:</strong> {{ event.description }}</div>
 {% endif %}
 
-<p><strong>Start Date:</strong> {{ event.start_date.strftime('%Y-%m-%d %H:%M') }}</p>
+<div class="mb-2"><strong>Start Date:</strong> {{ event.start_date.strftime('%Y-%m-%d %H:%M') }}</div>
 
 {% if event.end_date %}
-<p><strong>End Date:</strong> {{ event.end_date.strftime('%Y-%m-%d %H:%M') }}</p>
+<div class="mb-2"><strong>End Date:</strong> {{ event.end_date.strftime('%Y-%m-%d %H:%M') }}</div>
 {% endif %}
 
-<p><strong>Event Types:</strong>
+<div class="mb-2"><strong>Event Types:</strong>
     {% set types = [] %}
     {% if event.type_parties %}{% set _ = types.append('Parties') %}{% endif %}
     {% if event.type_politics %}{% set _ = types.append('Politics') %}{% endif %}
     {% if event.type_lectures %}{% set _ = types.append('Lectures') %}{% endif %}
     {% if event.type_activism %}{% set _ = types.append('Activism') %}{% endif %}
     {{ types | join(', ') if types else 'None' }}
-</p>
+</div>
 
-<p><strong>Extras:</strong>
+<div class="mb-2"><strong>Extras:</strong>
     {% set extras = [] %}
     {% if event.extra_external %}{% set _ = extras.append('External') %}{% endif %}
     {% if event.extra_non_political %}{% set _ = extras.append('Non-Political') %}{% endif %}
     {% if event.extra_visilble_all %}{% set _ = extras.append('Visible to All') %}{% endif %}
     {{ extras | join(', ') if extras else 'None' }}
-</p>
+</div>

@@ -99,14 +99,7 @@ class BaseMixin:
         values.update(overrides)
         return cls(**values)
 
-class Calls(BaseMixin, Base):
-    __tablename__ = "calls"
 
-    id = Column(Integer, primary_key=True, index=True)
-    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
-    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    status = Column(JSON, default=[])
-    note = Column(String, nullable=True)
 
 
 # models set up in routes# ------------------------------------------------------
@@ -209,6 +202,69 @@ class Event(BaseMixin, Base):
     extra_visilble_all = Column(Boolean, default=False)
 
     extra = Column(JSON, nullable=True)
+
+class EventUpdate(BaseModel):
+    name: str
+    price: Optional[int] = None
+    description: Optional[str] = None
+    start_date: datetime
+    end_date: Optional[datetime] = None
+
+    type_parties: bool = False
+    type_politics: bool = False
+    type_lectures: bool = False
+    type_activism: bool = False
+    extra_external: bool = False
+    extra_non_political: bool = False
+    extra_visilble_all: bool = False
+
+
+#    extra: Optional[Dict[str, Any]] = None
+
+    class Config:
+        orm_mode = True
+
+
+
+
+
+
+#class Calls(BaseMixin, Base):
+#    __tablename__ = "calls"
+#
+#    id = Column(Integer, primary_key=True, index=True)
+#    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
+#    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+#    status = Column(JSON, default=[])
+#    note = Column(String, nullable=True)
+
+
+
+
+        # -----------------------------
+# SQLAlchemy ORM Event model
+# -----------------------------
+class Call(BaseMixin, Base):
+    __tablename__ = "calls"
+
+    id = Column(Integer, primary_key=True, index=True)
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
+    call_date = Column(DateTime, nullable=False)
+    status = Column(JSON, default=[])
+    note = Column(String, nullable=True)
+    extra = Column(JSON, nullable=True)
+
+class CallCreate(BaseModel):
+    customer_id: int
+    caller: int
+    call_date: Optional[datetime] = None
+    status: Optional[List[Any]] = []
+    note: Optional[str] = None
+    extra: Optional[Dict[str, Any]] = None
+
+    class Config:
+        orm_mode = True
+
 
 class EventUpdate(BaseModel):
     name: str
