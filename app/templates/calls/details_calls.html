@@ -58,19 +58,19 @@ Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
 
     
     <div class="p-2 border-bottom cursor-pointer" 
-  :class="{
-    'bg-green-200 text-green-800': {{ call.status }} === 1 && $store.call.id !== {{ call.id }},
-    'bg-green-600 text-white font-bold': {{ call.status }} === 1 && $store.call.id === {{ call.id }},
-    'bg-red-200 text-red-800': {{ call.status }} === 2 && $store.call.id !== {{ call.id }},
-    'bg-red-600 text-white font-bold': {{ call.status }} === 2 && $store.call.id === {{ call.id }},
-    'bg-yellow-200 text-yellow-800': {{ call.status }} === 3 && $store.call.id !== {{ call.id }},
-    'bg-yellow-800 text-white font-bold': {{ call.status }} === 3 && $store.call.id === {{ call.id }},
-    'bg-white text-dark font-normal': ![1,2,3].includes({{ call.status }}) && $store.call.id !== {{ call.id }},
-    'bg-gray-300 text-dark font-bold': ![1,2,3].includes({{ call.status }}) && $store.call.id === {{ call.id }}
-  }"
+:class="{
+  'bg-success bg-opacity-25 text-dark fw-bold': {{ call.status }} === 1 && $store.call.id !== {{ call.id }},
+  'bg-success text-dark fw-bold': {{ call.status }} === 1 && $store.call.id === {{ call.id }},
+  'bg-danger bg-opacity-25 text-dark fw-bold': {{ call.status }} === 2 && $store.call.id !== {{ call.id }},
+  'bg-danger text-dark fw-bold': {{ call.status }} === 2 && $store.call.id === {{ call.id }},
+  'bg-warning bg-opacity-25 text-dark fw-bold': {{ call.status }} === 3 && $store.call.id !== {{ call.id }},
+  'bg-warning text-dark fw-bold': {{ call.status }} === 3 && $store.call.id === {{ call.id }},
+  'bg-light text-dark fw-bold': ![1,2,3].includes({{ call.status }}) && $store.call.id !== {{ call.id }},
+  'bg-secondary text-dark fw-bold': ![1,2,3].includes({{ call.status }}) && $store.call.id === {{ call.id }}
+}"
             @click="Alpine.store('call').id  =  {{ call.id | tojson }}" hx-get="{{ url_for('call_details', call_id=call.id) }}"
         hx-trigger="click"
-        hx-target="#call-info">>
+        hx-target="#call-info">
 
         {{ call.call_date.strftime('%y-%m-%d %H:%M') }}
     </div>

@@ -86,12 +86,13 @@ from app.templates import templates
 # --- Routers ---
 # Routers should be defined in /routers/*.py and included here.
 # Each router file exposes a "router" object.
-from app.routers import customers, events, calls, alarms
+from app.routers import customers, events, calls, alarms, callers
 
 app.include_router(customers.router, tags=["customers"])
 app.include_router(events.router, tags=["events"])
 app.include_router(calls.router, tags=["calls"])
 app.include_router(alarms.router, tags=["alarms"])
+app.include_router(callers.router, tags=["callers"])
 
 
 # --- Root route ---

@@ -110,8 +110,9 @@ class Alarm(BaseMixin, Base):
 
     id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
-    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=True)
+    event_status = Column(Integer, nullable=True)
+    timestamp = Column(DateTime, default=datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%dT%H:%M"))
     note = Column(String, nullable=True)
 
 
@@ -132,7 +133,10 @@ class Customer(BaseMixin, Base):
     location = Column(String, nullable=True)
     contributes = Column(Integer, nullable=True) # 1 not, 2 contributes, 3 Silver, 4 Gold
 
-    caller = Column(Integer, nullable=True) # key to caller database
+    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True)
+    # Relationship to caller
+    caller = relationship("Caller", back_populates="customers")
+    
     previous_caller = Column(JSON, default=[])
     previous_categories = Column(JSON, default=[])
 
@@ -155,6 +159,15 @@ class Customer(BaseMixin, Base):
     extra = Column(JSON, default={})
 
 #
+
+class Caller(BaseMixin, Base):
+    __tablename__ = "callers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    # Backref to customers (one-to-many)
+    customers = relationship("Customer", back_populates="caller")
+
 
 class CustomerUpdate(BaseModel):
     first_name: str
@@ -241,7 +254,7 @@ class EventUpdate(BaseModel):
 
 
 
-        # -----------------------------
+# -----------------------------
 # SQLAlchemy ORM Event model
 # -----------------------------
 class Call(BaseMixin, Base):
@@ -254,7 +267,8 @@ class Call(BaseMixin, Base):
     note = Column(String, nullable=True)
     extra = Column(JSON, nullable=True)
 
-class CallCreate(BaseModel):
+class CallUpdate(BaseModel):
+    id: Optional[str] = None
     customer_id: int
     caller: int
     call_date: Optional[datetime] = None

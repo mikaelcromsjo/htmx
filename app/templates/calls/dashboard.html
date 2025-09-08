@@ -24,6 +24,7 @@
   if (Alpine.store('customer').id !== {{ customer.id }}) {
     Alpine.store('customer').id = {{ customer.id }};
     $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
+    document.querySelector('#save-form').reset(); 
   }
 "
      hx-swap="none">
@@ -69,15 +70,21 @@
                             {% for event in events %}
                             <div x-show="isVisible({ 
                                 activism: {{ 'true' if event.type_activism else 'false' }},
-                                lecture: {{ 'true' if event.type_lecture else 'false' }},
+                                lectures: {{ 'true' if event.type_lectures else 'false' }},
                                 parties: {{ 'true' if event.type_parties else 'false' }},
                                 politics: {{ 'true' if event.type_politics else 'false' }}
                             })" class="p-2 border-bottom cursor-pointer" :class="{
                                 'bg-primary bg-opacity-25 fw-bold text-primary': selectedEvent === {{ event.id }},
                                 'bg-white fw-normal text-dark': selectedEvent !== {{ event.id }}
-                            }" @click="selectedEvent = {{ event.id }}"
-                                hx-get="{{ url_for('event_detail', event_id=event.id) }}?list=short"
-                                hx-target="#event-info">
+                            }" 
+                            @click="selectedEvent = {{ event.id }}"
+                                hx-get="{{ url_for('calls_event_detail', event_id=event.id) }}?list=short"
+                                hx-target="#event-info"
+                                :hx-vals="JSON.stringify(
+                                Alpine.store('customer')?.id 
+                                    ? { customer_id: Alpine.store('customer').id } 
+                                    : {}
+                                )">
                                 {{ event.name }}
                             </div>
                             {% endfor %}
@@ -96,7 +103,7 @@
 
     <!-- Row 2 -->
     <div class="row" style="min-height:40vh;">
-        <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
+        <div class="col-md-3 border-end p-3 d-flex flex-column" style="min-height:100%; max-height:400px">
             Calls
             <div class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
                 <div id="calls">
@@ -129,27 +136,35 @@
                 </label>
 
             </div>
+<form id="save-form"
+      hx-post="{{ url_for('save_call') }}"
+      hx-ext="json-enc"
+      hx-swap="none"
+    hx-trigger="submit"
+    hx-on="htmx:afterRequest:  document.getElementById('current_call').value = JSON.parse(event.detail.xhr.responseText).call_id ;htmx.trigger('#customer-calls', 'load-customer')">      
+
             <!-- Event Options -->
             <div class="d-flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light">
                 <label class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox">
+                    <input name="event_status" value="1" class="form-check-input" type="checkbox">
                     <span>Interested</span>
                 </label>
                 <label class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox">
+                    <input name="event_status" value="2" class="form-check-input" type="checkbox">
                     <span>Not interested</span>
                 </label>
-                <label class="form-check form-check-inline">
+                <label name="event_status" value="3" class="form-check form-check-inline">
                     <input class="form-check-input" type="checkbox">
                     <span>Payed</span>
                 </label>
                 <!-- Hidden datetime input with Tailwind button trigger -->
 
-                <input type="datetime-local" name="alarm_date" data-save="true" class="absolute w-0 h-0 opacity-0"
-                    id="alarm_input">
-
-
-
+<input type="datetime-local" 
+       name="event_alarm_date" 
+       data-save="true" 
+       id="alarm_input"
+       class="absolute w-0 h-0 opacity-0 pointer-events-none">
+       
                 <div class="mb-2 relative">
 
                     <button type="button"
@@ -159,14 +174,8 @@
                     </button>
                 </div>
             </div>
-<form id="save-form"
-      hx-post="{{ url_for('save_call') }}"
-      hx-ext="json-enc"
-      hx-swap="none"
-      hx-on:afterRequest="console.log('test');
-        if(event.detail.successful){
-          htmx.trigger('#customer-calls', 'load-customer');
-        }">
+
+
                 Call Comment
                 <div>
                     <textarea name="note" date-save="true" class="form-control mb-2" rows="3"></textarea>
@@ -175,6 +184,7 @@
 
                     <input data-save="true" type="hidden" name="caller" value="1">
                     <input type="hidden" name="customer_id" :value="$store.customer.id" x-data>
+                    <input type="hidden" name="id" id="current_call">
 
                     <!-- Radio Button Options -->
                     <div class="d-inline-block me-2 mb-2">
@@ -205,7 +215,7 @@
 <script defer>
     Alpine.store('eventFilters', {
         activism: true,
-        lecture: true,
+        lectures: true,
         parties: true,
         politics: true
     });
