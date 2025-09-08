@@ -1,13 +1,15 @@
+
+<input type="hidden" name="customer_id" x-model="Alpine.store('customer').id" id="customer-id">
 <div id="customer-calls"
-     hx-get="/calls/customers"
-     :hx-vals="{ customer_id: $store.customer.id }"
+     hx-get="/calls/customer_data"
+     hx-include="#customer-id"
      hx-trigger="load-customer"
      hx-swap="none">
 </div>
 
 <div class="container-fluid border">
     <!-- Row 1 -->
-    <div class="row border-bottom" style="height: 40vh;">
+    <div class="row border-bottom" style="min-height: 40vh;">
         <!-- Customers Column -->
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             <div class="fw-semibold">Customers</div>
@@ -15,10 +17,15 @@
 {% for customer in customers %}
 <div class="p-2 border-bottom cursor-pointer"
      :class="{
-        'bg-success bg-opacity-25 fw-bold text-success': $store.customer.id === {{ customer.id }},
-        'bg-white fw-normal text-dark': $store.customer.id !== {{ customer.id }}
+        'bg-success bg-opacity-25 fw-bold text-success': Alpine.store('customer').id=== {{ customer.id }},
+        'bg-white fw-normal text-dark': Alpine.store('customer').id !== {{ customer.id }}
      }"
-     @click="$store.customer.id = {{ customer.id }}; htmx.trigger('#customer-calls', 'load-customer')"
+@click="
+  if (Alpine.store('customer').id !== {{ customer.id }}) {
+    Alpine.store('customer').id = {{ customer.id }};
+    $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
+  }
+"
      hx-swap="none">
   {{ customer.first_name }}
 </div>
@@ -41,8 +48,8 @@
 
             <div class="mt-2">
                 Comment
-                <textarea class="form-control mt-1" x-model="$store.customer.comment" rows="3"
-                    @input="$store.customer.comment = $event.target.value"></textarea>
+                <textarea class="form-control mt-1" x-model="Alpine.store('customer').comment" rows="3"></textarea>
+                    </textarea>
             </div>
         </div>
 
@@ -88,7 +95,7 @@
     </div>
 
     <!-- Row 2 -->
-    <div class="row" style="height:40vh;">
+    <div class="row" style="min-height:40vh;">
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             Calls
             <div class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
@@ -102,8 +109,8 @@
 
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             Call Info
-            <div class="flex-grow-1 overflow-auto mt-2 border p-2" style="background:#f8f9fa;">
-                <!-- Call Info content goes here -->
+            <div id="call-info">
+                <div class="flex-grow-1 overflow-auto mt-2 border p-2" style="background:#f8f9fa;"></div>
             </div>
         </div>
 
@@ -156,13 +163,13 @@
       hx-post="{{ url_for('save_call') }}"
       hx-ext="json-enc"
       hx-swap="none"
-      hx-on::afterRequest="
+      hx-on:afterRequest="console.log('test');
         if(event.detail.successful){
-          htmx.trigger('body', 'refresh-customer-calls');
+          htmx.trigger('#customer-calls', 'load-customer');
         }">
                 Call Comment
                 <div>
-                    <textarea name="call_comment" date-save="true" class="form-control mb-2" rows="3"></textarea>
+                    <textarea name="note" date-save="true" class="form-control mb-2" rows="3"></textarea>
                 </div>
                 <div>
 
@@ -172,18 +179,18 @@
                     <!-- Radio Button Options -->
                     <div class="d-inline-block me-2 mb-2">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" date-save="true" type="radio" name="response" id="answered"
-                                value="answered">
+                            <input class="form-check-input" date-save="true" type="radio" name="status" id="answered"
+                                value="1">
                             <label class="form-check-label" for="answered">Answered</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" date-save="true" type="radio" name="response" id="no-answer"
-                                value="no-answer">
+                            <input class="form-check-input" date-save="true" type="radio" name="status" id="no-answer"
+                                value="2">
                             <label class="form-check-label" for="no-answer">No answer</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" date-save="true" type="radio" name="response"
-                                id="wrong-person" value="wrong-person">
+                            <input class="form-check-input" date-save="true" type="radio" name="status"
+                                id="wrong-person" value="3">
                             <label class="form-check-label" for="wrong-person">Wrong person</label>
                         </div>
                     </div>

@@ -70,7 +70,7 @@ def customer_new(
         }
     )
 
-@router.post("/customer", name="upsert_customer", response_class=HTMLResponse)
+@router.post("/customer/upsert", name="upsert_customer", response_class=HTMLResponse)
 async def upsert_customer(
     request: Request,
     update_data: Update,
@@ -109,11 +109,14 @@ async def upsert_customer(
     )
 
 
+
+
+
 @router.get("/customer/{customer_id}", response_class=HTMLResponse)
 def customer_detail(
     request: Request,
     customer_id: str,
-    list: str | None = Query(default=None, description="Optional list parameter, e.g., 'short'"),
+    list: str | None = Query(default=None),
     db: Session = Depends(get_db)
 ):
     

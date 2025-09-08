@@ -1,1 +1,7 @@
-<p><strong>Note:</strong> {{ call.note }}</p>
+
+<div class="mb-2"><strong>Time:</strong> {{ call.call_date.strftime('%y-%m-%d %H:%M') }}</div>
+<div class="mb-2"><strong>Status:</strong> {{ call.status }}</div>
+
+<div disabled class="flex-grow-1 overflow-auto mt-2 border p-2" style="background:#f8f9fa;">
+{{call.note}}
+</div>

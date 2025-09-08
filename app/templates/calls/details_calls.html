@@ -6,22 +6,9 @@ Alpine.store("eventFilters").activism = {{ customer.likes_activism | tojson }};
 Alpine.store("eventFilters").lectures  = {{ customer.likes_lectures | tojson }};
 Alpine.store("eventFilters").parties  = {{ customer.likes_parties | tojson }};
 Alpine.store("eventFilters").politics = {{ customer.likes_politics | tojson }};
-    if (Alpine.store("customer").id !== {{ customer.id | tojson }}) {
-        Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
-        Alpine.store("customer").id = {{ customer.id | tojson | safe }};
-    }
+Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
         '>
 </div>
-
-    <script>
-        document.addEventListener('alpine:init', () => {
-            // Initialize store if it doesn't exist
-            if (!Alpine.store('customer')) {
-                Alpine.store('customer', { comment: "" });
-            }
-            Alpine.store('customer').comment = {{ customer.comment | tojson }};
-        });    
-        </script>
 
     
     <div class="mb-2"><strong>User ID:</strong> {{ customer.customer_id }}</div>
@@ -68,11 +55,22 @@ Alpine.store("eventFilters").politics = {{ customer.likes_politics | tojson }};
 <div id="calls" hx-swap-oob="true">
 
     {% for call in calls %}
-    <div class="p-2 border-bottom cursor-pointer" :class="{
-                'bg-success bg-opacity-25 fw-bold text-success': $store.call.id === {{ call.id }},
-                'bg-white fw-normal text-dark':  $store.call.id !== {{ call.id }}
-            }" @click="$store.call.ids =  {{ call.id | tojson }}" hx-get="{{ url_for('call_details', call_id=call.id) }}"
-        hx-trigger="click">
+
+    
+    <div class="p-2 border-bottom cursor-pointer" 
+  :class="{
+    'bg-green-200 text-green-800': {{ call.status }} === 1 && $store.call.id !== {{ call.id }},
+    'bg-green-600 text-white font-bold': {{ call.status }} === 1 && $store.call.id === {{ call.id }},
+    'bg-red-200 text-red-800': {{ call.status }} === 2 && $store.call.id !== {{ call.id }},
+    'bg-red-600 text-white font-bold': {{ call.status }} === 2 && $store.call.id === {{ call.id }},
+    'bg-yellow-200 text-yellow-800': {{ call.status }} === 3 && $store.call.id !== {{ call.id }},
+    'bg-yellow-800 text-white font-bold': {{ call.status }} === 3 && $store.call.id === {{ call.id }},
+    'bg-white text-dark font-normal': ![1,2,3].includes({{ call.status }}) && $store.call.id !== {{ call.id }},
+    'bg-gray-300 text-dark font-bold': ![1,2,3].includes({{ call.status }}) && $store.call.id === {{ call.id }}
+  }"
+            @click="Alpine.store('call').id  =  {{ call.id | tojson }}" hx-get="{{ url_for('call_details', call_id=call.id) }}"
+        hx-trigger="click"
+        hx-target="#call-info">>
 
         {{ call.call_date.strftime('%y-%m-%d %H:%M') }}
     </div>

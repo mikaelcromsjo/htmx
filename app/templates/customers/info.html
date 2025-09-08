@@ -10,7 +10,7 @@
 <script>
     document.addEventListener('alpine:init', () => {
         if (!$store.customer) Alpine.store('customer', { comment: "" });
-        $store.customer.comment = {{ customer.comment | tojson | safe }
+        Alpine.store("customer").comment= {{ customer.comment | tojson | safe }}
     };
 });
 </script>
@@ -19,6 +19,10 @@
 
 {% if customer.email %}
 <div class="mb-2"><strong>Email:</strong> {{ customer.email }}</div>
+{% endif %}
+
+{% if customer.comment %}
+<div class="mb-2"><strong>Comment:</strong> {{ customer.comment }}</div>
 {% endif %}
 
 {% if customer.phone %}

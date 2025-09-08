@@ -258,7 +258,7 @@ class CallCreate(BaseModel):
     customer_id: int
     caller: int
     call_date: Optional[datetime] = None
-    status: Optional[List[Any]] = []
+    status: int
     note: Optional[str] = None
     extra: Optional[Dict[str, Any]] = None
 
