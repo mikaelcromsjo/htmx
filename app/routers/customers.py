@@ -14,7 +14,7 @@ from app.database import get_db
 from app.functions.helpers import render
 from app.templates import templates
 from app.data.constants import categories, organisations
-from app.models.models import Customer, CustomerUpdate
+from app.models.models import Customer, CustomerUpdate, Caller
 from app.functions.helpers import populate
 
 from app.models.models import Update
@@ -39,10 +39,12 @@ def customers_list(
     if filter:
         query = query.filter(Customer.name.ilike(f"%{filter}%"))
     customers = query.all()
-    
+
     return render(
         "customers/list.html",
-        {"request": request, "customers": customers, "filter": filter},
+        {"request": request, 
+         "customers": customers, 
+         "filter": filter},
     )
 
 
@@ -59,6 +61,10 @@ def customer_new(
 ):
 
     customer = Customer.empty()
+
+    query = db.query(Caller)
+    callers = query.all()
+
     return templates.TemplateResponse(
         "customers/edit.html",
         {
@@ -66,6 +72,7 @@ def customer_new(
             "customer": customer, 
             "mode": "edit",
             "categories": categories,
+            "callers": callers, 
             "organisations": organisations, 
         }
     )
@@ -91,11 +98,22 @@ async def upsert_customer(
             raise HTTPException(status_code=404, detail="Customer not found")
     else:
         customer = Customer()
+        
+    data_dict = update_data.model_dump()
 
-    print(update_data.model_dump())
+    # --- Temporarily remove relationships before populate ---
+    caller_id = data_dict.pop("caller", None)  # remove 'caller' from dict
 
-    # Populate DB model dynamically
-    customer = populate(update_data.model_dump(), customer, CustomerUpdate)
+    # Populate DB model dynamically (everything except relationships)
+    customer = populate(data_dict, customer, CustomerUpdate)
+
+    # --- Handle relationships AFTER populate ---
+    if isinstance(caller_id, int):
+        caller_instance = db.get(Caller, int(caller_id))
+        if not caller_instance:
+            raise HTTPException(status_code=404, detail="Caller not found")
+        customer.caller = caller_instance  # assign the actual SQLAlchemy object
+
 
     db.add(customer)
     db.commit()
@@ -105,7 +123,9 @@ async def upsert_customer(
     customers = db.query(Customer).all()
     return templates.TemplateResponse(
         "customers/list.html",
-        {"request": request, "customers": customers},
+        {
+            "request": request, 
+            "customers": customers},
     )
 
 
@@ -133,6 +153,13 @@ def customer_detail(
         .first()
     )
 
+    callers = (
+        db.query(Caller)
+        .all()
+    )
+
+    customer.caller_id = int(customer.caller_id) if customer.caller_id is not None else None
+
     print(customer.to_dict())
 
 # Example: log all query params
@@ -158,6 +185,7 @@ def customer_detail(
                 "mode": "edit",
                 "categories": categories,
                 "organisations": organisations, 
+                "callers": callers,
             }
         )  
          

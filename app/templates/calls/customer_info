@@ -1,3 +1,19 @@
+<div x-data x-init='
+        Alpine.store("eventFilters").activism = {{ "true" if customer.likes_activism else "false" }};
+        Alpine.store("eventFilters").lecture  = {{ "true" if customer.likes_lecture else "false" }};
+        Alpine.store("eventFilters").parties  = {{ "true" if customer.likes_parties else "false" }};
+        Alpine.store("eventFilters").politics  = {{ "true" if customer.likes_politics else "false" }};
+        Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
+'>
+</div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        if (!$store.customer) Alpine.store('customer', { comment: "" });
+        Alpine.store("customer").comment= {{ customer.comment | tojson | safe }}
+    };
+});
+</script>
 
 <div class="mb-2"><strong>User ID:</strong> {{ customer.user_id }}</div>
 
@@ -17,8 +33,8 @@
 <div class="mb-2"><strong>Location:</strong> {{ customer.location }}</div>
 {% endif %}
 
-{% if customer.caller is not none %}
-<div class="mb-2"><strong>Caller:</strong> {{ customer.caller.name }}</div>
+{% if customer.caller_id  %}
+<div class="mb-2"><strong>Caller:</strong> {{ customer.caller_id  }}</div>
 {% endif %}
 
 {% if customer.sub_caller %}
@@ -31,6 +47,10 @@
 
 {% if customer.contributes is not none %}
 <div class="mb-2"><strong>Contributes:</strong> {{ customer.contributes }}</div>
+{% endif %}
+
+{% if customer.caller is not none %}
+<div class="mb-2"><strong>Caller:</strong> {{ customer.caller }}</div>
 {% endif %}
 
 {% if customer.categories %}

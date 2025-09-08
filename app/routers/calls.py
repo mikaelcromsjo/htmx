@@ -12,7 +12,7 @@ from app.database import get_db
 from app.templates import templates
 
 
-from app.models.models import Customer, Call, Event
+from app.models.models import Customer, Call, Event, EventCustomer
 from app.functions.helpers import render
 from app.functions.customers import get_selected_ids, get_customers, SelectedIDs
 
@@ -145,7 +145,6 @@ def call_details(
         .first()
     )
 
-    # Render short template
     return templates.TemplateResponse(
         "calls/info.html",
         {
@@ -173,6 +172,44 @@ async def save_call(
     comment: str | None = Query(None),
     db: Session = Depends(get_db),
 ):
+    
+    # update event status
+    event_id = update_data.event_id
+    event_status = update_data.event_status
+    customer_id = update_data.customer_id
+
+    # Debug: print input values
+    print("Debug: customer_id =", customer_id)
+    print("Debug: event_id =", event_id)
+
+    # Get the CustomerEvent match
+    event_customer = db.query(EventCustomer).filter_by(
+        customer_id=customer_id, event_id=event_id
+    ).first()
+
+    # Check if event_customer exists
+    if not event_customer:
+        print("No existing EventCustomer found. Creating a new one.")
+        event_customer = EventCustomer(
+            customer_id=customer_id,
+            event_id=event_id
+        )
+    else:
+        print("Found existing EventCustomer:", event_customer)
+
+    # Update status
+    event_customer.status = event_status
+    print("Setting EventCustomer.status =", event_status)
+
+    # Add to DB and commit
+    db.add(event_customer)
+    try:
+        db.commit()
+        print("Database commit successful.")
+    except Exception as e:
+        db.rollback()
+        print("Database commit failed:", e)
+
     # Try to fetch existing call by ID if provided
     existing_call = None
     call_id = update_data.id if hasattr(update_data, "id") else None
@@ -193,6 +230,10 @@ async def save_call(
         call.call_date = datetime.now()
         call.id = None  # let DB auto-generate if using Integer PK        
         db.add(call)
+
+
+    #TODO add caller id
+    call.caller_id = 1
 
     try:
         db.commit()
@@ -301,62 +342,6 @@ def list_customer_events(customer_id: int, request: Request, db: Session = Depen
     )
 
 
-# ---------------------------
-# Event Info Fragment
-# ---------------------------
-@router.get("/event/{event_id}/info", response_class=HTMLResponse)
-def event_info(event_id: int, request: Request, db: Session = Depends(get_db)):
-    """
-    Return HTMX fragment with details of a specific event.
-    """
-    event = db.query(models.Event).filter(models.Event.id == event_id).first()
-    if not event:
-        return HTMLResponse("<div>Event not found</div>", status_code=404)
-
-    return templates.TemplateResponse(
-        "calls/fragments/event_info.html",
-        {"request": request, "event": event},
-    )
-
-
-# ---------------------------
-# Update Customer Event Relation
-# ---------------------------
-@router.post("/customer/{customer_id}/event/{event_id}/update", response_class=HTMLResponse)
-def update_customer_event_relation(
-    customer_id: int,
-    event_id: int,
-    request: Request,
-    status: str = Form(...),
-    visited: Optional[bool] = Form(False),
-    db: Session = Depends(get_db),
-):
-    """
-    Update the relation between a customer and an event.
-    """
-    relation = (
-        db.query(models.CustomerEvent)
-        .filter(
-            models.CustomerEvent.customerId == customer_id,
-            models.CustomerEvent.eventId == event_id,
-        )
-        .first()
-    )
-
-    if not relation:
-        return HTMLResponse("<div>Relation not found</div>", status_code=404)
-
-    relation.status = status
-    relation.visited = visited
-    db.commit()
-    db.refresh(relation)
-
-    return templates.TemplateResponse(
-        "calls/fragments/customer_event_detail.html",
-        {"request": request, "relation": relation},
-    )
-
-
 # -----------------------------
 # Event Detail Modal (HTMX fragment)
 # -----------------------------
@@ -364,19 +349,36 @@ def update_customer_event_relation(
 def calls_event_detail(
     request: Request,
     event_id: int,
-    list: str | None = Query(default=None),
+    customer_id: str | None = Query(default=None),
     db: Session = Depends(get_db),
 ):
     
     event = db.get(Event, event_id)
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
-    
+        
+    # Debug: print input values
+    print("Debug: customer_id =", customer_id)
+    print("Debug: event_id =", event_id)
+
+    # Get the EventCustomer match
+    event_customer = db.query(EventCustomer).filter_by(
+        customer_id=customer_id, event_id=event_id
+    ).first()
+
+    # Debug: print query result
+    print("Debug: event_customer =", event_customer)
+
+    event_status = None
+    if event_customer:
+        event_status = event_customer.status
+
     return templates.TemplateResponse(
-        "events/info.html",
+        "calls/event_info.html",
         {
             "request": request, 
             "event": event, 
+            "event_status": event_status,
         }
     )
      

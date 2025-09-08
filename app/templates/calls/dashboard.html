@@ -66,7 +66,7 @@
                             return Object.keys(filters).some(type => filters[type] && event[type]);
                         }
                     }">
-                        <div id="event-list" x-data="{ selectedEvent: null }">
+                        <div id="event-list" x-data="{ Alpine.store('event').id: null }">
                             {% for event in events %}
                             <div x-show="isVisible({ 
                                 activism: {{ 'true' if event.type_activism else 'false' }},
@@ -74,10 +74,10 @@
                                 parties: {{ 'true' if event.type_parties else 'false' }},
                                 politics: {{ 'true' if event.type_politics else 'false' }}
                             })" class="p-2 border-bottom cursor-pointer" :class="{
-                                'bg-primary bg-opacity-25 fw-bold text-primary': selectedEvent === {{ event.id }},
-                                'bg-white fw-normal text-dark': selectedEvent !== {{ event.id }}
+                                'bg-primary bg-opacity-25 fw-bold text-primary': Alpine.store('event').id === {{ event.id }},
+                                'bg-white fw-normal text-dark': Alpine.store('event').id !== {{ event.id }}
                             }" 
-                            @click="selectedEvent = {{ event.id }}"
+                            @click="Alpine.store('event').id = {{ event.id }}"
                                 hx-get="{{ url_for('calls_event_detail', event_id=event.id) }}?list=short"
                                 hx-target="#event-info"
                                 :hx-vals="JSON.stringify(
@@ -143,20 +143,46 @@
     hx-trigger="submit"
     hx-on="htmx:afterRequest:  document.getElementById('current_call').value = JSON.parse(event.detail.xhr.responseText).call_id ;htmx.trigger('#customer-calls', 'load-customer')">      
 
-            <!-- Event Options -->
-            <div class="d-flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light">
-                <label class="form-check form-check-inline">
-                    <input name="event_status" value="1" class="form-check-input" type="checkbox">
-                    <span>Interested</span>
-                </label>
-                <label class="form-check form-check-inline">
-                    <input name="event_status" value="2" class="form-check-input" type="checkbox">
-                    <span>Not interested</span>
-                </label>
-                <label name="event_status" value="3" class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox">
-                    <span>Payed</span>
-                </label>
+<!-- Event Options -->
+<div class="d-flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light" :key="$store.eventCustomer.status" x-data
+ x-effect="
+        // force sync with store
+        $el.querySelectorAll('input[name=event_status]').forEach(radio => {
+            radio.checked = (radio.value == $store.eventCustomer.status)
+        })"
+        >
+
+    <label class="form-check form-check-inline">
+        <input 
+            name="event_status" 
+            date-save="true" 
+            value="1" 
+            class="form-check-input" 
+            type="radio"
+        >
+        <span>Interested</span>
+    </label>
+    <label class="form-check form-check-inline">
+        <input 
+            name="event_status" 
+            date-save="true" 
+            value="2" 
+            class="form-check-input" 
+            type="radio"
+        >
+        <span>Not interested</span>
+    </label>
+    <label class="form-check form-check-inline">
+        <input 
+            name="event_status" 
+            date-save="true" 
+            value="3" 
+            class="form-check-input" 
+            type="radio"
+        >
+        <span>Paid</span>
+    </label>
+
                 <!-- Hidden datetime input with Tailwind button trigger -->
 
 <input type="datetime-local" 
@@ -164,7 +190,11 @@
        data-save="true" 
        id="alarm_input"
        class="absolute w-0 h-0 opacity-0 pointer-events-none">
-       
+
+                    <input type="hidden" name="event_id" :value="$store.event.id" x-data>
+                    <input type="hidden" name="customer_id" :value="$store.customer.id" x-data>
+                    <input type="hidden" name="id" id="current_call">       
+
                 <div class="mb-2 relative">
 
                     <button type="button"
@@ -181,10 +211,6 @@
                     <textarea name="note" date-save="true" class="form-control mb-2" rows="3"></textarea>
                 </div>
                 <div>
-
-                    <input data-save="true" type="hidden" name="caller" value="1">
-                    <input type="hidden" name="customer_id" :value="$store.customer.id" x-data>
-                    <input type="hidden" name="id" id="current_call">
 
                     <!-- Radio Button Options -->
                     <div class="d-inline-block me-2 mb-2">
@@ -220,6 +246,11 @@
         politics: true
     });
 
+    Alpine.store('event', {
+        id: "",
+    });
+
+
     Alpine.store('customer', {
         comment: "",
         id: "",
@@ -228,6 +259,10 @@
     Alpine.store('call', {
         comment: "",
         id: "",
+    });
+
+    Alpine.store('eventCustomer', {
+        status: "",
     });
 
 </script>

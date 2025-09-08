@@ -111,7 +111,7 @@ class Alarm(BaseMixin, Base):
     id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     event_id = Column(Integer, ForeignKey("events.id"), nullable=True)
-    event_status = Column(Integer, nullable=True)
+    date = Column(DateTime, default=datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%dT%H:%M"))
     timestamp = Column(DateTime, default=datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%dT%H:%M"))
     note = Column(String, nullable=True)
 
@@ -241,19 +241,6 @@ class EventUpdate(BaseModel):
 
 
 
-
-#class Calls(BaseMixin, Base):
-#    __tablename__ = "calls"
-#
-#    id = Column(Integer, primary_key=True, index=True)
-#    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
-#    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-#    status = Column(JSON, default=[])
-#    note = Column(String, nullable=True)
-
-
-
-
 # -----------------------------
 # SQLAlchemy ORM Event model
 # -----------------------------
@@ -262,15 +249,16 @@ class Call(BaseMixin, Base):
 
     id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
+    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=False)    
     call_date = Column(DateTime, nullable=False)
     status = Column(JSON, default=[])
     note = Column(String, nullable=True)
     extra = Column(JSON, nullable=True)
 
+
 class CallUpdate(BaseModel):
     id: Optional[str] = None
     customer_id: int
-    caller: int
     call_date: Optional[datetime] = None
     status: int
     note: Optional[str] = None
@@ -300,3 +288,13 @@ class EventUpdate(BaseModel):
 
     class Config:
         orm_mode = True
+
+    
+
+class EventCustomer(BaseMixin, Base):
+    __tablename__ = "event_customers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
+    status = Column(Integer, nullable=False)  # 0 = not going, 1 = going, 2 = interested

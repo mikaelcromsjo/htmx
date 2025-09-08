@@ -37,8 +37,8 @@ Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
     <div class="mb-2"><strong>Contributes:</strong> {{ customer.contributes }}</div>
     {% endif %}
 
-    {% if customer.caller is not none %}
-    <div class="mb-2"><strong>Caller:</strong> {{ customer.caller }}</div>
+    {% if customer.caller_id is not none %}
+    <div class="mb-2"><strong>Caller:</strong> {{ customer.caller.name }}</div>
     {% endif %}
 
     {% if customer.categories %}
