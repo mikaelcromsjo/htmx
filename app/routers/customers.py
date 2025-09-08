@@ -173,6 +173,9 @@ def customer_detail(
                 "request": request, 
                 "customer": customer, 
                 "customer_id": customer_id, 
+                "categories": categories,
+                "organisations": organisations, 
+                "callers": callers,
             }
         )
     else:
@@ -182,8 +185,7 @@ def customer_detail(
             {
                 "request": request, 
                 "customer": customer, 
-                "mode": "edit",
-                "categories": categories,
+                "categories": categories, 
                 "organisations": organisations, 
                 "callers": callers,
             }

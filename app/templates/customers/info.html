@@ -33,8 +33,25 @@
 <div class="mb-2"><strong>Contributes:</strong> {{ customer.contributes }}</div>
 {% endif %}
 
-{% if customer.categories %}
-<div class="mb-2"><strong>Categories:</strong> {{ customer.categories | join(', ') }}</div>
+{% if customer.categories is not none %}
+    <!-- Categories -->
+    <div class="mb-2"> <strong>Categories:</strong>
+          {% for cid, cat in categories.items() %}
+              {% for iid, item in cat.get('items', {}).items() %}
+                {% if iid in customer.categories %}{{ item }}  {% endif %}                               
+              {% endfor %}
+          {% endfor %}
+    </div>
+{% endif %}
+
+{% if customer.organisations %}
+  <div class="mb-2">
+    <strong>Organisations:</strong>
+    {{ organisations
+       | selectattr("id", "in", customer.organisations | map("int") | list)
+       | map(attribute="name")
+       | join(', ') }}
+  </div>
 {% endif %}
 
 {% if customer.tags %}

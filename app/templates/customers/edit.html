@@ -85,7 +85,7 @@
     <div class="mb-2">
         <label class="block font-semibold">Caller</label>
         <select name="caller" class="border p-1 w-full">
-            <option value="" {% if customer.caller_id is none %}selected{% endif %}>Select...</option>
+            <option value="" {% if customer.caller is none %}selected{% endif %}>Select...</option>
             {% for caller in callers %}
               <option value="{{ caller.id }}" {% if customer.caller_id == caller.id %}selected{% endif %}>{{ caller.name }}</option>
             {% endfor %}

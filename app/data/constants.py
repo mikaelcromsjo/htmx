@@ -17,3 +17,9 @@ organisations = [
     {"id": 4, "name": "Umbrella Corp"},
     {"id": 5, "name": "Hooli"}
 ]
+
+callers = [
+    {"id": 1, "name": "Mats"},
+    {"id": 2, "name": "Pelle"},
+]
+
