@@ -10,6 +10,22 @@ categories = {
     }},
 }
 
+categories_map = {}
+
+for cid, cat in categories.items():
+    # Add category itself
+    categories_map[cid] = {
+        "name": cat["name"],
+        "type": "category"
+    }
+    # Add items under this category
+    for iid, item in cat["items"].items():
+        categories_map[iid] = {
+            "name": item,
+            "parent": cid,
+            "type": "item"
+        }
+
 organisations = [
     {"id": 1, "name": "Acme Corp"},
     {"id": 2, "name": "Globex Inc"},
@@ -18,8 +34,13 @@ organisations = [
     {"id": 5, "name": "Hooli"}
 ]
 
-callers = [
-    {"id": 1, "name": "Mats"},
-    {"id": 2, "name": "Pelle"},
-]
+organisations_map = {org["id"]: org["name"] for org in organisations}
 
+personalities = [
+    {"id": 0, "name": "Unknown"},
+    {"id": 1, "name": "Yellow"},
+    {"id": 2, "name": "Blue"},
+    {"id": 3, "name": "Red"},
+    {"id": 4, "name": "Green"}]
+
+personalities_map = {p["id"]: p for p in personalities}

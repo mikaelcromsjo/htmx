@@ -13,7 +13,8 @@ from app.models.base import Base
 from app.database import get_db
 from app.functions.helpers import render
 from app.templates import templates
-from app.data.constants import categories, organisations
+from app.data.constants import categories, organisations, personalities
+from app.data.constants import categories_map, organisations_map, personalities_map
 from app.models.models import Customer, CustomerUpdate, Caller
 from app.functions.helpers import populate
 
@@ -74,6 +75,7 @@ def customer_new(
             "categories": categories,
             "callers": callers, 
             "organisations": organisations, 
+            "personalities": personalities, 
         }
     )
 
@@ -173,8 +175,9 @@ def customer_detail(
                 "request": request, 
                 "customer": customer, 
                 "customer_id": customer_id, 
-                "categories": categories,
-                "organisations": organisations, 
+                "categories_map": categories_map,
+                "organisations_map": organisations_map, 
+                "personalities_map": personalities_map, 
                 "callers": callers,
             }
         )
@@ -187,6 +190,7 @@ def customer_detail(
                 "customer": customer, 
                 "categories": categories, 
                 "organisations": organisations, 
+                "personalities": personalities, 
                 "callers": callers,
             }
         )  

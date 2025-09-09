@@ -11,43 +11,71 @@ Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
 </div>
 
     
-    <div class="mb-2"><strong>User ID:</strong> {{ customer.customer_id }}</div>
+   
+<div class="mb-1"><strong>User ID:</strong> {{ customer.user_id }}</div>
 
-    {% if customer.email %}
-    <div class="mb-2"><strong>Email:</strong> {{ customer.email }}</div>
-    {% endif %}
+{% if customer.email %}
+<div class="mb-1"><strong>Email:</strong> {{ customer.email }}</div>
+{% endif %}
 
-    {% if customer.phone %}
-    <div class="mb-2"><strong>Phone:</strong> {{ customer.phone }}</div>
-    {% endif %}
+{% if customer.phone %}
+<div class="mb-1"><strong>Phone:</strong> {{ customer.phone }}</div>
+{% endif %}
 
-    {% if customer.location %}
-    <div class="mb-2"><strong>Location:</strong> {{ customer.location }}</div>
-    {% endif %}
+{% if customer.location %}
+<div class="mb-1"><strong>Location:</strong> {{ customer.location }}</div>
+{% endif %}
 
-    {% if customer.sub_caller %}
-    <div class="mb-2"><strong>Sub Caller:</strong> {{ customer.sub_caller }}</div>
-    {% endif %}
+{% if customer.caller is not none %}
+<div class="mb-1"><strong>Caller:</strong> {{ customer.caller.name }}</div>
+{% endif %}
 
-    {% if customer.personality_type is not none %}
-    <div class="mb-2"><strong>Personality Type:</strong> {{ customer.personality_type }}</div>
-    {% endif %}
+{% if customer.sub_caller %}
+<div class="mb-1"><strong>Sub Caller:</strong> {{ customer.sub_caller }}</div>
+{% endif %}
 
-    {% if customer.contributes is not none %}
-    <div class="mb-2"><strong>Contributes:</strong> {{ customer.contributes }}</div>
-    {% endif %}
+{% if customer.personality_type is not none %}
+  <div class="mb-1">
+    <strong>Personality Type:</strong>
+    {{ personalities_map[customer.personality_type].name }}
+  </div>
+{% endif %}
 
-    {% if customer.caller_id is not none %}
-    <div class="mb-2"><strong>Caller:</strong> {{ customer.caller.name }}</div>
-    {% endif %}
 
-    {% if customer.categories %}
-    <div class="mb-2"><strong>Categories:</strong> {{ customer.categories | join(', ') }}</div>
-    {% endif %}
+{% if customer.categories %}
+  <div class="mb-1">
+    <strong>Categories:</strong>
+    {# Build a list of item names using the lookup #}
+    {% set item_names = [] %}
+    {% for iid in customer.categories %}
+      {% if iid in categories_map %}
+        {% set _ = item_names.append(categories_map[iid].name) %}
+      {% endif %}
+    {% endfor %}
+    {{ item_names | join(', ') }}
+  </div>
+{% endif %}
 
-    {% if customer.tags %}
-    <div class="mb-2"><strong>Tags:</strong> {{ customer.tags }}</div>
-    {% endif %}
+{% if customer.organisations %}
+
+  <div class="mb-1">
+    <strong>Organisations:</strong>
+{% set org_names = [] %}
+{% for oid in customer.organisations %}
+  {% set int_oid = oid | int %}
+  {% if int_oid in organisations_map %}
+    {% set _ = org_names.append(organisations_map[int_oid]) %}
+  {% endif %}
+{% endfor %}
+{{ org_names | join(', ') }}
+  </div>
+{% endif %}
+
+{% if customer.tags %}
+<div class="mb-1"><strong>Tags:</strong> {{ customer.tags }}</div>
+{% endif %}
+
+
 
 </div>
 

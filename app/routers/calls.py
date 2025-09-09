@@ -12,9 +12,11 @@ from app.database import get_db
 from app.templates import templates
 
 
-from app.models.models import Customer, Call, Event, EventCustomer
+from app.models.models import Customer, Call, Event, EventCustomer, Caller
 from app.functions.helpers import render
 from app.functions.customers import get_selected_ids, get_customers, SelectedIDs
+
+from app.data.constants import categories_map, organisations_map, personalities_map
 
 
 router = APIRouter(prefix="/calls", tags=["calls"])
@@ -72,12 +74,22 @@ def customer_data(
         .filter(Customer.id == customer_id)
         .first()
     )
+    
+    callers = (
+        db.query(Caller)
+        .all()
+    )    
 
     calls = db.query(Call).filter(Call.customer_id == int(customer_id)).order_by(desc(Call.id)).all()
     return templates.TemplateResponse(
         "calls/details_calls.html",
         {
             "request": request, 
+            "customer": customer,
+            "categories_map": categories_map,
+            "organisations_map": organisations_map, 
+            "personalities_map": personalities_map, 
+            "callers": callers,
             "customer": customer,
             "calls": calls
         }

@@ -133,18 +133,18 @@
         </select>
     </div>
 
-    <!-- Personality Type -->
-    <div class="mb-2">
-        <label class="block font-semibold">Personality Type</label>
-        <select name="personality_type" class="border p-1 w-full">
-            <option value="" {% if customer.personality_type is none %}selected{% endif %}>Select...</option>
-            <option value="0" {% if customer.personality_type == 0 %}selected{% endif %}>Unknown</option>
-            <option value="1" {% if customer.personality_type == 1 %}selected{% endif %}>Yellow</option>
-            <option value="2" {% if customer.personality_type == 2 %}selected{% endif %}>Blue</option>
-            <option value="3" {% if customer.personality_type == 3 %}selected{% endif %}>Red</option>
-            <option value="4" {% if customer.personality_type == 4 %}selected{% endif %}>Green</option>
-        </select>
-    </div>
+<!-- Personality Type -->
+<div class="mb-2">
+    <label class="block font-semibold">Personality Type</label>
+    <select name="personality_type" class="border p-1 w-full">
+        <option value="" {% if customer.personality_type is none %}selected{% endif %}>Select...</option>
+        {% for p in personalities %}
+            <option value="{{ p.id }}" {% if customer.personality_type == p.id %}selected{% endif %}>
+                {{ p.name }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
 
     <!-- Boolean Preferences -->
     <div class="mb-2">
