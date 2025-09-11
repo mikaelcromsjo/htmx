@@ -224,12 +224,10 @@ async def save_call(
     
     # update event status
     event_id = update_data.event_id
-    event_status = update_data.event_status
+    if (event_id > 0):
+        event_status = update_data.event_status
     customer_id = update_data.customer_id
 
-    # Debug: print input values
-    print("Debug: customer_id =", customer_id)
-    print("Debug: event_id =", event_id)
 
     # Get the CustomerEvent match
     event_customer = db.query(EventCustomer).filter_by(
