@@ -123,6 +123,7 @@ async def logout(request: Request):
 # Root route: check if logged in
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
+
     user = request.session.get("user")  # optional, might be None    
     if user:
         # Already logged in → redirect to dashboard
