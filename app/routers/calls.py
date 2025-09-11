@@ -17,6 +17,8 @@ from app.functions.helpers import render
 from app.functions.customers import get_selected_ids, get_customers, SelectedIDs
 
 from app.data.constants import categories_map, organisations_map, personalities_map
+from app.auth import get_current_user
+
 
 
 router = APIRouter(prefix="/calls", tags=["calls"])
@@ -57,18 +59,38 @@ def call_center_dashboard(
 # -----------------------------
 
 from sqlalchemy import desc
+from ..state import user_data, active_connections
 
 @router.get("/customer_data", name="customer_data", response_class=HTMLResponse)
-def customer_data(
+async def customer_data(
     request: Request,
     customer_id: str = Query(default="0", alias="customer_id"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user)
 ):
     
+
     customer = db.query(Customer).filter(Customer.id == int(customer_id)).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
-    
+
+
+    user_data.setdefault(user, {})["name"] = customer.first_name + " " + customer.last_name
+    user_data.setdefault(user, {})["number"] = customer.phone
+    # Broadcast to all connected receivers
+
+    to_remove = []
+    for ws in active_connections.get(user, []):
+        try:
+            await ws.send_json(user_data[user])
+        except RuntimeError:
+            # WebSocket is closed, mark for removal
+            to_remove.append(ws)
+
+    for ws in to_remove:
+        active_connections[user].remove(ws)
+
+
     customer = (
         db.query(Customer)
         .filter(Customer.id == customer_id)
@@ -131,6 +153,21 @@ def events_list(
     events = db.execute(query).scalars().all()
     return templates.TemplateResponse(
         "events/list.html", {"request": request, "events": events}
+    )
+
+
+## Get number to call
+
+@router.get("/number", response_class=HTMLResponse, name="number")
+def number(
+    request: Request,
+    filter: Optional[str] = None,
+    db: Session = Depends(get_db),
+    user: str = Depends(get_current_user)
+):
+    
+    return templates.TemplateResponse(
+        "calls/number.html", {"request": request, "user": user}
     )
 
 

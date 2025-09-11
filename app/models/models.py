@@ -158,15 +158,7 @@ class Customer(BaseMixin, Base):
     tags = Column(JSON, default=[])
     extra = Column(JSON, default={})
 
-#
 
-class Caller(BaseMixin, Base):
-    __tablename__ = "callers"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    # Backref to customers (one-to-many)
-    customers = relationship("Customer", back_populates="caller")
 
 
 class CustomerUpdate(BaseModel):
@@ -298,3 +290,14 @@ class EventCustomer(BaseMixin, Base):
     event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     status = Column(Integer, nullable=False)  # 0 = not going, 1 = going, 2 = interested
+
+
+#
+
+class Caller(BaseMixin, Base):
+    __tablename__ = "callers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    # Backref to customers (one-to-many)
+    customers = relationship("Customer", back_populates="caller")

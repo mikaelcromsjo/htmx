@@ -29,13 +29,6 @@
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <h1 class="text-xl font-bold">Call Center</h1>  
 
- <div id="auth-links">
-            User: {{ user }} 
-            <button hx-get="/logout" hx-target="#auth-links" hx-swap="none">
-                Logout
-            </button>
-    </div>
-
             <nav class="space-x-4">
                 <button 
                     class="px-3 py-2 rounded hover:bg-gray-200"
@@ -66,9 +59,15 @@
     <!-- Main Content Area -->
     <main class="flex-1 max-w-7xl mx-auto p-4 w-full">
         <div id="content" class="bg-white rounded shadow p-4">
-            {% block content %}
-            <p class="text-gray-500">Select a section from the navigation above.</p>
-            {% endblock %}
+
+
+<div id="auth-links">
+    <button hx-post="/login" hx-target="#auth-links" hx-swap="none">
+        Login
+    </button>
+</div>
+
+
         </div>
     </main>
 

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Call</title>
+</head>
+<body>
+
+
+ <div id="auth-links">
+            User: {{ user }} 
+            <button hx-get="/logout" hx-target="#auth-links" hx-swap="none">
+                Logout
+            </button>
+            <button hx-get="/login" hx-target="#auth-links" hx-swap="none">
+                Login
+            </button>
+    </div>
+
+<h1>Customer</h1>
+<p>Name: <span id="name"></span></p>
+<p>Number: <span id="number"></span></p>
+
+<!-- Call Button -->
+  <a id="call_href" href="">
+    <button style="padding: 10px 20px; font-size: 16px;">Call</button>
+  </a>
+
+  <!-- SMS Button 
+  <a id="text_href" href="sms:123445?body=asasasas">
+    <button style="padding: 10px 20px; font-size: 16px; margin-left: 10px;">Send SMS</button>
+  </a>
+-->
+
+
+<script>
+    const variableEl = document.getElementById("name");
+    const variableEl2 = document.getElementById("number");
+    const variableEl3 = document.getElementById("call_href");
+    const ws = new WebSocket(`ws://${location.host}/ws`);
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        variableEl.textContent = data.name;
+        variableEl2.textContent = data.number;
+        variableEl3.href = "tel:"+data.number;
+    };
+
+</script>
+</body>
+</html>
