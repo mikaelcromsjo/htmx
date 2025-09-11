@@ -26,6 +26,7 @@
     $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
     document.querySelector('#save-form').reset(); 
     document.getElementById('current_call').value = '';
+    Alpine.store('event').id = '';
   }
 "
      hx-swap="none">
