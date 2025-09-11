@@ -36,7 +36,7 @@
             padding: 15px 25px;
             font-size: 1.2em;
             margin: 10px 5px;
-            width: 45%;
+            width: 100%;
         }
     </style>
 </head>
@@ -50,7 +50,7 @@
 
     <div class="d-flex justify-content-center">
         <!-- Call Button -->
-        <a id="call_href" disabled href="">
+        <a id="call_href" href="">
             <button class="btn btn-primary">Call</button>
         </a>
 
@@ -74,7 +74,6 @@
         name.textContent = data.name;
         number.textContent = data.number;
         call_href.href = "tel:" + data.number;
-        call_href.disabled = false;
         text_href.href = "sms:" + data.number + "?body=Hej!";
     };
 </script>
