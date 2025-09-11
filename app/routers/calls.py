@@ -224,8 +224,7 @@ async def save_call(
     
     # update event status
     event_id = update_data.event_id
-    if (event_id > 0):
-        event_status = update_data.event_status
+    event_status = getattr(update_data, "event_status", None)
     customer_id = update_data.customer_id
 
 
@@ -235,27 +234,28 @@ async def save_call(
     ).first()
 
     # Check if event_customer exists
-    if not event_customer:
-        print("No existing EventCustomer found. Creating a new one.")
-        event_customer = EventCustomer(
-            customer_id=customer_id,
-            event_id=event_id
-        )
-    else:
-        print("Found existing EventCustomer:", event_customer)
+    if (event_id and event_status):
+        if not event_customer:
+            print("No existing EventCustomer found. Creating a new one.")
+            event_customer = EventCustomer(
+                customer_id=customer_id,
+                event_id=event_id
+            )
+        else:
+            print("Found existing EventCustomer:", event_customer)
 
-    # Update status
-    event_customer.status = event_status
-    print("Setting EventCustomer.status =", event_status)
+        # Update status
+        event_customer.status = event_status
+        print("Setting EventCustomer.status =", event_status)
 
-    # Add to DB and commit
-    db.add(event_customer)
-    try:
-        db.commit()
-        print("Database commit successful.")
-    except Exception as e:
-        db.rollback()
-        print("Database commit failed:", e)
+        # Add to DB and commit
+        db.add(event_customer)
+        try:
+            db.commit()
+            print("Database commit successful.")
+        except Exception as e:
+            db.rollback()
+            print("Database commit failed:", e)
 
     # Try to fetch existing call by ID if provided
     existing_call = None
