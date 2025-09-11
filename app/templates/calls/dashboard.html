@@ -214,25 +214,38 @@
                 <div>
 
                     <!-- Radio Button Options -->
-                    <div class="d-inline-block me-2 mb-2">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" date-save="true" type="radio" name="status" id="answered"
-                                value="1">
-                            <label class="form-check-label" for="answered">Answered</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" date-save="true" type="radio" name="status" id="no-answer"
-                                value="2">
-                            <label class="form-check-label" for="no-answer">No answer</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" date-save="true" type="radio" name="status"
-                                id="wrong-person" value="3">
-                            <label class="form-check-label" for="wrong-person">Wrong person</label>
-                        </div>
-                    </div>
+<form id="statusForm" hx-post="/your-endpoint" hx-target="#response" method="POST">
+    <!-- Hidden input to store selected status -->
+    <input type="hidden" name="status" id="statusValue">
+
+    <div class="d-inline-block me-2 mb-2">
+        <!-- Success button -->
+        <button 
+            type="submit" 
+            class="btn btn-success me-2"
+            onclick="document.getElementById('statusValue').value='1';"
+        >
+            Answered
+        </button>
+
+        <button 
+            type="submit" 
+            class="btn btn-danger me-2"
+            onclick="document.getElementById('statusValue').value='2';"
+        >
+            No answer
+        </button>
+
+        <button 
+            type="submit" 
+            class="btn btn-warning me-2"
+            onclick="document.getElementById('statusValue').value='3';"
+        >
+            Wrong person
+        </button>
+    </div>
                     <!-- Save Button -->
-                    <button type="submit" class="btn btn-success mb-2">Save</button>
+                    <button type="submit" class="btn btn-success me-2">Save</button>
                 </div>
             </form>
         </div>
