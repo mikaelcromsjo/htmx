@@ -45,19 +45,20 @@
 <div class="container">
     <h1>Call Customer</h1>
 
-    <p>Name: <span id="name">...</span></p>
-    <p>Number: <span id="number">...</span></p>
+    <p><span id="name">...</span></p>
+    <p><span id="number">...</span></p>
 
     <div class="d-flex justify-content-center">
         <!-- Call Button -->
-        <a id="call_href" href="">
+        <a id="call_href" disabled href="">
             <button class="btn btn-primary">Call</button>
         </a>
 
-        <!-- SMS Button -->
+        <!-- SMS Button 
         <a id="text_href" href="">
             <button class="btn btn-success">Send SMS</button>
         </a>
+        -->
     </div>
 </div>
 
@@ -73,6 +74,7 @@
         name.textContent = data.name;
         number.textContent = data.number;
         call_href.href = "tel:" + data.number;
+        call_href.disabled = false;
         text_href.href = "sms:" + data.number + "?body=Hej!";
     };
 </script>
