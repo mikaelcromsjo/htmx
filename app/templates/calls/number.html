@@ -10,7 +10,7 @@
   </a>
 
 
-  <a id="text_href" href="sms:123445?body=asasasas">
+  <a id="text_href" href="">
     <button style="padding: 10px 20px; font-size: 16px; margin-left: 10px;">Send SMS</button>
   </a>
 
@@ -26,7 +26,7 @@
         name.textContent = data.name;
         number.textContent = data.number;
         call_href.href = "tel:"+data.number;
-        text_href.href = "sms:"+data.number+"?body"+"Hej!";
+        text_href.href = "sms:"+data.number+"?body="+"Hej!";
     };
 
 </script>
