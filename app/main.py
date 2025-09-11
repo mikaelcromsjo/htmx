@@ -168,7 +168,7 @@ def get_db():
         db.close()
 
 # WebSocket endpoint (receiver browsers connect here)
-@app.websocket("/ws")
+@app.websocket("/ws/")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
