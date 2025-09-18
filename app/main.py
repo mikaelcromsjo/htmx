@@ -17,7 +17,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.responses import HTMLResponse, Response
-from fastapi import WebSocket
+from fastapi import WebSocket, WebSocketDisconnect
 
 from starlette.types import ASGIApp, Scope, Receive, Send
 from starlette.middleware.sessions import SessionMiddleware
@@ -28,14 +28,29 @@ from sqlalchemy import text
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.models.base import Base
+from app.core.models.base import Base
 from app.models.models import Alarm, Customer, Event
 
-from app.database import engine
-from app.auth import get_current_user
+from app.core.database import engine
+from app.core.auth import get_current_user
 
 import logging
 from sqlalchemy import inspect
+
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi.responses import JSONResponse
+from starlette.middleware.sessions import SessionMiddleware
+from jose import jwt, JWTError
+from datetime import datetime, timedelta
+
+import json
+
+SESSION_SECRET = "super-secret-key"
+
+# Secret key for JWT
+JWT_SECRET_KEY = "supersecret-jwt-key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 1
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -43,7 +58,7 @@ logger = logging.getLogger(__name__)
 
 # --- FastAPI app setup ---
 app = FastAPI(title="HTMX + Alpine.js Prototype", debug=True)
-app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
+app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 
 # Function to list tables
 def list_tables():
@@ -82,7 +97,7 @@ def on_startup():
 
 
 # Static files (CSS, JS, images) will be served from /static
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/static", StaticFiles(directory="app/core/static"), name="static")
 
 # Jinja2 templates (HTML pages/fragments)
 from app.templates import templates
@@ -110,8 +125,22 @@ async def login(request: Request):
     request.session["authenticated"] = True
     request.session["user"] = user
     response = Response()
+
+    session_cookie = request.cookies.get("session")
+
     response.headers["HX-Refresh"] = "true"
     return response
+
+@app.get("/get-ws-token")
+def get_ws_token(request: Request):
+    user = request.session.get("user")
+    if not user:
+        raise HTTPException(status_code=401, detail="Not logged in")
+    
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    token = jwt.encode({"sub": user, "exp": expire}, JWT_SECRET_KEY, algorithm=ALGORITHM)
+    return {"ws_token": token}
+
 
 # Logout route
 @app.get("/logout") #not secure
@@ -124,7 +153,7 @@ async def logout(request: Request):
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
 
-    user = request.session.get("user")  # optional, might be None    
+    user = request.session.get("user")  # optional, might be None
     if user:
         # Already logged in → redirect to dashboard
         return RedirectResponse(url="/dashboard")
@@ -168,13 +197,33 @@ def get_db():
     finally:
         db.close()
 
-# WebSocket endpoint (receiver browsers connect here)
-@app.websocket("/ws/")
+
+
+@app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    print("login")
     await websocket.accept()
 
-    # For demo purposes, we assume a single user "alice"
-    user = "Alice"
+    token = websocket.query_params.get("token")
+    print("Received token:", token)    
+    if not token:
+        await websocket.close(code=1008)
+        return
+
+    try:
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
+        print("Payload:", payload)
+        user = payload.get("sub")
+        if not user:
+            raise JWTError()
+    except JWTError as e:
+        print("JWTError:", e)
+        await websocket.close(code=1008)
+        return
+
+    print("User", user)
+#    user = "Alice"
+
 
     if user not in active_connections:
         active_connections[user] = []
@@ -194,6 +243,7 @@ async def websocket_endpoint(websocket: WebSocket):
         if not active_connections[user]:
             del active_connections[user]
             del user_data[user]
+
 
 # --- Main entrypoint ---
 if __name__ == "__main__":

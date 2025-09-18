@@ -22,3 +22,5 @@ pydantic
 python-multipart
 
 itsdangerous
+
+python-jose[cryptography]

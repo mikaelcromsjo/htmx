@@ -63,12 +63,30 @@
 </div>
 
 <script>
-    const name = document.getElementById("name");
-    const number = document.getElementById("number");
-    const call_href = document.getElementById("call_href");
-    const text_href = document.getElementById("text_href");
-    const ws = new WebSocket(`wss://${location.host}/ws/`);
 
+let ws;
+let wsToken;
+
+// Get elements using querySelector
+const name = document.querySelector("#name");
+const number = document.querySelector("#number");
+const call_href = document.querySelector("#call_href");
+const text_href = document.querySelector("#text_href");
+
+async function fetchToken() {
+    const res = await fetch(`http://${location.host}/get-ws-token`, {
+        credentials: "include"
+    });
+    const data = await res.json();
+    wsToken = data.ws_token;
+}
+
+async function connectWS() {
+    await fetchToken();
+
+    ws = new WebSocket(`ws://${location.host}/ws?token=${wsToken}`);
+
+    ws.onopen = () => console.log("WebSocket connected!");
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         name.textContent = data.name;
@@ -76,6 +94,28 @@
         call_href.href = "tel:" + data.number;
         text_href.href = "sms:" + data.number + "?body=Hej!";
     };
+
+    ws.onclose = async () => {
+        console.log("WebSocket closed. Reconnecting...");
+        // Wait a second before reconnect
+        setTimeout(connectWS, 1000);
+    };
+
+    // Send ping messages every 2 seconds
+    setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.send("ping");
+        }
+    }, 2000);
+}
+
+// Start automatically
+connectWS();
+
+    
+
+
+
 </script>
 
 </body>

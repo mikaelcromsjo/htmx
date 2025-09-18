@@ -8,16 +8,16 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from app.database import get_db
+from app.core.database import get_db
 from app.templates import templates
 
 
 from app.models.models import Customer, Call, Event, EventCustomer, Caller
-from app.functions.helpers import render
+from app.core.functions.helpers import render
 from app.functions.customers import get_selected_ids, get_customers, SelectedIDs
 
 from app.data.constants import categories_map, organisations_map, personalities_map
-from app.auth import get_current_user
+from app.core.auth import get_current_user
 
 
 
@@ -80,8 +80,11 @@ async def customer_data(
     # Broadcast to all connected receivers
 
     to_remove = []
+    print("Web Socket")
+
     for ws in active_connections.get(user, []):
         try:
+            print("Sending to web sockets")
             await ws.send_json(user_data[user])
         except RuntimeError:
             # WebSocket is closed, mark for removal
@@ -210,7 +213,7 @@ def call_details(
 
 from app.models.models import Update
 from app.models.models import Call, CallUpdate
-from app.functions.helpers import populate
+from app.core.functions.helpers import populate
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 

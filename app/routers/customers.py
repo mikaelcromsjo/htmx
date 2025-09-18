@@ -9,14 +9,14 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from typing import Any, Union, Optional, get_origin, get_args
 
-from app.models.base import Base
-from app.database import get_db
-from app.functions.helpers import render
+from app.core.models.base import Base
+from app.core.database import get_db
+from app.core.functions.helpers import render
 from app.templates import templates
 from app.data.constants import categories, organisations, personalities
 from app.data.constants import categories_map, organisations_map, personalities_map
 from app.models.models import Customer, CustomerUpdate, Caller
-from app.functions.helpers import populate
+from app.core.functions.helpers import populate
 
 from app.models.models import Update
 

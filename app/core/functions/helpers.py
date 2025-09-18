@@ -104,15 +104,6 @@ def render(template_name: str, context: dict, base_template: str = "base.html"):
     template_name = template_name.lstrip("/")
     base_template = base_template.lstrip("/")
 
-    # Get the search path from Jinja2 loader
-    template_loader_paths = templates.env.loader.searchpath  # list of directories Jinja searches
-    print("=== Template Debug ===")
-    print("Jinja2 search paths:", template_loader_paths)
-    for path in template_loader_paths:
-        print("Full path to template:", os.path.join(path, template_name))
-        print("Full path to base template:", os.path.join(path, base_template))
-    print("=====================")
-
     if request.headers.get("hx-request"):
         return templates.TemplateResponse(template_name, context)
     else:

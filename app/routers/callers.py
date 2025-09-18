@@ -8,12 +8,12 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from app.database import get_db
+from app.core.database import get_db
 from app.templates import templates
 
 
 from app.models.models import Customer, Call, Event, Caller
-from app.functions.helpers import render
+from app.core.functions.helpers import render
 from app.functions.customers import get_selected_ids, get_customers, SelectedIDs
 
 

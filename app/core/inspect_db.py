@@ -1,5 +1,5 @@
 from sqlalchemy import inspect
-from app.database import engine
+from app.core.database import engine
 
 def list_tables():
     inspector = inspect(engine)
