@@ -75,7 +75,7 @@ const call_href = document.querySelector("#call_href");
 const text_href = document.querySelector("#text_href");
 
 async function fetchToken() {
-    const res = await fetch(`http://${location.host}/get-ws-token`, {
+    const res = await fetch(`https://${location.host}/get-ws-token`, {
         credentials: "include"
     });
     const data = await res.json();
@@ -85,7 +85,7 @@ async function fetchToken() {
 async function connectWS() {
     await fetchToken();
 
-    ws = new WebSocket(`ws://${location.host}/calls/ws?token=${wsToken}`);
+    ws = new WebSocket(`wss://${location.host}/calls/ws?token=${wsToken}`);
 
     ws.onopen = () => console.log("WebSocket connected!");
     ws.onmessage = (event) => {
