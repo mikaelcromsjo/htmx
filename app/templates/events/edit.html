@@ -2,9 +2,11 @@
 
 <form 
     hx-post="{{ url_for('upsert_event') }}"
-    hx-target="#event-container" 
+    hx-target="#modal-container" 
     hx-ext="json-enc"
-    hx-swap="innerHTML">
+    hx-swap="innerHTML"
+    hx-on="htmx:afterRequest: modalOpen = false"
+    >
 
 
     {% if event.id %}

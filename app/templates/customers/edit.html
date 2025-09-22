@@ -4,12 +4,12 @@
 
 <form
     hx-post="{{ url_for('upsert_customer') }}"
-    hx-target="#customer-container"
+    hx-target="#modal-container"
+    hx-swap="none"
     hx-ext="json-enc"
     hx-headers='{"Content-Type": "application/json"}'
-    hx-swap="innerHTML"
-    id="customerForm"
-    hx-on="htmx:configRequest: (evt) => {
+    hx-on:htmx:afterRequest.window="modalOpen = false"
+    hx-on:htmx:configRequest="(evt) => {
         const data = evt.detail.parameters;
         for (const key in data) {
             if (data[key] === '') data[key] = null;

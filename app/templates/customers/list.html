@@ -46,8 +46,9 @@
 
                         <button 
                             hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}"
-                            hx-target="#customer-container"
+                            hx-target="#modal-container"
                             hx-swap="innerHTML"
+                            @click="modalOpen = true"
                         >
                             Edit
                         </button>                
