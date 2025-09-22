@@ -36,6 +36,9 @@ def customers_list(
     filter: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
+    
+
+    
     query = db.query(Customer)
     if filter:
         query = query.filter(Customer.name.ilike(f"%{filter}%"))

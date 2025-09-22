@@ -19,7 +19,12 @@
     <!-- Local Bootstrap JS -->
     <script src="/static/js/bootstrap.bundle.min.js"></script>
 
-
+  <style>
+        .highlight {
+            outline: 2px solid black!important; /* just a visible black outline */
+            outline-offset: 2px;      /* optional spacing */       
+         }
+    </style>
 
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -90,12 +95,6 @@
     </div>
 
 
-<!-- Popup div -->
-<div id="popup" 
-     class="alert position-fixed top-0 start-50 translate-middle-x" 
-     style="display:none; padding:10px 20px; border-radius:5px; z-index:1000; transition: opacity 0.3s;">
-</div>
-
 
 <script>
   if (/Mobi|Android/i.test(navigator.userAgent)) {
@@ -104,8 +103,16 @@
 
 </script>
 
+
+<!-- Popup div -->
+<div id="popup" 
+     class="alert position-fixed top-0 start-50 translate-middle-x" 
+     style="display:none; padding:10px 20px; border-radius:5px; z-index:1000; transition: opacity 0.3s;">
+</div>
+
+
 <script>
-    
+
 function showPopup(evt) {
     let xhr = evt.detail.xhr;
     let contentType = xhr.getResponseHeader('Content-Type') || '';
@@ -176,3 +183,118 @@ document.body.addEventListener('htmx:afterRequest', showPopup);
 </script>
 
 <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+
+
+<!-- Global Alpine Confirm Dialog -->
+<div x-data="confirmDialog()" @confirm-dialog.window="open($event)">
+    <template x-if="show">
+        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white rounded-lg shadow-xl p-6 w-80">
+                <h2 class="text-lg font-semibold">Confirm</h2>
+                <p class="mt-2 text-sm text-gray-600" x-text="message"></p>
+                <div class="mt-4 flex justify-end space-x-2">
+                    <button 
+                        @click="cancel()" 
+                        class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        @click="proceed()" 
+                        class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
+                    >
+                        Yes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+
+<script>
+document.addEventListener("alpine:init", () => {
+    // Register a directive like `x-confirm`
+    console.log("init event listener");
+    Alpine.directive("confirm", (el, { expression }) => {
+        el.addEventListener("click", (e) => {
+            e.preventDefault(); // Stop immediate action
+            el.dispatchEvent(new CustomEvent("confirm-dialog", {
+                bubbles: true,
+                detail: { message: expression, target: el }
+            }));
+        });
+    });
+});
+
+function confirmDialog() {
+    return {
+        show: false,
+        message: "",
+        targetEl: null,
+        open(e) {
+            this.targetEl = e.detail.target;
+            this.message = e.detail.message;
+            this.show = true;
+        },
+        cancel() {
+            this.show = false;
+            this.targetEl = null;
+        },
+        proceed() {
+            this.show = false;
+            if (this.targetEl) {
+                htmx.trigger(this.targetEl, "confirmed");
+            }
+        }
+    }
+}
+</script>
+<script>
+
+
+
+async function fetchToken() {
+    const res = await fetch(`http://${location.host}/get-ws-token`, {
+        credentials: "include"
+    });
+    const data = await res.json();
+    wsToken = data.ws_token;
+}
+
+async function connectWS() {
+    await fetchToken();
+
+    ws = new WebSocket(`ws://${location.host}/calls/ws?token=${wsToken}`);
+
+    ws.onopen = () => console.log("WebSocket connected!");
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("Recieved", data)
+        if(data.call){
+            const fieldset = document.querySelector('#call-fields');
+            // Enable the fieldset itself
+            fieldset.disabled = false;            
+        }
+    };
+
+    ws.onclose = async () => {
+        console.log("WebSocket closed. Reconnecting...");
+        // Wait a second before reconnect
+        setTimeout(connectWS, 1000);
+    };
+
+    // Send ping messages every x seconds
+    setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: "ping" }));
+        }
+    }, 10000);
+}
+
+
+
+// Start automatically
+connectWS();
+</script>
+
+

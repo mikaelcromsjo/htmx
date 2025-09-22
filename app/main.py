@@ -17,7 +17,6 @@ from fastapi.templating import Jinja2Templates
 from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.responses import HTMLResponse, Response
-from fastapi import WebSocket, WebSocketDisconnect
 
 from starlette.types import ASGIApp, Scope, Receive, Send
 from starlette.middleware.sessions import SessionMiddleware
@@ -43,14 +42,11 @@ from starlette.middleware.sessions import SessionMiddleware
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
-import json
-
 SESSION_SECRET = "super-secret-key"
-
-# Secret key for JWT
-JWT_SECRET_KEY = "supersecret-jwt-key"
+JWT_SECRET_KEY = "supersecret-jwt-key" # dublicated in calls.py TODO
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1
+
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -182,9 +178,6 @@ async def read_root(request: Request, user: str = Depends(get_current_user)):
         },
     )
 
-
-
-
 # --- Dependency for DB session (to be imported in routers) ---
 def get_db():
     """
@@ -199,50 +192,8 @@ def get_db():
 
 
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    print("login")
-    await websocket.accept()
-
-    token = websocket.query_params.get("token")
-    print("Received token:", token)    
-    if not token:
-        await websocket.close(code=1008)
-        return
-
-    try:
-        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
-        print("Payload:", payload)
-        user = payload.get("sub")
-        if not user:
-            raise JWTError()
-    except JWTError as e:
-        print("JWTError:", e)
-        await websocket.close(code=1008)
-        return
-
-    print("User", user)
-#    user = "Alice"
 
 
-    if user not in active_connections:
-        active_connections[user] = []
-        user_data[user] = {"customer_id": 0}
-
-    active_connections[user].append(websocket)
-
-    # Send initial value
-    await websocket.send_json(user_data[user])
-
-    try:
-        while True:
-            # Keep connection alive
-            await websocket.receive_text()
-    except WebSocketDisconnect:
-        active_connections[user].remove(websocket)
-        if not active_connections[user]:
-            del active_connections[user]
-            del user_data[user]
 
 
 # --- Main entrypoint ---

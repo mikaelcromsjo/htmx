@@ -27,6 +27,9 @@
     document.querySelector('#save-form').reset(); 
     document.getElementById('current_call').value = '';
     Alpine.store('event').id = '';
+    document.getElementById('status_value').value='';
+    document.querySelector('#call-fields').disabled = true;
+    removeHightlight()    
   }
 "
      hx-swap="none">
@@ -207,7 +210,8 @@
                 </div>
             </div>
 
-
+<fieldset id="call-fields" disabled>
+    
                 Call Comment
                 <div>
                     <textarea name="note" date-save="true" class="form-control mb-2" rows="3"></textarea>
@@ -215,36 +219,38 @@
                 <div>
 
                     <!-- Radio Button Options -->
-<form id="statusForm" hx-post="/your-endpoint" hx-target="#response" method="POST">
+<form id="statusForm" method="POST">
     <!-- Hidden input to store selected status -->
-    <input type="hidden" name="status" id="statusValue">
+    <input type="hidden" name="status" id="status_value">
 
     <div class="d-inline-block me-2 mb-2">
         <!-- Success button -->
         <button 
             type="submit" 
-            class="btn btn-success me-2"
-            onclick="document.getElementById('statusValue').value='1';"
+            class="btn btn-success me-2  btn-select"
+            onclick="document.getElementById('status_value').value='1';"
         >
             Answered
         </button>
 
         <button 
             type="submit" 
-            class="btn btn-danger me-2"
-            onclick="document.getElementById('statusValue').value='2';"
+            class="btn btn-danger me-2 btn-select"
+            onclick="document.getElementById('status_value').value='2';"
         >
             No answer
         </button>
 
         <button 
             type="submit" 
-            class="btn btn-warning me-2"
-            onclick="document.getElementById('statusValue').value='3';"
+            class="btn btn-warning me-2 btn-select"
+            onclick="document.getElementById('status_value').value='3';"
         >
             Wrong person
         </button>
     </div>
+</fieldset>
+
                     <!-- Save Button -->
                     <button type="submit" class="btn btn-success me-2">Save</button>
                 </div>
@@ -279,5 +285,21 @@
     Alpine.store('eventCustomer', {
         status: "",
     });
+
+</script>
+
+
+<script>
+const buttons = document.querySelectorAll('.btn-select');
+buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('highlight'));
+        btn.classList.add('highlight');
+    });
+});
+
+function removeHightlight(){
+    buttons.forEach(b => b.classList.remove('highlight'));
+}
 
 </script>

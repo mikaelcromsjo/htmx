@@ -51,8 +51,9 @@
     <div class="d-flex justify-content-center">
         <!-- Call Button -->
         <a id="call_href" href="">
-            <button class="btn btn-primary">Call</button>
+            <button class="btn btn-primary" onclick="call()">Call</button>
         </a>
+
 
         <!-- SMS Button 
         <a id="text_href" href="">
@@ -84,15 +85,18 @@ async function fetchToken() {
 async function connectWS() {
     await fetchToken();
 
-    ws = new WebSocket(`ws://${location.host}/ws?token=${wsToken}`);
+    ws = new WebSocket(`ws://${location.host}/calls/ws?token=${wsToken}`);
 
     ws.onopen = () => console.log("WebSocket connected!");
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        name.textContent = data.name;
-        number.textContent = data.number;
-        call_href.href = "tel:" + data.number;
-        text_href.href = "sms:" + data.number + "?body=Hej!";
+        console.log("Recieved", data)
+        if(data.name){
+            name.textContent = data.name;
+            number.textContent = data.number;
+            call_href.href = "tel:" + data.number;
+//            text_href.href = "sms:" + data.number + "?body=Hej!";
+        }
     };
 
     ws.onclose = async () => {
@@ -101,12 +105,26 @@ async function connectWS() {
         setTimeout(connectWS, 1000);
     };
 
-    // Send ping messages every 2 seconds
+    // Send ping messages every x seconds
     setInterval(() => {
         if (ws.readyState === WebSocket.OPEN) {
-            ws.send("ping");
+            ws.send(JSON.stringify({ type: "ping" }));
         }
-    }, 2000);
+    }, 10000);
+}
+
+
+// Send variable on each click
+function call() {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+        console.log("WebSocket not connected yet");
+        return;
+    }
+
+    const call_id = Math.random(); 
+    console.log("Sending Call");
+
+    ws.send(JSON.stringify({ call: true }));
 }
 
 // Start automatically
