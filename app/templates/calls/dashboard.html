@@ -13,29 +13,45 @@
         <!-- Customers Column -->
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             <div class="fw-semibold">Customers</div>
-            <div id="customer-list" class="flex-grow-1 overflow-auto mt-2" x-data>
+            <div id="calls-customer-list" class="flex-grow-1 overflow-auto mt-2" x-data>
 {% for customer in customers %}
-<div class="p-2 border-bottom cursor-pointer"
+<div class="p-1.5 border-bottom cursor-pointer d-flex justify-content-between align-items-center"
      :class="{
         'bg-success bg-opacity-25 fw-bold text-success': Alpine.store('customer').id=== {{ customer.id }},
         'bg-white fw-normal text-dark': Alpine.store('customer').id !== {{ customer.id }}
      }"
-@click="
-  if (Alpine.store('customer').id !== {{ customer.id }}) {
-    Alpine.store('customer').id = {{ customer.id }};
-    $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
-    document.querySelector('#save-form').reset(); 
-    document.getElementById('current_call').value = '';
-    Alpine.store('event').id = '';
-    document.getElementById('status_value').value='';
-    document.querySelector('#call-fields').disabled = true;
-    removeHightlight()    
-  }
-"
+     @click="
+        if (Alpine.store('customer').id !== {{ customer.id }}) {
+            Alpine.store('customer').id = {{ customer.id }};
+            $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
+            document.querySelector('#save-form').reset(); 
+            document.getElementById('current_call').value = '';
+            Alpine.store('event').id = '';
+            document.getElementById('status_value').value='';
+            document.querySelector('#call-fields').disabled = true;
+            removeHightlight()    
+        }
+     "
      hx-swap="none">
-  {{ customer.first_name }}
-</div>
-{% endfor %}
+
+  <!-- Customer Name -->
+  <span>{{ customer.first_name }}</span>
+
+  <!-- Edit Icon -->
+<span 
+    class="ms-2 cursor-pointer d-flex align-items-center justify-content-center"
+    style="width: 30px; height: 30px;"
+    hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}"
+    hx-target="#modal-container"
+    hx-swap="innerHTML"
+    @click.stop="modalOpen = true">
+    <!-- Pencil SVG -->
+    <svg xmlns="http://www.w3.org/2000/svg" color="gray"width="15" height="15" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+      <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708L4.207 14.793l-3 1a.5.5 0 0 1-.637-.637l1-3L12.146.854zM11.207 2L2 11.207V13h1.793L14 3.793 11.207 2z"/>
+    </svg>
+</span>
+
+</div>{% endfor %}
             </div>
         </div>
 
@@ -63,7 +79,7 @@
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             <div class="fw-semibold">Events</div>
             <div id="call-events" class="flex-grow-1 overflow-auto mt-2">
-                <div id="call-event-list">
+                <div id="calls-event-list">
                     <div x-data="{
                         isVisible(event) {
                             let filters = Alpine.store('eventFilters');
@@ -71,7 +87,7 @@
                             return Object.keys(filters).some(type => filters[type] && event[type]);
                         }
                     }">
-                        <div id="event-list" x-data="{ Alpine.store('event').id: null }">
+                        <div id="event-list" x-data>
                             {% for event in events %}
                             <div x-show="isVisible({ 
                                 activism: {{ 'true' if event.type_activism else 'false' }},
@@ -85,6 +101,7 @@
                             @click="Alpine.store('event').id = {{ event.id }}"
                                 hx-get="{{ url_for('calls_event_detail', event_id=event.id) }}?list=short"
                                 hx-target="#event-info"
+                                hx-swap="innerHTML"
                                 :hx-vals="JSON.stringify(
                                 Alpine.store('customer')?.id 
                                     ? { customer_id: Alpine.store('customer').id } 
@@ -258,35 +275,6 @@
         </div>
     </div>
 </div>
-
-<script defer>
-    Alpine.store('eventFilters', {
-        activism: true,
-        lectures: true,
-        parties: true,
-        politics: true
-    });
-
-    Alpine.store('event', {
-        id: "",
-    });
-
-
-    Alpine.store('customer', {
-        comment: "",
-        id: "",
-    });
-
-    Alpine.store('call', {
-        comment: "",
-        id: "",
-    });
-
-    Alpine.store('eventCustomer', {
-        status: "",
-    });
-
-</script>
 
 
 <script>

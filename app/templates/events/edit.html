@@ -2,7 +2,7 @@
 
 <form 
     hx-post="{{ url_for('upsert_event') }}"
-    hx-target="#modal-container" 
+    hx-target="#event-list" 
     hx-ext="json-enc"
     hx-swap="innerHTML"
     hx-on="htmx:afterRequest: modalOpen = false"
@@ -72,6 +72,6 @@
 
     <!-- Submit -->
     <div class="flex justify-end mt-4">
-        <button type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
+        <button @click="modalOpen = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
     </div>
 </form>

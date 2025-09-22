@@ -1,5 +1,11 @@
+{% if customer.first_name %}
+<div class="mb-1"><strong>Name:</strong> {{ customer.first_name }} {{ customer.last_name }}</div>
+{% endif %}
 
+
+{% if customer.user_id %}
 <div class="mb-1"><strong>User ID:</strong> {{ customer.user_id }}</div>
+{% endif %}
 
 {% if customer.email %}
 <div class="mb-1"><strong>Email:</strong> {{ customer.email }}</div>

@@ -37,7 +37,7 @@
                     class="cursor-pointer hover:bg-gray-100">
 
                     <td class="px-2 py-1 border">{{ customer.id }}</td>
-                    <td class="px-2 py-1 border">{{ customer.first_name }} {{ customer.second_name }}</td>
+                    <td class="px-2 py-1 border">{{ customer.first_name }} {{ customer.last_name }}</td>
                     <td class="px-2 py-1 border">{{ customer.email }}</td>
 
                     <td class="px-2 py-1 border text-center" 
@@ -78,7 +78,8 @@
 
         <div class="mt-2 flex gap-2">
             <button hx-get="/customers/new"
-                    hx-target="#customer-list"
+                    hx-target="#modal-container"
+                    @click="modalOpen = true"
                     class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                 New Customer
             </button>
@@ -100,7 +101,7 @@
 
         </div>
         
-    <div id="customer-info"></div>
+    <div class="mt-4" id="customer-info"></div>
         
     </div>
 

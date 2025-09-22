@@ -46,12 +46,15 @@
 
         <div class="mt-2 flex gap-2">
 
-            <button hx-get="/events/new" hx-target="#event-container"
+            <button hx-get="/events/new" 
+                    hx-target="#modal-container"
+                    @click="modalOpen = true"
+
                 class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                 New Event
             </button>
         </div>
     </div>
-    <div id="event-info">
+    <div class="mt-4" id="event-info">
     </div>
 </div>
