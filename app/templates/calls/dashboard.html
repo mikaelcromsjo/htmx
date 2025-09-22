@@ -21,7 +21,6 @@
         'bg-white fw-normal text-dark': Alpine.store('customer').id !== {{ customer.id }}
      }"
      @click="
-        if (Alpine.store('customer').id !== {{ customer.id }}) {
             Alpine.store('customer').id = {{ customer.id }};
             $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
             document.querySelector('#save-form').reset(); 
@@ -30,7 +29,6 @@
             document.getElementById('status_value').value='';
             document.querySelector('#call-fields').disabled = true;
             removeHightlight()    
-        }
      "
      hx-swap="none">
 
