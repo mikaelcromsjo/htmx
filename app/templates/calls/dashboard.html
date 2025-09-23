@@ -21,6 +21,7 @@
         'bg-white fw-normal text-dark': Alpine.store('customer').id !== {{ customer.id }}
      }"
      @click="
+        if (Alpine.store('customer').id !== {{ customer.id }}) {
             Alpine.store('customer').id = {{ customer.id }};
             $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
             document.querySelector('#save-form').reset(); 
@@ -29,11 +30,12 @@
             document.getElementById('status_value').value='';
             document.querySelector('#call-fields').disabled = true;
             removeHightlight()    
+        }
      "
-     hx-swap="none">
+    hx-swap="none">
 
   <!-- Customer Name -->
-  <span>{{ customer.first_name }}</span>
+  <span>{{ customer.first_name }} {{ customer.last_name }}</span>
 
   <!-- Edit Icon -->
 <span 
@@ -58,7 +60,7 @@
             <div class="fw-semibold">Customer Info</div>
 
             <div class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
-                <div id="customer-info">
+                <div id="customer-details">
                     {% for info in customer_details %}
                     <div class="p-1">{{ info }}</div>
                     {% endfor %}
@@ -98,7 +100,7 @@
                             }" 
                             @click="Alpine.store('event').id = {{ event.id }}"
                                 hx-get="{{ url_for('calls_event_detail', event_id=event.id) }}?list=short"
-                                hx-target="#event-info"
+                                hx-target="#event-details"
                                 hx-swap="innerHTML"
                                 :hx-vals="JSON.stringify(
                                 Alpine.store('customer')?.id 
@@ -117,7 +119,7 @@
         <!-- Event Info Column -->
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             <div class="fw-semibold">Event Info</div>
-            <div id="event-info" class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;"></div>
+            <div id="event-details" class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;"></div>
         </div>
     </div>
 

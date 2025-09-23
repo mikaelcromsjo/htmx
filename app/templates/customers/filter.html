@@ -1,0 +1,239 @@
+<form 
+    hx-post="{{ url_for('set_filter') }}"
+    hx-target="#customer-list"
+    hx-swap="innerHTML"
+    hx-ext="json-enc"
+    class="space-y-4"
+>
+
+<h2 class="text-xl font-bold mb-4">Customer Filter</h2>
+
+
+    <!-- First Name -->
+    <div>
+        <label class="block font-semibold">First Name</label>
+        <input type="text" name="first_name" value="{{ filters.get('first_name','') }}" class="border p-1 w-full"/>
+        <select name="first_name_type" class="border p-1 mt-1">
+            <option value="like">Contains</option>
+            <option value="exact">Exact</option>
+        </select>
+    </div>
+
+    <!-- Last Name -->
+    <div>
+        <label class="block font-semibold">Last Name</label>
+        <input type="text" name="last_name" value="{{ filters.get('last_name','') }}" class="border p-1 w-full"/>
+        <select name="last_name_type" class="border p-1 mt-1">
+            <option value="like">Contains</option>
+            <option value="exact">Exact</option>
+        </select>
+    </div>
+
+    <!-- User ID -->
+    <div>
+        <label class="block font-semibold">User ID</label>
+        <input type="text" name="user_id" value="{{ filters.get('user_id','') }}" class="border p-1 w-full"/>
+        <select name="user_id_type" class="border p-1 mt-1">
+            <option value="like">Contains</option>
+            <option value="exact">Exact</option>
+        </select>
+    </div>
+
+    <!-- Code Name (Boolean) -->
+    <div>
+        <label class="block font-semibold">Code Name</label>
+        <select name="code_name_type" class="border p-1 mt-1">
+            <option value="">Any</option>
+            <option value="true" {% if filters.get('code_name') %}selected{% endif %}>True</option>
+            <option value="false" {% if filters.get('code_name') is not none and not filters.get('code_name') %}selected{% endif %}>False</option>
+        </select>
+    </div>
+
+    <!-- Email -->
+    <div>
+        <label class="block font-semibold">Email</label>
+        <input type="email" name="email" value="{{ filters.get('email','') }}" class="border p-1 w-full"/>
+        <select name="email_type" class="border p-1 mt-1">
+            <option value="like">Contains</option>
+            <option value="exact">Exact</option>
+        </select>
+    </div>
+
+    <!-- Phone -->
+    <div>
+        <label class="block font-semibold">Phone</label>
+        <input type="text" name="phone" value="{{ filters.get('phone','') }}" class="border p-1 w-full"/>
+        <select name="phone_type" class="border p-1 mt-1">
+            <option value="like">Contains</option>
+            <option value="exact">Exact</option>
+        </select>
+    </div>
+
+    <!-- Location -->
+    <div>
+        <label class="block font-semibold">Location</label>
+        <input type="text" name="location" value="{{ filters.get('location','') }}" class="border p-1 w-full"/>
+        <select name="location_type" class="border p-1 mt-1">
+            <option value="like">Contains</option>
+            <option value="exact">Exact</option>
+        </select>
+    </div>
+
+    <!-- Contributes (Select) -->
+    <div>
+        <label class="block font-semibold">Contributes</label>
+        <select name="contributes" multiple class="border p-1 w-full">
+            <option value="1" {% if '1' in filters.get('contributes', []) %}selected{% endif %}>No contributions</option>
+            <option value="2" {% if '2' in filters.get('contributes', []) %}selected{% endif %}>Contributes</option>
+            <option value="3" {% if '3' in filters.get('contributes', []) %}selected{% endif %}>Silver</option>
+            <option value="4" {% if '4' in filters.get('contributes', []) %}selected{% endif %}>Gold</option>
+        </select>
+        <select name="contributes_type" class="border p-1 mt-1">
+            <option value="has">Has any</option>
+            <option value="has-all">Has all</option>
+            <option value="exact">Exact</option>
+            <option value="has-not">Does not have</option>
+        </select>
+    </div>
+
+    <!-- Caller (Select) -->
+    <div>
+        <label class="block font-semibold">Caller</label>
+        <select name="caller_id" multiple class="border p-1 w-full">
+            {% for caller in callers %}
+              <option value="{{ caller.id }}" {% if caller.id|string in filters.get('caller', []) %}selected{% endif %}>{{ caller.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="caller_id_type" class="border p-1 mt-1">
+            <option value="has">Has any</option>
+            <option value="has-all">Has all</option>
+            <option value="exact">Exact</option>
+            <option value="has-not">Does not have</option>
+        </select>
+    </div>
+
+    <!-- Comment -->
+    <div>
+        <label class="block font-semibold">Comment</label>
+        <input type="text" name="comment" value="{{ filters.get('comment','') }}" class="border p-1 w-full"/>
+        <select name="comment_type" class="border p-1 mt-1">
+            <option value="like">Contains</option>
+            <option value="exact">Exact</option>
+        </select>
+    </div>
+
+    <!-- Sub Caller -->
+    <div>
+        <label class="block font-semibold">Sub Caller</label>
+        <input type="text" name="sub_caller" value="{{ filters.get('sub_caller','') }}" class="border p-1 w-full"/>
+        <select name="sub_caller_type" class="border p-1 mt-1">
+            <option value="like">Contains</option>
+            <option value="exact">Exact</option>
+        </select>
+    </div>
+
+    <!-- Organisations -->
+    <div>
+        <label class="block font-semibold">Organisations</label>
+        <select name="organisations" multiple class="border p-1 w-full">
+            {% for org in organisations %}
+                <option value="{{ org.id }}"
+                    {% if org.id|string in filters.get("organisations", []) %}selected{% endif %}>
+                    {{ org.name }}
+                </option>
+            {% endfor %}
+        </select>
+        <select name="organisations_type" class="border p-1 mt-1">
+            <option value="has">Has any</option>
+            <option value="has-all">Has all</option>
+            <option value="exact">Exact</option>
+            <option value="has-not">Does not have</option>
+        </select>
+    </div>
+
+    <!-- Categories -->
+    <div>
+        <label class="block font-semibold">Categories</label>
+        <select name="categories" multiple class="border p-1 w-full">
+          {% for cid, cat in categories.items() %}
+            <optgroup label="{{ cat.name }}">
+              {% for iid, item in cat.get('items', {}).items() %}
+                <option value="{{ iid }}" {% if iid|string in filters.get("categories", []) %}selected{% endif %}>
+                  {{ item }}
+                </option>
+              {% endfor %}
+            </optgroup>
+          {% endfor %}
+        </select>
+        <select name="categories_type" class="border p-1 mt-1">
+            <option value="has">Has any</option>
+            <option value="has-all">Has all</option>
+            <option value="exact">Exact</option>
+            <option value="has-not">Does not have</option>
+        </select>
+    </div>
+
+    <!-- Personality Type -->
+    <div>
+        <label class="block font-semibold">Personality Type</label>
+        <select name="personality_type" multiple class="border p-1 w-full">
+            {% for p in personalities %}
+                <option value="{{ p.id }}" {% if p.id|string in filters.get('personality_type', []) %}selected{% endif %}>
+                    {{ p.name }}
+                </option>
+            {% endfor %}
+        </select>
+        <select name="personality_type_type" class="border p-1 mt-1">
+            <option value="has">Has any</option>
+            <option value="has-all">Has all</option>
+            <option value="exact">Exact</option>
+            <option value="has-not">Does not have</option>
+        </select>
+    </div>
+
+    <!-- Boolean Preferences -->
+    {% for field, label in [
+        ('controlled', 'Controlled'),
+        ('likes_parties', 'Likes Parties'),
+        ('likes_politics', 'Likes Politics'),
+        ('likes_lectures', 'Likes Lectures'),
+        ('likes_activism', 'Likes Activism')
+    ] %}
+    <div>
+        <label class="block font-semibold">{{ label }}</label>
+        <select name="{{ field }}_type" class="border p-1 mt-1">
+            <option value="">Any</option>
+            <option value="true" {% if filters.get(field) %}selected{% endif %}>True</option>
+            <option value="false" {% if filters.get(field) is not none and not filters.get(field) %}selected{% endif %}>False</option>
+        </select>
+    </div>
+    {% endfor %}
+
+    <!-- Tags -->
+    <div>
+        <label class="block font-semibold">Tags (comma separated)</label>
+        <input type="text" name="tags" value="{{ filters.get('tags','') }}" class="border p-1 w-full"/>
+        <select name="tags_type" class="border p-1 mt-1">
+            <option value="like">Contains</option>
+            <option value="exact">Exact</option>
+        </select>
+    </div>
+
+    <!-- Extra JSON -->
+    <div>
+        <label class="block font-semibold">Extra (JSON)</label>
+        <input type="text" name="extra" value="{{ filters.get('extra','') }}" class="border p-1 w-full"/>
+        <select name="extra_type" class="border p-1 mt-1">
+            <option value="like">Contains</option>
+            <option value="exact">Exact</option>
+        </select>
+    </div>
+
+    <div class="flex justify-end mt-4">
+        <button @click="modalOpen = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">
+            Apply Filters
+        </button>
+    </div>
+
+</form>
+

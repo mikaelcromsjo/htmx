@@ -1,5 +1,5 @@
 <!-- Customer Info fragment -->
-<div id="customer-info" hx-swap-oob="true">
+<div id="customer-details" hx-swap-oob="true">
 
 <div x-data x-init='
 Alpine.store("eventFilters").activism = {{ customer.likes_activism | tojson }};
@@ -12,8 +12,6 @@ Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
 
     
    
-<div class="mb-1"><strong>User ID:</strong> {{ customer.user_id }}</div>
-
 {% if customer.email %}
 <div class="mb-1"><strong>Email:</strong> {{ customer.email }}</div>
 {% endif %}
@@ -69,10 +67,6 @@ Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
 {% endfor %}
 {{ org_names | join(', ') }}
   </div>
-{% endif %}
-
-{% if customer.tags %}
-<div class="mb-1"><strong>Tags:</strong> {{ customer.tags }}</div>
 {% endif %}
 
 

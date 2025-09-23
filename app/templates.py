@@ -21,3 +21,7 @@ loader = ChoiceLoader([
 # Jinja2 will look in this order
 templates = Jinja2Templates(directory=str(app_templates_path))
 templates.env.loader = loader
+
+# 🔥 disable Jinja caching
+templates.env.cache = {}
+templates.env.auto_reload = True
