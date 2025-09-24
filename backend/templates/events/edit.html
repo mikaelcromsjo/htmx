@@ -1,11 +1,11 @@
-<h2 class="text-xl font-bold mb-4">Event: {{ event.name }}</h2>
+ <div x-init="$store.modal.title = 'Event: {{ event.name }}'"></div> 
 
 <form 
     hx-post="{{ url_for('upsert_event') }}"
     hx-target="#event-list" 
     hx-ext="json-enc"
     hx-swap="innerHTML"
-    hx-on="htmx:afterRequest: modalOpen = false"
+    hx-on="htmx:afterRequest: $store.modal.open = false"
     >
 
 
@@ -72,6 +72,6 @@
 
     <!-- Submit -->
     <div class="flex justify-end mt-4">
-        <button @click="modalOpen = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
+        <button @click="$store.modal.open = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
     </div>
 </form>
