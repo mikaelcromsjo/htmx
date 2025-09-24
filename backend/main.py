@@ -166,11 +166,17 @@ def get_ws_token(request: Request):
 
 
 # Logout route
-@app.get("/logout") #not secure
+@app.get("/logout")
 @app.post("/logout")
 async def logout(request: Request):
     request.session.clear()
-    return JSONResponse({"message": "Logged out"})
+    return templates.TemplateResponse(
+        "login.html",
+        {
+            "request": request,
+            "message": "Logged out"  # 👈 add message here
+        },
+    )
 
 
 @app.post("/users/create")

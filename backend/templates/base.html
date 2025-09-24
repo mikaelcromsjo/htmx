@@ -126,6 +126,7 @@
 
 <!-- Global Modal Container -->
 <div 
+    x-data="{ modalTitle: '' }"
     x-show="modalOpen" 
     x-transition.opacity 
     x-cloak
@@ -139,13 +140,16 @@
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
     <div class="modal-content">
 
-      <!-- Close Button -->
-      <div class="modal-header">
-        <button type="button" class="btn-close" @click="modalOpen = false" aria-label="Close"></button>
-      </div>
+
+        <!-- Header -->
+        <div class="modal-header">
+      <h5 class="modal-title" x-text="$store.modal.title"></h5>
+                <button type="button" class="btn-close" @click="modalOpen = false"></button>
+        </div>
 
       <!-- HTMX swaps modal contents here -->
-      <div class="modal-body" id="modal-container" style="max-height: 90vh; overflow-y: auto;"></div>
+      <div class="modal-body" id="modal-container" style="max-height: 80vh; overflow-y: auto;">
+        </div>
 
     </div>
   </div>
@@ -374,6 +378,13 @@
     Alpine.store('eventCustomer', {
         status: "",
     });
+
+    Alpine.store('modal', {
+        title: "",
+        open: false
+    });
+
+
 });
 
 </script>
