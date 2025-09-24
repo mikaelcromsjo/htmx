@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/static/css/output.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+
+    <script src="/static/css/tailwind.css"></script>
+
+
+    <!-- HTMX and Alpine.js from /static -->
+    <script src="/static/htmx.min.js"></script>
+    <script src="/static/alpine.min.js" defer></script>
+
+    <!-- Local Bootstrap JS -->
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        .highlight {
+            outline: 2px solid black !important;
+            /* just a visible black outline */
+            outline-offset: 2px;
+            /* optional spacing */
+        }
+    </style>
+
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <!-- Header -->
+ <div>
+    <header class="bg-white shadow sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto p-3 w-full flex items-center justify-between">
+            <div class="text-xl font-semibold">Call Center</div>
+            <nav class="flex space-x-4">
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="max-w-7xl mx-auto p-4 w-full">
+        <!-- Content -->
+        <div id="content" x-show="active === 'customers'" class="bg-white rounded shadow p-4">
+            {% block content %}{% endblock %}
+        </div>
+
+    </main>
+</div>
+<script>
+
+        // Attach to all HTMX requests globally
+        document.body.addEventListener('htmx:afterRequest', showPopup);
+</script>
+
+    <script src="/static/js/json-enc.js"></script>
+
+
+
+<meta name="htmx-history-cache-size" content="0">

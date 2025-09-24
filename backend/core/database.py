@@ -4,6 +4,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.core.models.base import Base
 import os
+from sqlalchemy.orm import relationship, Session
+from app.core.models.models import BaseMixin, Update, User
+
 
 
 # SQLite URL (relative path, works inside Docker)
@@ -31,3 +34,20 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def init_admin_user():
+    db: Session = SessionLocal()
+
+    admin = db.query(User).filter_by(username="admin").first()
+    if not admin:
+        admin = User(username="admin", admin=1)
+        admin.set_password("changeme")  # 🔒 use env var in prod
+        db.add(admin)
+        db.commit()
+        db.refresh(admin)
+        print("✅ Default admin user created: admin / changeme")
+    else:
+        print("ℹ️ Admin user already exists")
+
+    db.close()        

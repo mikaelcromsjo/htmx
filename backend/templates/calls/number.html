@@ -1,0 +1,25 @@
+{% extends "open_base.html" %}
+
+{% block title %}Call Customer{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center mt-5">
+    <div class="card shadow" style="width: 400px;">
+        <div class="card-body text-center">
+            <h3 class="card-title mb-4">Call Customer</h3>
+
+            <p><strong>Name:</strong> <span id="name">...</span></p>
+            <p><strong>Number:</strong> <span id="number">...</span></p>
+
+            <div class="d-flex justify-content-center gap-2 mt-3">
+                <a id="call_href" href="#">
+                    <button class="btn btn-primary" onclick="call()">Call</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

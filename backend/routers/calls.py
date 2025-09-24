@@ -61,15 +61,19 @@ def call_center_dashboard(
 from sqlalchemy import desc
 from ..state import user_data, active_connections
 
-@router.get("/customer_data", name="customer_data", response_class=HTMLResponse)
+from app.core.models.models import BaseMixin, Update, User
+
+
+
+@router.get("/customer_data", name="customer_data", response_class=HTMLResponse, response_model=None)
 async def customer_data(
     request: Request,
-    customer_id: str = Query(default=0, alias="customer_id"),
-    db: Session = Depends(get_db),
-    user: str = Depends(get_current_user)
+    customer_id: int = Query(default=0),
+    db = Depends(get_db),
+    user = Depends(get_current_user)
 ):
     
-    print ("customer_id", customer_id)
+
     customer = db.query(Customer).filter(Customer.id == int(customer_id)).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")

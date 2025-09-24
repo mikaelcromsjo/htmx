@@ -32,6 +32,9 @@ from app.models.models import Alarm, Customer, Event
 
 from app.core.database import engine
 from app.core.auth import get_current_user
+from app.core.database import get_db, init_admin_user
+from sqlalchemy.orm import relationship, Session
+
 
 import logging
 from sqlalchemy import inspect
@@ -41,6 +44,9 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
+
+from app.core.models.models import BaseMixin, Update, User
+
 
 SESSION_SECRET = "super-secret-key"
 JWT_SECRET_KEY = "supersecret-jwt-key" # dublicated in calls.py TODO
@@ -55,6 +61,7 @@ logger = logging.getLogger(__name__)
 # --- FastAPI app setup ---
 app = FastAPI(title="HTMX + Alpine.js Prototype", debug=True)
 app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
+
 
 # Function to list tables
 def list_tables():
@@ -82,6 +89,9 @@ def on_startup():
     # Create all tables
     Base.metadata.create_all(bind=engine)
     logger.info("Tables created (if missing).")
+
+    logger.info("Default Admin created (if missing).")
+    init_admin_user()
 
     # Print existing tables
     tables = list_tables()
@@ -112,20 +122,31 @@ app.include_router(alarms.router, tags=["alarms"])
 app.include_router(callers.router, tags=["callers"])
 
 
-# Login route
-@app.get("/login") #not secure
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import RedirectResponse
+from starlette.middleware.sessions import SessionMiddleware
+
+@app.get("/login")
+async def login_get(request: Request):
+    # If already logged in, redirect to home
+    if request.session.get("authenticated"):
+        return RedirectResponse(url="/")
+    return templates.TemplateResponse("login.html", {"request": request})
+
+# --- Routes ---
 @app.post("/login")
-async def login(request: Request):
-    # Example: in real apps, validate username/password here
-    user = "Alice"
-    request.session["authenticated"] = True
-    request.session["user"] = user
-    response = Response()
+async def login_post(request: Request, username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
 
-    session_cookie = request.cookies.get("session")
 
-    response.headers["HX-Refresh"] = "true"
-    return response
+    user = db.query(User).filter(User.username == username).first()
+    if user and user.verify_password(password):
+        request.session["authenticated"] = True
+        request.session["admin"] = user.admin
+        request.session["user"] = user.username
+        return RedirectResponse(url="/", status_code=303)
+
+    return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
+
 
 @app.get("/get-ws-token")
 def get_ws_token(request: Request):
@@ -144,6 +165,32 @@ def get_ws_token(request: Request):
 async def logout(request: Request):
     request.session.clear()
     return JSONResponse({"message": "Logged out"})
+
+
+@app.post("/users/create")
+async def create_user(
+    request: Request,
+    username: str = Form(...),
+    password: str = Form(...),
+    caller_id: int = Form(None),
+    db: Session = Depends(get_db)
+):
+    current_user = get_current_user(request, db)
+
+    # --- Admin-only check ---
+    if not current_user.admin:
+        raise HTTPException(status_code=403, detail="Only admins can create users")
+
+    # --- Create new user ---
+    new_user = User(username=username, caller_id=caller_id)
+    new_user.set_password(password)
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return {"message": f"User {username} created successfully", "user_id": new_user.id}
+
 
 # Root route: check if logged in
 @app.get("/", response_class=HTMLResponse)
@@ -174,7 +221,7 @@ async def read_root(request: Request, user: str = Depends(get_current_user)):
         {
             "request": request,
             "title": "Dashboard",
-            "user": user,
+            "user": user.username,
         },
     )
 

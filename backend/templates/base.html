@@ -34,9 +34,23 @@
     <!-- Header -->
  <div x-data="{ active: 'customers', loaded: { customers: false, events: false, calls: false } }">
     <header class="bg-white shadow sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto p-2 w-full flex items-center justify-between">
+        <div class="max-w-7xl mx-auto p-3 w-full flex items-center justify-between">
             <div class="text-xl font-semibold">Call Center</div>
             <nav class="flex space-x-4">
+
+<!-- User info + logout grouped, aligned left -->
+<div class="card d-flex flex-row align-items-center p-2 mb-0" style="background-color: #f8f9fa; max-width: 250px;">
+    <span>
+        {{ user }}
+    </span>
+
+<form method="get" action="/logout" class="mb-0 ms-2">
+    <button type="submit" class="btn-light">
+        Logout
+    </button>
+</form></div>
+
+
                 <!-- Customers -->
                 <button 
                     @click="
@@ -78,6 +92,8 @@
                     class="px-3 py-2 rounded hover:bg-gray-200">
                     Call Center
                 </button>
+
+
             </nav>
         </div>
     </header>

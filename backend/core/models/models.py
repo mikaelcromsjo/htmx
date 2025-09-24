@@ -12,6 +12,25 @@ from pydantic import BaseModel, field_validator
 from app.core.database import Base
 
 
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    admin = Column(Integer, default=0)  # 0 = normal user, 1 = admin
+    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True)
+    caller = relationship("Caller")
+
+    def verify_password(self, password: str):
+        return pwd_context.verify(password, self.password_hash)
+
+    def set_password(self, password: str):
+        self.password_hash = pwd_context.hash(password)
+
 
 
 # Py Models
@@ -97,3 +116,5 @@ class BaseMixin:
         values.update(getattr(cls, "__empty_overrides__", {}) or {})
         values.update(overrides)
         return cls(**values)
+
+
