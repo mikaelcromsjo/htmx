@@ -228,6 +228,7 @@ async def read_root(request: Request, user: str = Depends(get_current_user)):
             "request": request,
             "title": "Dashboard",
             "user": user.username,
+            "caller": user.caller.name,
         },
     )
 
