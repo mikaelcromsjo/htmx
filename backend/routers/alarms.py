@@ -6,12 +6,12 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from typing import List
 
-from app.core.database import get_db  # your session dependency
-from app.models.models import Customer, Event 
-from app.core.models.base import Base
+from core.database import get_db  # your session dependency
+from models.models import Customer, Event 
+from core.models.base import Base
 from fastapi.templating import Jinja2Templates
-from app.models.models import Alarm
-from app.templates import templates
+from models.models import Alarm
+from templates import templates
 
 
 

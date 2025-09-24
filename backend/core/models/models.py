@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pydantic import BaseModel, Field
 from pydantic import BaseModel, field_validator
 
-from app.core.database import Base
+from core.database import Base
 
 
 from passlib.context import CryptContext

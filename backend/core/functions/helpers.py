@@ -8,7 +8,7 @@ from typing import Any, Union
 
 from pydantic import BaseModel
 
-from app.templates import templates
+from templates import templates
 
 
 def populate(update_dict: dict, db_obj: Any, pyd_model: Type[BaseModel]) -> Any:

@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   app:
     build: .
@@ -5,11 +7,12 @@ services:
     ports:
       - "8010:8010"
     volumes:
-      - .:/app               # source code
-      - app_db:/dbdata       # database goes here
+      - ./backend:/app/backend
+      - ./scripts:/app/scripts
+      - app_db:/dbdata
     environment:
       - DATABASE_URL=sqlite:////dbdata/app.db
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8010 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8010 --reload
 
 volumes:
   app_db:

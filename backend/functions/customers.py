@@ -2,9 +2,9 @@
 
 from sqlalchemy.orm import Session, declarative_base
 from typing import List, Optional
-from app.models.models import Customer
+from models.models import Customer
 from sqlalchemy.orm import Session, joinedload
-from app.core.models.base import Base
+from core.models.base import Base
 from fastapi import Request
 from pydantic import BaseModel, Field
 

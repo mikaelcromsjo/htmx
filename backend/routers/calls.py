@@ -8,16 +8,16 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from app.core.database import get_db
-from app.templates import templates
+from core.database import get_db
+from templates import templates
 
 
-from app.models.models import Customer, Call, Event, EventCustomer, Caller
-from app.core.functions.helpers import render
-from app.functions.customers import get_selected_ids, get_customers, SelectedIDs
+from models.models import Customer, Call, Event, EventCustomer, Caller
+from core.functions.helpers import render
+from functions.customers import get_selected_ids, get_customers, SelectedIDs
 
-from app.data.constants import categories_map, organisations_map, personalities_map
-from app.core.auth import get_current_user
+from data.constants import categories_map, organisations_map, personalities_map
+from core.auth import get_current_user
 
 
 
@@ -59,9 +59,9 @@ def call_center_dashboard(
 # -----------------------------
 
 from sqlalchemy import desc
-from ..state import user_data, active_connections
+from state import user_data, active_connections
 
-from app.core.models.models import BaseMixin, Update, User
+from core.models.models import BaseMixin, Update, User
 
 
 
@@ -218,9 +218,9 @@ def call_details(
 # Update Customer Call Data
 # ---------------------------
 
-from app.models.models import Update
-from app.models.models import Call, CallUpdate
-from app.core.functions.helpers import populate
+from models.models import Update
+from models.models import Call, CallUpdate
+from core.functions.helpers import populate
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 

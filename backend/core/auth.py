@@ -4,9 +4,9 @@ from fastapi import FastAPI, Request, Depends, HTTPException
 from sqlalchemy.orm import relationship, Session
 from fastapi import FastAPI, Request, Form, Depends, HTTPException
 
-from app.core.models.models import User
-from app.core.models.models import BaseMixin, Update, User
-from app.core.database import get_db
+from core.models.models import User
+from core.models.models import BaseMixin, Update, User
+from core.database import get_db
 
 
 # --- Helper ---

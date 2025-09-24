@@ -10,6 +10,9 @@ Features:
 - One-page style app (HTMX returns fragments into a container)
 """
 
+
+
+
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -27,12 +30,12 @@ from sqlalchemy import text
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.core.models.base import Base
-from app.models.models import Alarm, Customer, Event
+from core.models.base import Base
+from models.models import Alarm, Customer, Event
 
-from app.core.database import engine
-from app.core.auth import get_current_user
-from app.core.database import get_db, init_admin_user
+from core.database import engine
+from core.auth import get_current_user
+from core.database import get_db, init_admin_user
 from sqlalchemy.orm import relationship, Session
 
 
@@ -45,7 +48,10 @@ from starlette.middleware.sessions import SessionMiddleware
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
-from app.core.models.models import BaseMixin, Update, User
+from core.models.models import BaseMixin, Update, User
+
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # points to /app/backend
 
 
 SESSION_SECRET = "super-secret-key"
@@ -103,17 +109,17 @@ def on_startup():
 
 
 # Static files (CSS, JS, images) will be served from /static
-app.mount("/static", StaticFiles(directory="app/core/static"), name="static")
+app.mount("/static", StaticFiles(directory="core/static"), name="static")
 
 # Jinja2 templates (HTML pages/fragments)
-from app.templates import templates
+from templates import templates
 
-from app.state import user_data, active_connections
+from state import user_data, active_connections
 
 # --- Routers ---
 # Routers should be defined in /routers/*.py and included here.
 # Each router file exposes a "router" object.
-from app.routers import customers, events, calls, alarms, callers
+from routers import customers, events, calls, alarms, callers
 
 app.include_router(customers.router, tags=["customers"])
 app.include_router(events.router, tags=["events"])

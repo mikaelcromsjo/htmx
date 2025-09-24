@@ -9,8 +9,8 @@ from datetime import datetime, timezone
 from pydantic import BaseModel, Field
 from pydantic import BaseModel, field_validator
 
-from app.core.database import Base
-from app.core.models.models import BaseMixin, Update
+from core.database import Base
+from core.models.models import BaseMixin, Update
 
 from typing import List, Optional, Dict, Any
 

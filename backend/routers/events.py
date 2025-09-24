@@ -10,19 +10,19 @@ from datetime import datetime
 
 
 from typing import List, Optional
-from app.core.models.base import Base
+from core.models.base import Base
 from pydantic import BaseModel
 from pydantic import BaseModel, Field
 
 from datetime import datetime
 
-from app.core.database import get_db   
-from app.templates import templates
-from app.core.database import engine
-from app.core.models.base import Base
-from app.models.models import Event, EventUpdate
-from app.models.models import Update
-from app.core.functions.helpers import populate
+from core.database import get_db   
+from templates import templates
+from core.database import engine
+from core.models.base import Base
+from models.models import Event, EventUpdate
+from models.models import Update
+from core.functions.helpers import populate
 
 router = APIRouter(prefix="/events", tags=["events"])
 

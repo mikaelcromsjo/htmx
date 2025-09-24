@@ -9,16 +9,16 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from typing import Any, Union, Optional, get_origin, get_args
 
-from app.core.models.base import Base
-from app.core.database import get_db
-from app.core.functions.helpers import render
-from app.templates import templates
-from app.data.constants import categories, organisations, personalities
-from app.data.constants import categories_map, organisations_map, personalities_map
-from app.models.models import Customer, CustomerUpdate, Caller
-from app.core.functions.helpers import populate, build_filters
+from core.models.base import Base
+from core.database import get_db
+from core.functions.helpers import render
+from templates import templates
+from data.constants import categories, organisations, personalities
+from data.constants import categories_map, organisations_map, personalities_map
+from models.models import Customer, CustomerUpdate, Caller
+from core.functions.helpers import populate, build_filters
 
-from app.models.models import Update
+from models.models import Update
 
 
 # -------------------------------------------------

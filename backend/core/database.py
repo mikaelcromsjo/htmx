@@ -2,10 +2,10 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from app.core.models.base import Base
+from core.models.base import Base
 import os
 from sqlalchemy.orm import relationship, Session
-from app.core.models.models import BaseMixin, Update, User
+from core.models.models import BaseMixin, Update, User
 
 
 

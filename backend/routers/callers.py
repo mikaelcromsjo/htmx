@@ -8,13 +8,13 @@ from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from app.core.database import get_db
-from app.templates import templates
+from core.database import get_db
+from templates import templates
 
 
-from app.models.models import Customer, Call, Event, Caller
-from app.core.functions.helpers import render
-from app.functions.customers import get_selected_ids, get_customers, SelectedIDs
+from models.models import Customer, Call, Event, Caller
+from core.functions.helpers import render
+from functions.customers import get_selected_ids, get_customers, SelectedIDs
 
 
 router = APIRouter(prefix="/calls", tags=["calls"])
