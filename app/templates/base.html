@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="/static/css/output.css">
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
 
-    <!-- TailwindCSS from CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/css/tailwind.css"></script>
 
 
     <!-- HTMX and Alpine.js from /static -->
@@ -35,7 +34,7 @@
     <!-- Header -->
  <div x-data="{ active: 'customers', loaded: { customers: false, events: false, calls: false } }">
     <header class="bg-white shadow sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto p-4 w-full flex items-center justify-between">
+        <div class="max-w-7xl mx-auto p-2 w-full flex items-center justify-between">
             <div class="text-xl font-semibold">Call Center</div>
             <nav class="flex space-x-4">
                 <!-- Customers -->
@@ -107,24 +106,34 @@
         </div>
     </main>
 </div>
-    <!-- Global Modal Container -->
-    <div x-show="modalOpen" x-transition
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-auto">
 
-        <div class="bg-white p-6 rounded shadow-xl w-[90%] max-h-[90vh] relative overflow-auto">
 
-            <!-- Close Button -->
-            <button @click="modalOpen = false" class="absolute top-2 right-2 text-gray-500 hover:text-black">
-                ✕
-            </button>
+<!-- Global Modal Container -->
+<div 
+    x-show="modalOpen" 
+    x-transition.opacity 
+    x-cloak
+    :class="modalOpen ? 'modal fade show d-block' : 'modal fade'" 
+    tabindex="-1" 
+    role="dialog"
+    @keydown.escape.window="modalOpen = false"
+    @click.self="modalOpen = false"
+    style="background-color: rgba(0,0,0,0.5);"
+>
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
 
-            <!-- HTMX swaps modal contents here -->
-            <div id="modal-container" class="overflow-auto"></div>
+      <!-- Close Button -->
+      <div class="modal-header">
+        <button type="button" class="btn-close" @click="modalOpen = false" aria-label="Close"></button>
+      </div>
 
-        </div>
+      <!-- HTMX swaps modal contents here -->
+      <div class="modal-body" id="modal-container" style="max-height: 90vh; overflow-y: auto;"></div>
+
     </div>
-
-
+  </div>
+</div>
 
     <script>
         if (/Mobi|Android/i.test(navigator.userAgent)) {
@@ -211,8 +220,8 @@
         document.body.addEventListener('htmx:afterRequest', showPopup);
     </script>
 
-    <script src="/_static/js/json-enc.js"></script>
-    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <script src="/static/js/json-enc.js"></script>
+    <script _src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
 
 
     <!-- Global Alpine Confirm Dialog -->
@@ -293,7 +302,7 @@
             ws.onopen = () => console.log("WebSocket connected!");
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                console.log("Recieved", data)
+ //               console.log("Recieved", data)
                 if (data.call) {
                     const fieldset = document.querySelector('#call-fields');
                     // Enable the fieldset itself
@@ -352,3 +361,5 @@
 });
 
 </script>
+
+<meta name="htmx-history-cache-size" content="0">
