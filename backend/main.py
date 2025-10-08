@@ -38,6 +38,8 @@ from core.auth import get_current_user
 from core.database import get_db, init_admin_user
 from sqlalchemy.orm import relationship, Session
 
+from core.lang import get_translator
+
 
 import logging
 from sqlalchemy import inspect
@@ -58,6 +60,7 @@ SESSION_SECRET = "super-secret-key"
 JWT_SECRET_KEY = "supersecret-jwt-key" # dublicated in calls.py TODO
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1
+SUPPORTED_LANGUAGES = ["sv", "en"]
 
 
 # Setup logging
@@ -169,6 +172,15 @@ def get_ws_token(request: Request):
 @app.get("/logout")
 @app.post("/logout")
 async def logout(request: Request):
+
+
+    lang_code = request.cookies.get("lang_code")
+    if not lang_code:
+        accept_language = request.headers.get("accept-language", "")
+        lang_code = get_best_language_match(accept_language, SUPPORTED_LANGUAGES)
+
+    templates.env.filters["t"] = get_translator(lang_code)
+
     request.session.clear()
     return templates.TemplateResponse(
         "login.html",
@@ -207,6 +219,13 @@ async def create_user(
 # Root route: check if logged in
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
+
+    lang_code = request.cookies.get("lang_code")
+    if not lang_code:
+        accept_language = request.headers.get("accept-language", "")
+        lang_code = get_best_language_match(accept_language, SUPPORTED_LANGUAGES)
+
+    templates.env.filters["t"] = get_translator(lang_code)
 
     user = request.session.get("user")  # optional, might be None
     if user:
@@ -251,6 +270,34 @@ def get_db():
         db.close()
 
 
+
+def get_best_language_match(accept_language: str, supported: list[str]) -> str:
+    if not accept_language:
+        return supported[0]  # default to first supported language
+
+    # Split and sort by quality factor (q=)
+    languages = accept_language.split(",")
+    parsed = []
+    for lang in languages:
+        parts = lang.strip().split(";")
+        code = parts[0].strip().split("-")[0]  # only use base language like "sv" from "sv-SE"
+        q = 1.0  # default quality
+        if len(parts) > 1 and parts[1].startswith("q="):
+            try:
+                q = float(parts[1][2:])
+            except ValueError:
+                pass
+        parsed.append((code, q))
+
+    # Sort by quality factor descending
+    parsed.sort(key=lambda x: x[1], reverse=True)
+
+    # Return first match from supported languages
+    for code, _ in parsed:
+        if code in supported:
+            return code
+
+    return supported[0]  # fallback
 
 
 

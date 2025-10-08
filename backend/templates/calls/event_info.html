@@ -5,36 +5,36 @@ Alpine.store("eventCustomer").status = {{ event_status | tojson }};
 </div>
 
 
-<div class="mb-2"><strong>Name:</strong> {{ event.name }}</div>
+<div class="mb-2"><strong>{{ "Name" | t }}:</strong> {{ event.name }}</div>
 
 {% if event.price is not none and event.price > 0 %}
-<div class="mb-2"><strong>Price:</strong> {{ event.price }} SEK</div>
+<div class="mb-2"><strong>{{ "Price" | t }}:</strong> {{ event.price }} SEK</div>
 {% endif %}
 
 {% if event.description %}
-<div class="mb-2"><strong>Description:</strong> {{ event.description }}</div>
+<div class="mb-2"><strong>{{ "Description" | t }}:</strong> {{ event.description }}</div>
 {% endif %}
 
-<div class="mb-2"><strong>Start Date:</strong> {{ event.start_date.strftime('%Y-%m-%d %H:%M') }}</div>
+<div class="mb-2"><strong>{{ "Start Date" | t }}:</strong> {{ event.start_date.strftime('%Y-%m-%d %H:%M') }}</div>
 
 {% if event.end_date %}
-<div class="mb-2"><strong>End Date:</strong> {{ event.end_date.strftime('%Y-%m-%d %H:%M') }}</div>
+<div class="mb-2"><strong>{{ "End Date" | t }}:</strong> {{ event.end_date.strftime('%Y-%m-%d %H:%M') }}</div>
 {% endif %}
 
-<div class="mb-2"><strong>Event Types:</strong>
+<div class="mb-2"><strong>{{ "Event Types" | t }}:</strong>
     {% set types = [] %}
-    {% if event.type_parties %}{% set _ = types.append('Parties') %}{% endif %}
-    {% if event.type_politics %}{% set _ = types.append('Politics') %}{% endif %}
-    {% if event.type_lectures %}{% set _ = types.append('Lectures') %}{% endif %}
-    {% if event.type_activism %}{% set _ = types.append('Activism') %}{% endif %}
+    {% if event.type_parties %}{% set _ = types.append('Fester') %}{% endif %}
+    {% if event.type_politics %}{% set _ = types.append('Politik') %}{% endif %}
+    {% if event.type_lectures %}{% set _ = types.append('Föreläsning') %}{% endif %}
+    {% if event.type_activism %}{% set _ = types.append('Aktivism') %}{% endif %}
     {{ types | join(', ') if types else 'None' }}
 </div>
 
-<div class="mb-2"><strong>Extras:</strong>
+<div class="mb-2"><strong>{{ "Extras" | t }}:</strong>
     {% set extras = [] %}
-    {% if event.extra_external %}{% set _ = extras.append('External') %}{% endif %}
-    {% if event.extra_non_political %}{% set _ = extras.append('Non-Political') %}{% endif %}
-    {% if event.extra_visilble_all %}{% set _ = extras.append('Visible to All') %}{% endif %}
-    {{ extras | join(', ') if extras else 'None' }}
+    {% if event.extra_external %}{% set _ = extras.append('Extern') %}{% endif %}
+    {% if event.extra_non_political %}{% set _ = extras.append('Opolitisk') %}{% endif %}
+    {% if event.extra_visilble_all %}{% set _ = extras.append('Synlig för alla') %}{% endif %}
+    {{ extras | join(', ') if extras else '' }}
 </div>
 

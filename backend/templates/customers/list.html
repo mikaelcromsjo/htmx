@@ -22,11 +22,11 @@
         <table class="table-auto w-full border">
             <thead>
                 <tr>
-                    <th class="px-2 py-1 border">ID</th>
-                    <th class="px-2 py-1 border">Name</th>
-                    <th class="px-2 py-1 border">Email</th>
-                    <th class="px-2 py-1 border">Command</th>
-                    <th class="px-2 py-1 border" x-show="showSelect">Select</th>
+                    <th class="px-2 py-1 border">{{ "ID" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Name" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Email" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Command" | t }}</th>
+                    <th class="px-2 py-1 border" x-show="showSelect">{{ "Select" | t }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,7 +50,7 @@
                             hx-swap="innerHTML"
                             @click="$store.modal.open = true"
                         >
-                            Edit
+                            {{ "Edit" | t }}
                         </button>                
                         <button 
                             hx-post="{{ url_for('delete_customer', customer_id=customer.id) }}"
@@ -60,7 +60,7 @@
                             hx-trigger="confirmed"
                             x-confirm="Are you sure you want to delete this customer?"
                         >
-                                                    Delete
+                                                    {{ "Delete" | t }}
                         </button>
                     </td>
 
@@ -81,21 +81,21 @@
                     hx-target="#modal-container"
                     @click="$store.modal.open = true"
                     class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
-                New Customer
+                {{ "New Customer" | t }}
             </button>
 
             <button hx-get="{{ url_for('customer_filter') }}"
                     hx-target="#modal-container"
                     @click="$store.modal.open = true"
                     class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
-                Filter
+                {{ "Filter" | t }}
             </button>
 
 
             <button @click="toggleSelect()"
                     class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                     
-                Toggle Select Column
+                {{ "Toggle Select Column" | t }}
             </button>
 
         <button
@@ -104,7 +104,7 @@
                 hx-ext="json-enc"
                 hx-target="#calls_content"
                 class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
-                Load Selected Customers
+                {{ "Load Selected Customers" | t }}
             </button>
 
         </div>

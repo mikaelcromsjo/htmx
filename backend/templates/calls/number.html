@@ -1,19 +1,19 @@
 {% extends "open_base.html" %}
 
-{% block title %}Call Customer{% endblock %}
+{% block title %}{{ "Call Customer" | t }}{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-center mt-5">
     <div class="card shadow" style="width: 400px;">
         <div class="card-body text-center">
-            <h3 class="card-title mb-4">Call Customer</h3>
+            <h3 class="card-title mb-4">{{ "Call Customer" | t }}</h3>
 
-            <p><strong>Name:</strong> <span id="name">...</span></p>
-            <p><strong>Number:</strong> <span id="number">...</span></p>
+            <p><strong>{{ "Name" | t }}:</strong> <span id="name">...</span></p>
+            <p><strong>{{ "Number" | t }}:</strong> <span id="number">...</span></p>
 
             <div class="d-flex justify-content-center gap-2 mt-3">
                 <a id="call_href" href="#">
-                    <button class="btn btn-primary" onclick="call()">Call</button>
+                    <button class="btn btn-primary" onclick="call()">{{ "Call" | t }}</button>
                 </a>
             </div>
         </div>

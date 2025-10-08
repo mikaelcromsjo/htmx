@@ -26,7 +26,6 @@ class Alarm(BaseMixin, Base):
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     event_id = Column(Integer, ForeignKey("events.id"), nullable=True)
     date = Column(DateTime, default=datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%dT%H:%M"))
-    timestamp = Column(DateTime, default=datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%dT%H:%M"))
     note = Column(String, nullable=True)
 
 
@@ -71,8 +70,7 @@ class Customer(BaseMixin, Base):
 
     tags = Column(JSON, default=[])
     extra = Column(JSON, default={})
-
-
+#    timestamp = Column(DateTime, default=datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%dT%H:%M"))
 
 
 class CustomerUpdate(BaseModel):

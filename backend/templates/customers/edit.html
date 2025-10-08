@@ -1,4 +1,4 @@
- <div x-init="$store.modal.title = 'Customer: {{ customer.first_name }} {{ customer.last_name }}'"></div> 
+ <div x-init="$store.modal.title = '{{ "Customer" | t }}: {{ customer.first_name }} {{ customer.last_name }}'"></div> 
 
 <form
     hx-post="{{ url_for('upsert_customer') }}"
@@ -17,26 +17,26 @@
     {% if customer.id %}
     <!-- ID -->
     <div class="mb-2 hidden">
-        <label class="block font-semibold">ID</label>
+        <label class="block font-semibold">{{ "ID" | t }}</label>
         <input type="text" name="id" value="{{ customer.id }}" class="border p-1 w-full"/>
     </div>
     {% endif %}
 
     <!-- First Name -->
     <div class="mb-2">
-        <label class="block font-semibold">First Name</label>
+        <label class="block font-semibold">{{ "First Name" | t }}</label>
         <input type="text" name="first_name" value="{{ customer.first_name or '' }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Last Name -->
     <div class="mb-2">
-        <label class="block font-semibold">Last Name</label>
+        <label class="block font-semibold">{{ "Last Name" | t }}</label>
         <input type="text" name="last_name" value="{{ customer.last_name or '' }}" class="border p-1 w-full"/>
     </div>
 
     <!-- User ID -->
     <div class="mb-2">
-        <label class="block font-semibold">User ID</label>
+        <label class="block font-semibold">{{ "User ID" | t }}</label>
         <input type="text" name="user_id" value="{{ customer.user_id or '' }}" class="border p-1 w-full"/>
     </div>
 
@@ -44,45 +44,45 @@
     <div class="mb-2">
         <label class="inline-flex items-center">
             <input type="checkbox" name="code_name" value="1" {% if customer.code_name %}checked{% endif %} class="mr-2"/>
-            Code Name
+            {{ "Code Name" | t }}
         </label>
     </div>
 
     <!-- Email -->
     <div class="mb-2">
-        <label class="block font-semibold">Email</label>
+        <label class="block font-semibold">{{ "Email" | t }}</label>
         <input type="email" name="email" value="{{ customer.email or '' }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Phone -->
     <div class="mb-2">
-        <label class="block font-semibold">Phone</label>
+        <label class="block font-semibold">{{ "Phone" | t }}</label>
         <input type="text" name="phone" value="{{ customer.phone or '' }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Location -->
     <div class="mb-2">
-        <label class="block font-semibold">Location</label>
+        <label class="block font-semibold">{{ "Location" | t }}</label>
         <input type="text" name="location" value="{{ customer.location or '' }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Contributes -->
     <div class="mb-2">
-        <label class="block font-semibold">Contributes</label>
+        <label class="block font-semibold">{{ "Contributes" | t }}</label>
         <select name="contributes" class="border p-1 w-full">
-            <option value="" {% if customer.contributes is none %}selected{% endif %}>Select...</option>
-            <option value="1" {% if customer.contributes == 1 %}selected{% endif %}>No contributions</option>
-            <option value="2" {% if customer.contributes == 2 %}selected{% endif %}>Contributes</option>
-            <option value="3" {% if customer.contributes == 3 %}selected{% endif %}>Silver</option>
-            <option value="4" {% if customer.contributes == 4 %}selected{% endif %}>Gold</option>
+            <option value="" {% if customer.contributes is none %}selected{% endif %}>{{ "Select..." | t }}</option>
+            <option value="1" {% if customer.contributes == 1 %}selected{% endif %}>{{ "No contributions" | t }}</option>
+            <option value="2" {% if customer.contributes == 2 %}selected{% endif %}>{{ "Contributes" | t }}</option>
+            <option value="3" {% if customer.contributes == 3 %}selected{% endif %}>{{ "Silver" | t }}</option>
+            <option value="4" {% if customer.contributes == 4 %}selected{% endif %}>{{ "Gold" | t }}</option>
         </select>
     </div>
 
     <!-- Caller -->
     <div class="mb-2">
-        <label class="block font-semibold">Caller</label>
+        <label class="block font-semibold">{{ "Caller" | t }}</label>
         <select name="caller_id" class="border p-1 w-full">
-            <option value="" {% if customer.caller is none %}selected{% endif %}>Select...</option>
+            <option value="" {% if customer.caller is none %}selected{% endif %}>{{ "Select..." | t }}</option>
             {% for caller in callers %}
               <option value="{{ caller.id }}" {% if customer.caller_id == caller.id %}selected{% endif %}>{{ caller.name }}</option>
             {% endfor %}
@@ -91,19 +91,19 @@
 
     <!-- Comment -->
     <div class="mb-2">
-        <label class="block font-semibold">Comment</label>
+        <label class="block font-semibold">{{ "Comment" | t }}</label>
         <textarea name="comment" class="border p-1 w-full">{{ customer.comment or '' }}</textarea>
     </div>
 
     <!-- Sub Caller -->
     <div class="mb-2">
-        <label class="block font-semibold">Sub Caller</label>
+        <label class="block font-semibold">{{ "Sub Caller" | t }}</label>
         <input type="text" name="sub_caller" value="{{ customer.sub_caller or '' }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Organisations -->
     <div class="mb-2">
-        <label class="block font-semibold">Organisations</label>
+        <label class="block font-semibold">{{ "Organisations" | t }}</label>
         <select name="organisations" multiple class="border p-1 w-full">
             {% for org in organisations %}
                 <option value="{{ org.id }}"
@@ -116,7 +116,7 @@
 
     <!-- Categories -->
     <div class="mb-2">
-        <label class="block font-semibold">Categories</label>
+        <label class="block font-semibold">{{ "Categories" | t }}</label>
         <select name="categories" multiple class="border p-1 w-full">
           {% for cid, cat in categories.items() %}
             <optgroup label="{{ cat.name }}">
@@ -132,7 +132,7 @@
 
 <!-- Personality Type -->
 <div class="mb-2">
-    <label class="block font-semibold">Personality Type</label>
+    <label class="block font-semibold">{{ "Personality Type" | t }}</label>
     <select name="personality_type" class="border p-1 w-full">
         <option value="" {% if customer.personality_type is none %}selected{% endif %}>Select...</option>
         {% for p in personalities %}
@@ -147,48 +147,48 @@
     <div class="mb-2">
         <label class="inline-flex items-center">
             <input type="checkbox" name="controlled" {% if customer.controlled %}checked{% endif %} class="mr-2"/>
-            Controlled
+            {{ "Controlled" | t }}
         </label>
     </div>
     <div class="mb-2">
         <label class="inline-flex items-center">
             <input type="checkbox" name="likes_parties" {% if customer.likes_parties %}checked{% endif %} class="mr-2"/>
-            Likes Parties
+            {{ "Likes Parties" | t }}
         </label>
     </div>
     <div class="mb-2">
         <label class="inline-flex items-center">
             <input type="checkbox" name="likes_politics" {% if customer.likes_politics %}checked{% endif %} class="mr-2"/>
-            Likes Politics
+            {{ "Likes Politics" | t }}
         </label>
     </div>
     <div class="mb-2">
         <label class="inline-flex items-center">
             <input type="checkbox" name="likes_lectures" {% if customer.likes_lectures %}checked{% endif %} class="mr-2"/>
-            Likes Lectures
+            {{ "Likes Lectures" | t }}
         </label>
     </div>
     <div class="mb-2">
         <label class="inline-flex items-center">
             <input type="checkbox" name="likes_activism" {% if customer.likes_activism %}checked{% endif %} class="mr-2"/>
-            Likes Activism
+            {{ "Likes Activism" | t }}
         </label>
     </div>
 
     <!-- Tags -->
     <div class="mb-2">
-        <label class="block font-semibold">Tags (comma separated)</label>
+        <label class="block font-semibold">{{ "Tags (comma separated)" | t }}</label>
         <input type="text" name="tags" value="{{ customer.tags | default('') }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Extra JSON -->
     <div class="mb-2">
-        <label class="block font-semibold">Extra (JSON)</label>
+        <label class="block font-semibold">{{ "Extra (JSON)" | t }}</label>
         <textarea name="extra" class="border p-1 w-full">{{ customer.extra | default('{}') }}</textarea>
     </div>
 
     <div class="flex justify-end mt-4">
-        <button @click="$store.modal.open = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
+        <button @click="$store.modal.open = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>
     </div>
 
 </form>

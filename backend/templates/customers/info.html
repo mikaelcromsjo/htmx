@@ -1,39 +1,39 @@
 {% if customer.first_name %}
-<div class="mb-1"><strong>Name:</strong> {{ customer.first_name }} {{ customer.last_name }}</div>
+<div class="mb-1"><strong>{{ "Name" | t }}:</strong> {{ customer.first_name }} {{ customer.last_name }}</div>
 {% endif %}
 
 
 {% if customer.user_id %}
-<div class="mb-1"><strong>User ID:</strong> {{ customer.user_id }}</div>
+<div class="mb-1"><strong>{{ "User ID" | t }}:</strong> {{ customer.user_id }}</div>
 {% endif %}
 
 {% if customer.email %}
-<div class="mb-1"><strong>Email:</strong> {{ customer.email }}</div>
+<div class="mb-1"><strong>{{ "Email" | t }}:</strong> {{ customer.email }}</div>
 {% endif %}
 
 {% if customer.comment %}
-<div class="mb-1"><strong>Comment:</strong> {{ customer.comment }}</div>
+<div class="mb-1"><strong>{{ "Comment" | t }}:</strong> {{ customer.comment }}</div>
 {% endif %}
 
 {% if customer.phone %}
-<div class="mb-1"><strong>Phone:</strong> {{ customer.phone }}</div>
+<div class="mb-1"><strong>{{ "Phone" | t }}:</strong> {{ customer.phone }}</div>
 {% endif %}
 
 {% if customer.location %}
-<div class="mb-1"><strong>Location:</strong> {{ customer.location }}</div>
+<div class="mb-1"><strong>{{ "Location" | t }}:</strong> {{ customer.location }}</div>
 {% endif %}
 
 {% if customer.caller is not none %}
-<div class="mb-1"><strong>Caller:</strong> {{ customer.caller.name }}</div>
+<div class="mb-1"><strong>{{ "Caller" | t }}:</strong> {{ customer.caller.name }}</div>
 {% endif %}
 
 {% if customer.sub_caller %}
-<div class="mb-1"><strong>Sub Caller:</strong> {{ customer.sub_caller }}</div>
+<div class="mb-1"><strong>{{ "Sub Caller" | t }}:</strong> {{ customer.sub_caller }}</div>
 {% endif %}
 
 {% if customer.personality_type is not none %}
   <div class="mb-1">
-    <strong>Personality Type:</strong>
+    <strong>{{ "Personality Type" | t }}:</strong>
     {{ personalities_map[customer.personality_type].name }}
   </div>
 {% endif %}
@@ -41,7 +41,7 @@
 
 {% if customer.categories %}
   <div class="mb-1">
-    <strong>Categories:</strong>
+    <strong>{{ "Categories" | t }}:</strong>
     {# Build a list of item names using the lookup #}
     {% set item_names = [] %}
     {% for iid in customer.categories %}
@@ -56,7 +56,7 @@
 {% if customer.organisations %}
 
   <div class="mb-1">
-    <strong>Organisations:</strong>
+    <strong>{{ "Organisations" | t }}:</strong>
 {% set org_names = [] %}
 {% for oid in customer.organisations %}
   {% set int_oid = oid | int %}
@@ -69,6 +69,6 @@
 {% endif %}
 
 {% if customer.tags %}
-<div class="mb-1"><strong>Tags:</strong> {{ customer.tags }}</div>
+<div class="mb-1"><strong>{{ "Tags" | t }}:</strong> {{ customer.tags }}</div>
 {% endif %}
 

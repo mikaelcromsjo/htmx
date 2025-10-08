@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Dashboard{% endblock %}</title>
+    <title>{% block title %}{{ "Dashboard" | t }}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="/static/css/output.css">
@@ -35,7 +35,7 @@
  <div>
     <header class="bg-white shadow sticky top-0 z-10">
         <div class="max-w-7xl mx-auto p-3 w-full flex items-center justify-between">
-            <div class="text-xl font-semibold">Call Center</div>
+            <div class="text-xl font-semibold">{{ "Call Center" | t }}</div>
             <nav class="flex space-x-4">
             </nav>
         </div>

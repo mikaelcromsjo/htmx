@@ -12,66 +12,66 @@
     {% if event.id %}
     <!-- ID -->
     <div class="mb-2 hidden">
-        <label class="block font-semibold">ID</label>
+        <label class="block font-semibold">{{ "ID" | t }}</label>
         <input type="text" name="id" value="{{ event.id }}" class="border p-1 w-full"/>
     </div>
     {% endif %}
 
     <!-- Name -->
     <div class="mb-2">
-        <label class="block">Name</label>
+        <label class="block">{{ "Name" | t }}</label>
         <input type="text" name="name" data-save="true" value="{{ event.name }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Price -->
     <div class="mb-2">
-        <label class="block">Price</label>
+        <label class="block">{{ "Price" | t }}</label>
         <input type="number" name="price" data-save="true" value="{{ event.price }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Start Date -->
     <div class="mb-2">
-        <label class="block">Start Date</label>
+        <label class="block">{{ "Start Date" | t }}</label>
         <input type="datetime-local" name="start_date" data-save="true" value="{{ event.start_date }}" class="border p-1 w-full"/>
     </div>
 
     <!-- End Date -->
     <div class="mb-2">
-        <label class="block">End Date</label>
+        <label class="block">{{ "End Date" | t }}</label>
         <input type="datetime-local" name="end_date" data-save="true" value="{{ event.end_date }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Description -->
     <div class="mb-2">
-        <label class="block">Description</label>
+        <label class="block">{{ "Description" | t }}</label>
         <textarea name="description" data-save="true" class="border p-1 w-full">{{ event.description }}</textarea>
     </div>
 
     <!-- Event Types -->
     <fieldset class="mb-2 border p-2">
-        <legend class="font-bold">Event Types</legend>
-        <label><input type="checkbox" name="type_parties" {% if event.type_parties %}checked{% endif %}/> Parties</label><br/>
-        <label><input type="checkbox" name="type_politics" {% if event.type_politics %}checked{% endif %}/> Politics</label><br/>
-        <label><input type="checkbox" name="type_lectures" {% if event.type_lectures %}checked{% endif %}/> Lectures</label><br/>
-        <label><input type="checkbox" name="type_activism" {% if event.type_activism %}checked{% endif %}/> Activism</label>
+        <legend class="font-bold">{{ "Event Types" | t }}</legend>
+        <label><input type="checkbox" name="type_parties" {% if event.type_parties %}checked{% endif %}/> {{ "Parties" | t }}</label><br/>
+        <label><input type="checkbox" name="type_politics" {% if event.type_politics %}checked{% endif %}/> {{ "Politics" | t }}</label><br/>
+        <label><input type="checkbox" name="type_lectures" {% if event.type_lectures %}checked{% endif %}/> {{ "Lectures" | t }}</label><br/>
+        <label><input type="checkbox" name="type_activism" {% if event.type_activism %}checked{% endif %}/> {{ "Activism" | t }}</label>
     </fieldset>
 
     <!-- Extra Options -->
     <fieldset class="mb-2 border p-2">
-        <legend class="font-bold">Extra Options</legend>
-        <label><input type="checkbox" name="extra_external" {% if event.extra_external %}checked{% endif %}/> External</label><br/>
-        <label><input type="checkbox" name="extra_non_political" {% if event.extra_non_political %}checked{% endif %}/> Non-Political</label><br/>
-        <label><input type="checkbox" name="extra_visilble_all" {% if event.extra_visilble_all %}checked{% endif %}/> Visible to All</label>
+        <legend class="font-bold">{{ "Extra Options" | t }}</legend>
+        <label><input type="checkbox" name="extra_external" {% if event.extra_external %}checked{% endif %}/> {{ "External" | t }}</label><br/>
+        <label><input type="checkbox" name="extra_non_political" {% if event.extra_non_political %}checked{% endif %}/> {{ "Non-Political" | t }}</label><br/>
+        <label><input type="checkbox" name="extra_visilble_all" {% if event.extra_visilble_all %}checked{% endif %}/> {{ "Visible to All" | t }}</label>
     </fieldset>
 
     <!-- Extra JSON -->
     <div class="mb-2">
-        <label class="block">Extra JSON</label>
+        <label class="block">{{ "Extra JSON" | t }}</label>
         <textarea name="extra" data-save="true" class="border p-1 w-full">{{ event.extra|tojson }}</textarea>
     </div>
 
     <!-- Submit -->
     <div class="flex justify-end mt-4">
-        <button @click="$store.modal.open = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">Save</button>
+        <button @click="$store.modal.open = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>
     </div>
 </form>
