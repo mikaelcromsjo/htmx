@@ -11,7 +11,7 @@ Features:
 """
 
 
-
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
@@ -51,6 +51,8 @@ from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
 from core.models.models import BaseMixin, Update, User
+from threading import Lock
+
 
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # points to /app/backend
@@ -60,17 +62,60 @@ SESSION_SECRET = "super-secret-key"
 JWT_SECRET_KEY = "supersecret-jwt-key" # dublicated in calls.py TODO
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1
-SUPPORTED_LANGUAGES = ["sv", "en"]
+SUPPORTED_LANGUAGES = ["sv"]
 
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+_translators_cache = {}
+_cache_lock = Lock()
+
+def get_translator_cached(lang_code: str):
+    """Return a translator for lang_code, caching it globally."""
+    # Use lock for thread safety
+    with _cache_lock:
+        if lang_code not in _translators_cache:
+            _translators_cache[lang_code] = get_translator(lang_code)
+        return _translators_cache[lang_code]
+    
+
 # --- FastAPI app setup ---
 app = FastAPI(title="HTMX + Alpine.js Prototype", debug=True)
-app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
 
+
+class LanguageMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http":
+            from starlette.requests import Request
+            request = Request(scope, receive=receive)
+
+            # Get lang_code from session or recreate it
+            lang_code = request.session.get("lang_code")
+            if not lang_code:
+                accept_language = request.headers.get("accept-language", "")
+                lang_code = get_best_language_match(accept_language, SUPPORTED_LANGUAGES)
+                request.session["lang_code"] = lang_code
+
+            # Load translator from cache (thread-safe)
+            templates.env.filters["t"] = get_translator_cached(lang_code)
+
+        await self.app(scope, receive, send)
+
+# Add the middleware AFTER SessionMiddleware
+app.add_middleware(LanguageMiddleware)
+
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=SESSION_SECRET,
+    session_cookie="session",
+    https_only=True,
+)
 
 # Function to list tables
 def list_tables():
@@ -85,6 +130,9 @@ def list_models():
 # Startup event
 @app.on_event("startup")
 def on_startup():
+
+    for lang in SUPPORTED_LANGUAGES:
+        _translators_cache[lang] = get_translator(lang)
 
     # Check DB connection
     try:
@@ -238,6 +286,10 @@ async def root(request: Request):
                 "request": request,
             },
         )
+
+
+
+
 
 
 # --- Root route ---

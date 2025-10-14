@@ -6,3 +6,7 @@ docker compose up -d
 open ssh
 ssh -i C:\Users\mikae\Documents\Project\AIBot\key root@65.21.244.96
 Ssmislicks00?
+
+
+Rebuild tailwind
+npx tailwindcss -i ./backend/core/static/css/input.css -o ./backend/core/static/tailwind.css --minify --verbose

@@ -1,7 +1,19 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
+
+
+
 module.exports = {
-  content: ["./app/templates/**/*.html"],
+  content: [
+    "./backend/templates/**/*.html",
+    "./backend/core/templates/**/*.html",
+    "./backend/**/*.js",
+  ],
+  safelist: [
+    'bg-red-600',
+    'bg-red-700',
+    'text-white',
+  ],
   theme: {
     extend: {
       colors: {
