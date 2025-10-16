@@ -118,14 +118,15 @@ async def upsert_customer(
             del data_dict[key]  # optionally clean up the flat key
             
     # --- Temporarily remove relationships before populate ---
-    caller_id = data_dict.pop("caller_id", None)  # remove 'caller' from dict
+    caller_id = int (data_dict.pop("caller_id", None))  # remove 'caller' from dict
 
     # Populate DB model dynamically (everything except relationships)
     data_record = populate(data_dict, data_record, CustomerUpdate)
-
+    print ("caller_id", caller_id)
     # --- Handle relationships AFTER populate ---
     if isinstance(caller_id, int):
         caller_instance = db.get(Caller, int(caller_id))
+        print ("instance", caller_instance)
         if not caller_instance:
             raise HTTPException(status_code=404, detail="Caller not found")
         data_record.caller = caller_instance  # assign the actual SQLAlchemy object

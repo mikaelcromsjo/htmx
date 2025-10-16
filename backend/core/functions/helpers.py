@@ -120,182 +120,207 @@ from sqlalchemy.dialects.postgresql import JSON, JSONB
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.types import JSON as SQLAlchemyJSON
 
+from sqlalchemy import or_, and_, inspect, Boolean, Integer, String, Date, DateTime
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.types import JSON as SQLAlchemyJSON
+
+from sqlalchemy import or_, and_, inspect, Boolean, Integer, String, Date, DateTime
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.types import JSON as SQLAlchemyJSON
+
 def build_filters(data: dict, model):
     """
     Build SQLAlchemy filters from form data.
-    Handles:
-        - Scalar integers (caller, personality_type, contributes)
-        - Booleans
-        - Text fields
-        - Multi-select / JSON / text array fields
-        - Dates with start/end
-        - Filter types: exact, has, has-all, has-not, like, true, false
-    Prints exact SQLAlchemy filters.
+
+    Features:
+        - Booleans (direct column values)
+        - Strings
+        - Integers
+        - Arrays
+        - JSON / JSONB
+        - Dates (with optional start/end ranges)
+        - Filter types: exact, has, has-all, has-not, like
+        - Extensive debug logging
     """
     filters = []
     mapper = inspect(model)
     column_types = {col.name: col.type for col in mapper.columns}
 
+    print("=== Starting build_filters ===")
 
     for field, value in data.items():
-        # Skip None or empty string
-        if value in (None, ""):
+        if value in (None, "", []):
+            print(f"Skipping empty field: {field}")
             continue
 
-        print("data", field, value)
-
-
-        # BOOLEAN *_type
-        if field.endswith("_type") and field[:-5] in column_types:
-            print("bool")
-
-            base_field = field[:-5]
-            col = getattr(model, base_field)
-            col_type = column_types.get(base_field)
-            if isinstance(col_type, Boolean):
-                val_str = str(value).lower()
-                if val_str == "true":
-                    f = col == True
-                elif val_str == "false":
-                    f = col == False
-                else:
-                    continue
-                print(f"Adding filter: {f}")
-                filters.append(f)
-                continue
-
-        # DATE ranges
-        base_field = field
-        is_start = False
-        is_end = False
-        if field.endswith("-start"):
-            base_field = field[:-6]
-            is_start = True
-        elif field.endswith("-end"):
-            base_field = field[:-4]
-            is_end = True
-
-        col = getattr(model, base_field, None)
-        if not col:
+        col = getattr(model, field, None)
+        if col is None:
+            print(f"Skipping unknown column: {field}")
             continue
 
-        col_type = column_types.get(base_field)
+        col_type = column_types.get(field)
+        print(f"\nProcessing field: {field}")
+        print(f"  Column type: {col_type}")
+        print(f"  Raw value: {value}")
 
-       # 👇 Debug line here
-        print(f"DEBUG field={base_field}, type={type(col_type)}, col_type={col_type}")
-
+        # Determine filter type for this field
         filter_type = data.get(f"{field}_type", "like")
+        print(f"  Filter type: {filter_type}")
 
-        # DATE
+        # BOOLEAN handling (direct column value)
+        if isinstance(col_type, Boolean):
+            # Convert string "true"/"false" to Python boolean
+            if isinstance(value, str):
+                val_str = value.lower()
+                if val_str == "true":
+                    val = True
+                elif val_str == "false":
+                    val = False
+                else:
+                    print(f"  Skipping invalid Boolean value for {field}: {value}")
+                    continue
+            else:
+                val = bool(value)
+
+            # If filtering for False, include NULL as False
+            if val is False:
+                f = or_(col == False, col.is_(None))
+                print(f"  Adding Boolean filter (False or NULL): {field} = False/NULL")
+            else:
+                f = col == val
+                print(f"  Adding Boolean filter: {field} = True")
+
+            filters.append(f)
+            continue
+
+        # DATE / DATETIME
         if isinstance(col_type, (Date, DateTime)):
-            print("date")
-            if is_start:
-                f = col >= value
-            elif is_end:
-                f = col <= value
+            print(f"  Handling date/datetime")
+            if isinstance(value, dict):
+                if "start" in value:
+                    f = col >= value["start"]
+                    print(f"  Adding start date filter: {f}")
+                    filters.append(f)
+                if "end" in value:
+                    f = col <= value["end"]
+                    print(f"  Adding end date filter: {f}")
+                    filters.append(f)
             else:
                 f = col == value
-            print(f"Adding filter: {f}")
-            filters.append(f)
+                print(f"  Adding exact date filter: {f}")
+                filters.append(f)
             continue
 
-        # INTEGER SCALAR (caller, personality_type, contributes)
+        # INTEGER
         if isinstance(col_type, Integer):
-            print("integer")
+            # Only process if the value is actually integer-like
             vals = value if isinstance(value, list) else [value]
-            # filter out empty strings / None
-            vals = [v for v in vals if v not in (None, "", [])]
-            if not vals:
-                continue
-            try:
-                vals = [int(v) for v in vals]
-            except ValueError:
+            
+            # Skip values that clearly aren’t numbers
+            cleaned_vals = []
+            for v in vals:
+                if v in (None, "", []):
+                    continue
+                try:
+                    cleaned_vals.append(int(v))
+                except (ValueError, TypeError):
+                    print(f"  Skipping non-integer value for {field}: {v}")
+                    continue
+
+            if not cleaned_vals:
+                print(f"  No valid integers to filter for field: {field}")
                 continue
 
-            if filter_type in ("exact", "has"):
-                if len(vals) == 1 and filter_type == "exact":
-                    f = col == vals[0]
-                else:
-                    f = col.in_(vals)   # <- for 'has', use in_()
+            if filter_type == "exact":
+                f = col == cleaned_vals[0] if len(cleaned_vals) == 1 else col.in_(cleaned_vals)
+            elif filter_type in ("has", "has-all"):
+                f = col.in_(cleaned_vals)
             elif filter_type == "has-not":
-                f = ~col.in_(vals)
+                f = ~col.in_(cleaned_vals)
+            else:
+                print(f"  Unknown integer filter type: {filter_type}")
+                continue
 
-            print(f"Adding filter: {f}")
+            print(f"  Adding integer filter: {f}")
             filters.append(f)
             continue
 
+        # STRING
         if isinstance(col_type, String):
-            print ("string")
             vals = value if isinstance(value, list) else [value]
-            # filter out empty / None
             vals = [str(v) for v in vals if v not in (None, "")]
             if not vals:
+                print(f"  Skipping string field (empty after cleaning): {field}")
                 continue
 
-            if filter_type == "has":
+            if filter_type == "exact":
+                f = or_(*[col == v for v in vals])
+            elif filter_type == "has":
                 f = or_(*[col.contains(v) for v in vals])
             elif filter_type == "has-all":
                 f = and_(*[col.contains(v) for v in vals])
             elif filter_type == "has-not":
                 f = and_(*[~col.contains(v) for v in vals])
-            elif filter_type == "exact":
-                f = or_(*[col == v for v in vals])
             elif filter_type == "like":
-                f = col.ilike(f"%{vals[0]}%")  # only first for single value
+                f = col.ilike(f"%{vals[0]}%")
+            else:
+                print(f"  Unknown string filter type: {filter_type}")
+                continue
 
-            if f is not None:
-                print(f"Adding filter: field={field}, type={filter_type}, value={vals}, filter={f}")
-                filters.append(f)
+            print(f"  Adding string filter: {f}")
+            filters.append(f)
+            continue
 
+        # ARRAY
         if isinstance(col_type, ARRAY):
-            print("array")
             vals = value if isinstance(value, list) else [value]
             vals = [v for v in vals if v not in (None, "", [])]
             if not vals:
+                print(f"  Skipping array field (empty after cleaning): {field}")
                 continue
 
             if filter_type == "has":
-                # Matches if *any* element is present
                 f = or_(*[col.any(v) for v in vals])
             elif filter_type == "has-all":
-                # All must be present
                 f = and_(*[col.any(v) for v in vals])
             elif filter_type == "has-not":
                 f = and_(*[~col.any(v) for v in vals])
             elif filter_type == "exact":
-                # Whole array equality
                 f = col == vals
             else:
+                print(f"  Unknown array filter type: {filter_type}")
                 continue
 
-            print(f"Adding filter: field={field}, type={filter_type}, value={vals}, filter={f}")
+            print(f"  Adding array filter: {f}")
             filters.append(f)
             continue
 
-        # JSON / JSONB fields
+        # JSON / JSONB
         if isinstance(col_type, (SQLAlchemyJSON, JSONB)):
-            print("json")
             vals = value if isinstance(value, list) else [value]
             vals = [v for v in vals if v not in (None, "", [])]
             if not vals:
+                print(f"  Skipping JSON field (empty after cleaning): {field}")
                 continue
 
             if filter_type == "has":
-                # any value present
                 f = or_(*[col.contains([v]) for v in vals])
             elif filter_type == "has-all":
-                # must contain all
                 f = col.contains(vals)
             elif filter_type == "has-not":
                 f = and_(*[~col.contains([v]) for v in vals])
             elif filter_type == "exact":
                 f = col == vals
             else:
+                print(f"  Unknown JSON filter type: {filter_type}")
                 continue
 
-            print(f"Adding filter: field={field}, type={filter_type}, value={vals}, filter={f}")
+            print(f"  Adding JSON filter: {f}")
             filters.append(f)
             continue
 
-                
+        print(f"  Skipped field (no matching type handler): {field}")
+
+    print("=== Finished build_filters ===")
+    print(f"Total filters added: {len(filters)}")
     return filters

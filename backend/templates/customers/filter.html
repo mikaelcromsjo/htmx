@@ -42,7 +42,7 @@
     <!-- Code Name (Boolean) -->
     <div>
         <label class="block font-semibold">{{ "Code Name" | t }}</label>
-        <select name="code_name_type" class="border p-1 mt-1">
+        <select name="code_name" class="border p-1 mt-1">
             <option value="">{{ "Any" | t }}</option>
             <option value="true" {% if filters.get('code_name') %}selected{% endif %}>{{ "True" | t }}</option>
             <option value="false" {% if filters.get('code_name') is not none and not filters.get('code_name') %}selected{% endif %}>{{ "False" | t }}</option>
@@ -55,7 +55,7 @@
         <input type="email" name="email" value="{{ filters.get('email','') }}" class="border p-1 w-full"/>
         <select name="email_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
         </select>
     </div>
 
@@ -201,7 +201,7 @@
     ] %}
     <div>
         <label class="block font-semibold">{{ label }}</label>
-        <select name="{{ field }}_type" class="border p-1 mt-1">
+        <select name="{{ field }}" class="border p-1 mt-1">
             <option value="">Any</option>
             <option value="true" {% if filters.get(field) %}selected{% endif %}>{{ "True" | t }}</option>
             <option value="false" {% if filters.get(field) is not none and not filters.get(field) %}selected{% endif %}>{{ "False" | t }}</option>

@@ -41,7 +41,7 @@ class Customer(BaseMixin, Base):
     user_id = Column(String, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
-    code_name = Column(Integer, nullable=True)
+    code_name = Column(Boolean, nullable=True)
     email = Column(String, nullable=True)
     phone = Column(String, nullable=True)
     description_phone = Column(String, nullable=True)
