@@ -118,7 +118,9 @@ async def upsert_customer(
             del data_dict[key]  # optionally clean up the flat key
             
     # --- Temporarily remove relationships before populate ---
-    caller_id = int (data_dict.pop("caller_id", None))  # remove 'caller' from dict
+    caller_id = (data_dict.pop("caller_id", None))  # remove 'caller' from dict
+    if caller_id:
+        caller_id = int(caller_id)
 
     # Populate DB model dynamically (everything except relationships)
     data_record = populate(data_dict, data_record, CustomerUpdate)

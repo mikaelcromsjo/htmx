@@ -132,6 +132,7 @@
         <button x-ref="customerContent" hx-get="{{ url_for('customers_list') }}" hx-target="#customer_content" hx-push-url="false"></button>
         <button x-ref="eventContent" hx-get="{{ url_for('events_list') }}" hx-target="#event_content" hx-push-url="false"></button>
         <button x-ref="callsContent" hx-get="{{ url_for('calls_dashboard') }}" hx-target="#calls_content" hx-push-url="false"></button>
+        <button x-ref="invoiceContent" hx-get="{{ url_for('invoices_list') }}" hx-target="#invoice_content" hx-push-url="false"></button>
     </div>
     <!-- Main content -->
     <main class="max-w-7xl mx-auto p-4 w-full">
@@ -152,7 +153,6 @@
         <div id="calls_content" x-show="active === 'calls'" class="bg-white rounded shadow p-4">
         </div>
 
-        <!-- Calls -->
         <div id="invoice_content" x-show="active === 'invoice'" class="bg-white rounded shadow p-4">
         </div>
 

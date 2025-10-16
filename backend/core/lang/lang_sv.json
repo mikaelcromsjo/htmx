@@ -105,5 +105,13 @@
   "Address Line 2": "Address Line 2",
   "Postal Code": "Postal Code",
   "Country": "Country",
-  "Invoices": "Invoices"
+  "Invoices": "Invoices",
+  "New invoice": "New invoice",
+  "Number": "Number",
+  "Note": "Note",
+  "Date": "Date",
+  "Qty": "Qty",
+  "Total": "Total",
+  "Subtotal": "Subtotal",
+  "Add Row": "Add Row"
 }

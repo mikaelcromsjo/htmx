@@ -144,6 +144,30 @@ class EventUpdate(BaseModel):
 
 
 
+# -----------------------------
+# SQLAlchemy ORM Invoice model
+# -----------------------------
+class Invoice(BaseMixin, Base):
+    __tablename__ = "invoices"
+
+    id = Column(Integer, primary_key=True, index=True)
+    number = Column(Integer, nullable=True)
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
+    # Relationship to customer
+    customer = relationship("Customer")
+
+    date = Column(DateTime, nullable=True)
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)    
+
+class InvoiceUpdate(BaseModel):
+    number: Optional[int] = None
+    extra: Optional[Dict[str, Any]] = None
+    customer_id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
 
 
 # -----------------------------

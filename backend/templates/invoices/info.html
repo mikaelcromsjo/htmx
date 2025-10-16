@@ -1,0 +1,28 @@
+    {% if invoice.id %}
+    <div><strong>{{ "ID" | t }}:</strong> {{ invoice.id }}</div>
+    {% endif %}
+
+    <div><strong>{{ "Number" | t }}:</strong> {{ invoice.number }}</div>
+
+    <div><strong>{{ "Customer" | t }}:</strong> 
+        {{ invoice.customer.first_name if invoice.customer else "-" }}
+    </div>
+
+    <div><strong>{{ "Date" | t }}:</strong> {{ invoice.date.strftime('%Y-%m-%d %H:%M') if invoice.date else "-" }}</div>
+
+    {% if invoice.extra.note %}
+    <div><strong>{{ "Note" | t }}:</strong> {{ invoice.extra.note }}</div>
+    {% endif %}
+
+
+{% set rows = invoice.extra.row if invoice.extra and invoice.extra.row else {} %}
+{% set ns = namespace(subtotal=0) %}
+
+{% for key, row in rows.items() %}
+    {% set price = row['price'] | float(0) %}
+    {% set qty = row['qty'] | float(0) %}
+    {% set ns.subtotal = ns.subtotal + (price * qty) %}
+{% endfor %}
+
+<div><strong>{{ "Subtotal" | t }}:</strong> {{ "%.2f"|format(ns.subtotal) }}</div>
+<div><strong>{{ "Total" | t }}:</strong> {{ "%.2f"|format(ns.subtotal) }}</div>

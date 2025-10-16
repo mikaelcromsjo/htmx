@@ -1,0 +1,147 @@
+ <div x-init="$store.modal.title = 'Invoice: {{ invoice.name }}'"></div> 
+ 
+<form 
+    hx-post="{{ url_for('upsert_invoice') }}"
+    hx-target="#invoice-container" 
+    hx-ext="json-enc"
+    hx-swap="innerHTML"
+    hx-on="htmx:afterRequest: $store.modal.open = false"
+    >
+
+
+    {% if invoice.id %}
+    <!-- ID -->
+    <div class="mb-2 hidden">
+        <label class="block font-semibold">{{ "ID" | t }}</label>
+        <input type="text" name="id" value="{{ invoice.id }}" class="border p-1 w-full"/>
+    </div>
+    {% endif %}
+
+    <!-- Number -->
+    <div class="mb-2">
+        <label class="block">{{ "Number" | t }}</label>
+        <input disabled type="text" name="number" data-save="true" value="{{ invoice.number }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Customer -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ "Customer" | t }}</label>
+        <select name="customer_id" class="border p-1 w-full">
+            <option value="" {% if invoice.customer is none %}selected{% endif %}>{{ "Select..." | t }}</option>
+            {% for customer in customers %}
+              <option value="{{ customer.id }}" {% if invoice.customer_id == customer.id %}selected{% endif %}>{{ customer.first_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+
+    <!-- Date -->
+    <div class="mb-2">
+        <label class="block">{{ "Date" | t }}</label>
+        <input type="datetime-local" name="date" data-save="true" value="{{ invoice.date }}" class="border p-1 w-full"/>
+    </div>
+
+
+    <!-- Extra -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'Note' | t }}</label>
+        <input type="text" name="extra.note" value="{{ invoice.extra.note or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <div>
+    <table id="invoiceTable" class="w-full min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+        <tr>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            {{ "Description" | t }}
+        </th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            {{ "Price" | t }}
+        </th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            {{ "Qty" | t }}
+        </th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            {{ "Total" | t }}
+        </th>
+        </tr>
+    </thead>
+    <tbody id="invoiceBody">
+        {# --- Load existing rows from Jinja context --- #}
+        {% set rows = invoice.extra.row if invoice.extra and invoice.extra.row else {} %}
+        {% for key, row in rows.items() %}
+        <tr class="hover:bg-gray-50">
+            <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="text" name="extra.row.{{ key }}.description" value="{{ row.description }}" placeholder="{{ "Description" | t }}"></td>
+            <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.{{ key }}.price" value="{{ row.price }}" step="0.01" min="0"></td>
+            <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.{{ key }}.qty" value="{{ row.qty }}" step="1" min="0"></td>
+            <td class="line-total">0.00</td>
+        </tr>
+        {% endfor %}
+        {# --- If no rows, create one default row --- #}
+        {% if not rows %}
+        <tr>
+            <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="text" name="extra.row.1.description" placeholder="{{ "Description" | t }}"></td>
+            <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.1.price" value="0" step="0.01" min="0"></td>
+            <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.1.qty" value="1" step="1" min="0"></td>
+            <td class="line-total">0.00</td>
+        </tr>
+        {% endif %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3" style="text-align:right;">{{ "Subtotal" | t }}:</td>
+            <td id="subtotal">0.00</td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align:right;">{{ "Total" | t }}:</td>
+            <td id="total">0.00</td>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+<button id="addRow" type="button">{{ "Add Row" | t }}</button>
+    <!-- Submit -->
+    <div class="flex justify-end mt-4">
+        <button @click="$store.modal.open = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>
+    </div>
+</form>
+
+
+<script>
+(() => {
+  let rowCount = document.querySelectorAll('#invoiceBody tr').length || 1;
+
+  function updateTotals() {
+    const rows = document.querySelectorAll("#invoiceBody tr");
+    let subtotal = 0;
+
+    rows.forEach((row) => {
+      const price = parseFloat(row.querySelector(`[name$=".price"]`).value) || 0;
+      const qty = parseFloat(row.querySelector(`[name$=".qty"]`).value) || 0;
+      const lineTotal = price * qty;
+      row.querySelector(".line-total").textContent = lineTotal.toFixed(2);
+      subtotal += lineTotal;
+    });
+
+    document.getElementById("subtotal").textContent = subtotal.toFixed(2);
+    document.getElementById("total").textContent = subtotal.toFixed(2);
+  }
+
+  document.getElementById("invoiceTable").addEventListener("input", updateTotals);
+
+  document.getElementById("addRow").addEventListener("click", (e) => {
+    e.preventDefault(); // avoid form submit
+    rowCount++;
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+      <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="text" name="extra.row.${rowCount}.description" placeholder="Description"></td>
+      <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.${rowCount}.price" value="0" step="0.01" min="0"></td>
+      <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.${rowCount}.qty" value="1" step="1" min="0"></td>
+      <td class="line-total">0.00</td>
+    `;
+    document.getElementById("invoiceBody").appendChild(newRow);
+  });
+
+  updateTotals();
+})();
+</script>
