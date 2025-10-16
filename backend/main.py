@@ -170,13 +170,14 @@ from state import user_data, active_connections
 # --- Routers ---
 # Routers should be defined in /routers/*.py and included here.
 # Each router file exposes a "router" object.
-from routers import customers, events, calls, alarms, callers
+from routers import customers, events, calls, alarms, callers, user
 
 app.include_router(customers.router, tags=["customers"])
 app.include_router(events.router, tags=["events"])
 app.include_router(calls.router, tags=["calls"])
 app.include_router(alarms.router, tags=["alarms"])
 app.include_router(callers.router, tags=["callers"])
+app.include_router(user.router, tags=["user"])
 
 
 from fastapi import FastAPI, Request, Form

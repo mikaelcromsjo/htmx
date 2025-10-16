@@ -90,52 +90,63 @@ async def upsert_customer(
     update_data: Update,
     db: Session = Depends(get_db),
 ):
-#    from models import Customer
-#    from schemas import CustomerUpdate
 
     # Determine if this is an update or create
-    customer_id = update_data.model_dump().get("id")
-    if customer_id:
+    id = update_data.model_dump().get("id")
+    if id:
         try:
-            customer_id_int = int(customer_id)
+            id_int = int(id)
         except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid customer ID")
-        customer = db.query(Customer).filter(Customer.id == customer_id_int).first()
-        if not customer:
+            raise HTTPException(status_code=400, detail="Invalid Customer ID")
+        data_record = db.query(Customer).filter(Customer.id == id_int).first()
+        if not data_record:
             raise HTTPException(status_code=404, detail="Customer not found")
     else:
-        customer = Customer()
-        
-    data_dict = update_data.model_dump()
-    print(data_dict)
+        data_record = Customer()
 
+    data_dict = update_data.model_dump()
+
+    # Ensure 'extra' exists and is a dict
+    if 'extra' not in data_dict or not isinstance(data_dict['extra'], dict):
+        data_dict['extra'] = {}
+
+    # Move any keys that start with "extra." into the extra dict
+    for key, value in list(data_dict.items()):
+        if key.startswith("extra."):
+            field_name = key.split(".", 1)[1]  # remove "extra."
+            data_dict['extra'][field_name] = value
+            del data_dict[key]  # optionally clean up the flat key
+            
     # --- Temporarily remove relationships before populate ---
     caller_id = data_dict.pop("caller_id", None)  # remove 'caller' from dict
 
     # Populate DB model dynamically (everything except relationships)
-    customer = populate(data_dict, customer, CustomerUpdate)
+    data_record = populate(data_dict, data_record, CustomerUpdate)
 
     # --- Handle relationships AFTER populate ---
     if isinstance(caller_id, int):
         caller_instance = db.get(Caller, int(caller_id))
         if not caller_instance:
             raise HTTPException(status_code=404, detail="Caller not found")
-        customer.caller = caller_instance  # assign the actual SQLAlchemy object
+        data_record.caller = caller_instance  # assign the actual SQLAlchemy object
 
 
-    db.add(customer)
+    db.add(data_record)
     db.commit()
-    db.refresh(customer)
+    db.refresh(data_record)
 
     # Render updated list (HTMX swap)
     customers = db.query(Customer).all()
-    return templates.TemplateResponse(
+    response =  templates.TemplateResponse(
         "customers/list.html",
         {
             "request": request, 
-            "customers": customers},
+            "customers": customers,
+            "detail": "Updated"},
     )
-
+    # Set the popup message in a custom header
+    response.headers["HX-Popup-Message"] = "Saved"
+    return response
 
 
 

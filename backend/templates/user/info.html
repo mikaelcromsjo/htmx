@@ -1,0 +1,99 @@
+
+<form
+    hx-post="{{ url_for('upsert_user') }}"
+    hx-target="#user_content"
+    hx-swap="innerHTML"
+    hx-ext="json-enc"
+    hx-headers='{"Content-Type": "application/json"}'
+    hx-on:htmx:configRequest="(evt) => {
+        const data = evt.detail.parameters;
+        for (const key in data) {
+            if (data[key] === '') data[key] = null;
+        }
+    }"
+>
+    <!-- ID (hidden) -->
+    <div class="mb-2 hidden">
+        <label class="block font-semibold">{{ 'ID' | t }}</label>
+        <input type="text" name="id" value="{{ user.id }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- First Name -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'First Name' | t }}</label>
+        <input type="text" name="extra.first_name" value="{{ user.extra.first_name or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Last Name -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'Last Name' | t }}</label>
+        <input type="text" name="extra.last_name" value="{{ user.extra.last_name or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Address -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'Address' | t }}</label>
+        <input type="text" name="extra.address" value="{{ user.extra.address or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'Email' | t }}</label>
+        <input type="email" name="user.email" value="{{ user.extra.email or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- CC Email -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'CC Email' | t }}</label>
+        <input type="string" name="extra.cc_email" value="{{ user.extra.cc_email or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Phone -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'Phone' | t }}</label>
+        <input type="text" name="extra.phone" value="{{ user.extra.phone or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- VAT -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'VAT' | t }}</label>
+        <input type="text" name="extra.vat" value="{{ user.extra.vat or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Bank Name -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'Bank Name' | t }}</label>
+        <input type="text" name="extra.bank_name" value="{{ user.extra.bank_name or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- SWIFT / BIC -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'SWIFT / BIC' | t }}</label>
+        <input type="text" name="extra.swift_bic" value="{{ user.extra.swift_bic or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Account Holder -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'Account Holder' | t }}</label>
+        <input type="text" name="extra.account_holder" value="{{ user.extra.account_holder or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Account Number -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'Account Number' | t }}</label>
+        <input type="text" name="extra.account_number" value="{{ user.extra.account_number or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Clearing Number -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'Clearing Number' | t }}</label>
+        <input type="text" name="extra.clearing_number" value="{{ user.extra.clearing_number or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Save Button -->
+    <div class="flex justify-end mt-4">
+        <button type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">
+            {{ 'Save' | t }}
+        </button>
+    </div>
+</form>

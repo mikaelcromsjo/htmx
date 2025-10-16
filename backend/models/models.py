@@ -14,6 +14,8 @@ from core.models.models import BaseMixin, Update
 
 from typing import List, Optional, Dict, Any
 
+from sqlalchemy.ext.mutable import MutableDict
+
 
 
 # models set up in routes# ------------------------------------------------------
@@ -69,8 +71,7 @@ class Customer(BaseMixin, Base):
     likes_activism = Column(Boolean, default=False)
 
     tags = Column(JSON, default=[])
-    extra = Column(JSON, default={})
-#    timestamp = Column(DateTime, default=datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%dT%H:%M"))
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)
 
 
 class CustomerUpdate(BaseModel):
@@ -93,7 +94,7 @@ class CustomerUpdate(BaseModel):
     likes_activism: Optional[bool] = False
     categories: Optional[List[str]] = []         # Multi-select → list
     tags: Optional[str] = ""                      # Comma-separated → list in populate()
-    extra: Optional[str] = "{}"                   # JSON string → dict in populate()
+    extra: Optional[Dict[str, Any]] = None
     code_name: Optional[bool] = False            # Checkbox → bool
 
 
@@ -118,7 +119,7 @@ class Event(BaseMixin, Base):
     extra_non_political = Column(Boolean, default=False)
     extra_visilble_all = Column(Boolean, default=False)
 
-    extra = Column(JSON, nullable=True)
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)    
 
 class EventUpdate(BaseModel):
     name: str
@@ -136,7 +137,7 @@ class EventUpdate(BaseModel):
     extra_visilble_all: bool = False
 
 
-#    extra: Optional[Dict[str, Any]] = None
+    extra: Optional[Dict[str, Any]] = None
 
     class Config:
         orm_mode = True
@@ -157,7 +158,7 @@ class Call(BaseMixin, Base):
     call_date = Column(DateTime, nullable=False)
     status = Column(JSON, default=[])
     note = Column(String, nullable=True)
-    extra = Column(JSON, nullable=True)
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)    
 
 
 class CallUpdate(BaseModel):
@@ -188,7 +189,7 @@ class EventUpdate(BaseModel):
     extra_visilble_all: bool = False
 
 
-#    extra: Optional[Dict[str, Any]] = None
+    extra: Optional[Dict[str, Any]] = None
 
     class Config:
         orm_mode = True

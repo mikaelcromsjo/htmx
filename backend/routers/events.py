@@ -120,10 +120,23 @@ async def upsert_event(
     else:
         event = Event()
 
-    print(update_data.model_dump())
+
+    data_dict = update_data.model_dump(exclude_unset=True)
+
+    # Ensure 'extra' exists and is a dict
+    if 'extra' not in data_dict or not isinstance(data_dict['extra'], dict):
+        data_dict['extra'] = {}
+
+    # Move any keys that start with "extra." into the extra dict
+    for key, value in list(data_dict.items()):
+        if key.startswith("extra."):
+            field_name = key.split(".", 1)[1]  # remove "extra."
+            data_dict['extra'][field_name] = value
+            del data_dict[key]  # optionally clean up the flat key
+
 
     # Populate DB model dynamically
-    event = populate(update_data.model_dump(exclude_unset=True), event, EventUpdate)
+    event = populate(data_dict, event, EventUpdate)
 
     db.add(event)
     db.commit()
@@ -131,10 +144,13 @@ async def upsert_event(
 
     # Render updated list (HTMX swap)
     events = db.query(Event).all()
-    return templates.TemplateResponse(
+    response = templates.TemplateResponse(
         "events/list.html",
         {"request": request, "events": events},
     )
+    # Set the popup message in a custom header
+    response.headers["HX-Popup-Message"] = "Saved"
+    return response
 
 
 

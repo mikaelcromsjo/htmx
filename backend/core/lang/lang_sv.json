@@ -89,5 +89,21 @@
   "Fix": "Fixera",
   "Call Center": "Call Center",
   "Aktivism": "Aktivism",
-  "Politicss": "Politicss"
+  "Politicss": "Politicss",
+  "User": "User",
+  "Address": "Address",
+  "CC Email": "CC Email",
+  "VAT": "VAT",
+  "Bank Name": "Bank Name",
+  "SWIFT / BIC": "SWIFT / BIC",
+  "Account Holder": "Account Holder",
+  "Account Number": "Account Number",
+  "Clearing Number": "Clearing Number",
+  "Customer Name": "Customer Name",
+  "Organization Number": "Organization Number",
+  "Address Line 1": "Address Line 1",
+  "Address Line 2": "Address Line 2",
+  "Postal Code": "Postal Code",
+  "Country": "Country",
+  "Invoices": "Invoices"
 }

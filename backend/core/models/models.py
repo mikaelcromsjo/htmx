@@ -8,36 +8,14 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel, Field
 from pydantic import BaseModel, field_validator
+from sqlalchemy.ext.mutable import MutableDict
 
 from core.database import Base
-
+from typing import Optional, Dict, Any
 
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True)
-    username = Column(String, unique=True, nullable=False)
-    password_hash = Column(String, nullable=False)
-    admin = Column(Integer, default=0)  # 0 = normal user, 1 = admin
-    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True)
-    caller = relationship("Caller")
-
-    def verify_password(self, password: str):
-        return pwd_context.verify(password, self.password_hash)
-
-    def set_password(self, password: str):
-        self.password_hash = pwd_context.hash(password)
-
-
-
-# Py Models
-
-class Update(BaseModel):
-    class Config:
-        extra = "allow"
 
 
 # models set up customer routes# ------------------------------------------------------
@@ -58,6 +36,7 @@ class BaseMixin:
     You can also define __empty_overrides__ = {...} on a model class.
     """
     __empty_overrides__ = {}
+
 
     def to_dict(self):
         return( {c.name: getattr(self, c.name) for c in self.__table__.columns})
@@ -82,7 +61,7 @@ class BaseMixin:
 
             # --- JSON / arrays ---
             elif isinstance(t, (satypes.JSON,)) or (PG_JSONB and isinstance(t, PG_JSONB)):
-                values[col.name] = []
+                values[col.name] = {}
             elif (PG_ARRAY and isinstance(t, PG_ARRAY)) or isinstance(t, satypes.ARRAY):
                 values[col.name] = []
 
@@ -116,5 +95,36 @@ class BaseMixin:
         values.update(getattr(cls, "__empty_overrides__", {}) or {})
         values.update(overrides)
         return cls(**values)
+    
+
+class User(BaseMixin, Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    admin = Column(Integer, default=0)  # 0 = normal user, 1 = admin
+    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True)
+    caller = relationship("Caller")
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)
+
+    def verify_password(self, password: str):
+        return pwd_context.verify(password, self.password_hash)
+
+    def set_password(self, password: str):
+        self.password_hash = pwd_context.hash(password)
+
+class UserUpdate(BaseModel):
+    caller_id: Optional[int] = None
+    extra: Optional[Dict[str, Any]] = None
+
+    class Config:
+        orm_mode = True
+
+# Py Models
+
+class Update(BaseModel):
+    class Config:
+        extra = "allow"
+
 
 

@@ -50,6 +50,21 @@
 </form></div>
 
 
+                <!-- User -->
+                <button 
+                    @click="
+                        active = 'user';
+                        if(!loaded.user) {
+                            $refs.userContent.click();
+                            loaded.user = true;
+                        }
+                    "
+                    :class="{'bg-gray-200': active === 'user'}"
+                    class="px-3 py-2 rounded hover:bg-gray-200">
+                    {{ "User" | t }}
+                </button>
+
+
                 <!-- Customers -->
                 <button 
                     @click="
@@ -92,6 +107,20 @@
                     {{ "Call Center" | t }}
                 </button>
 
+                                <!-- Invoice -->
+                <button 
+                    @click="
+                        active = 'invoice';
+                        if(!loaded.invoice) {
+                            $refs.invoiceContent.click();
+                            loaded.invoice = true;
+                        }
+                    "
+                    :class="{'bg-gray-200': active === 'invoice'}"
+                    class="px-3 py-2 rounded hover:bg-gray-200">
+                    {{ "Invoices" | t }}
+                </button>
+
 
             </nav>
         </div>
@@ -99,26 +128,34 @@
 
     <!-- Hidden HTMX triggers -->
     <div style="display:none">
+        <button x-ref="userContent" hx-get="{{ url_for('user') }}" hx-target="#user_content" hx-push-url="false"></button>
         <button x-ref="customerContent" hx-get="{{ url_for('customers_list') }}" hx-target="#customer_content" hx-push-url="false"></button>
         <button x-ref="eventContent" hx-get="{{ url_for('events_list') }}" hx-target="#event_content" hx-push-url="false"></button>
         <button x-ref="callsContent" hx-get="{{ url_for('calls_dashboard') }}" hx-target="#calls_content" hx-push-url="false"></button>
     </div>
     <!-- Main content -->
     <main class="max-w-7xl mx-auto p-4 w-full">
-        <!-- Customers -->
+        <!-- User -->         
+        <div id="user_content" x-show="active === 'user'" class="bg-white rounded shadow p-4">
+        </div>
+
+        <!-- Customers -->         
         <div id="customer_content" x-show="active === 'customers'" class="bg-white rounded shadow p-4">
             {% block content %}{% endblock %}
         </div>
 
         <!-- Events -->
         <div id="event_content" x-show="active === 'events'" class="bg-white rounded shadow p-4">
-            <!-- HTMX content can load here -->
         </div>
 
         <!-- Calls -->
         <div id="calls_content" x-show="active === 'calls'" class="bg-white rounded shadow p-4">
-            <!-- Alpine store persists here -->
         </div>
+
+        <!-- Calls -->
+        <div id="invoice_content" x-show="active === 'invoice'" class="bg-white rounded shadow p-4">
+        </div>
+
     </main>
 </div>
 
@@ -167,76 +204,73 @@
         style="display:none; padding:10px 20px; border-radius:5px; z-index:1000; transition: opacity 0.3s;">
     </div>
 
-
     <script>
 
-        function showPopup(evt) {
-            let xhr = evt.detail.xhr;
-            let contentType = xhr.getResponseHeader('Content-Type') || '';
-            let status = xhr.status;
+function showPopup(evt) {
+    let xhr = evt.detail.xhr;
+    let contentType = xhr.getResponseHeader('Content-Type') || '';
+    let status = xhr.status;
+    let messages = [];
+    let isError = false;
 
-            if (!contentType.includes('application/json')) return;
+    const popup = document.getElementById('popup');
+    if (!popup) return;
 
-            try {
-                let data = JSON.parse(xhr.responseText);
-                let messages = [];
-                let isError = false;
+    const hx_message = evt.detail.xhr.getResponseHeader("HX-Popup-Message");
 
-                // Error if HTTP status is 4xx or 5xx
-                if (status >= 400 && status < 600) {
-                    isError = true;
+    // First, check if popup has a data-detail attribute
+    if (hx_message) {
+        messages.push(hx_message);
+    } 
+    // Otherwise, handle JSON response
+    else if (contentType.includes('application/json')) {
+        try {
+            let data = JSON.parse(xhr.responseText);
+
+            if (status >= 400 && status < 600) isError = true;
+
+            if (data.detail) {
+                if (Array.isArray(data.detail) && data.detail.length > 0) {
+                    data.detail.forEach(err => {
+                        if (err.type === "missing") isError = true;
+                        let field = err.loc && err.loc.length ? err.loc[0] : 'Field';
+                        field = field.charAt(0).toUpperCase() + field.slice(1);
+                        messages.push(`${field} is not correct`);
+                    });
+                } else if (!Array.isArray(data.detail)) {
+                    messages.push(data.detail);
+                    if (data.detail.type === "missing") isError = true;
                 }
-
-                // Check detail field for errors
-                if (data.detail) {
-                    if (Array.isArray(data.detail) && data.detail.length > 0) {
-                        data.detail.forEach(err => {
-                            if (err.type === "missing") {
-                                isError = true;
-                            }
-                            let field = err.loc && err.loc.length ? err.loc[0] : 'Field';
-                            field = field.charAt(0).toUpperCase() + field.slice(1);
-                            messages.push(`${field} is not correct`);
-                        });
-                    } else if (!Array.isArray(data.detail)) {
-                        messages.push(JSON.stringify(data.detail));
-                        if (data.detail.type === "missing") {
-                            isError = true;
-                        }
-                    }
-                }
-
-                if (messages.length === 0 && !isError) {
-                    messages.push("All good!");
-                }
-
-                let popup = document.getElementById('popup');
-                popup.innerText = messages.join('\n');
-
-                // ✅ Remove previous Bootstrap alert classes
-                popup.classList.remove('alert-success', 'alert-danger');
-
-                // ✅ Add the correct Bootstrap class
-                popup.classList.add(isError ? 'alert-danger' : 'alert-success');
-
-                // Show popup
-                popup.style.display = 'block';
-                popup.style.opacity = '1';
-
-                // Fade out
-                setTimeout(() => {
-                    popup.style.opacity = '0';
-                    setTimeout(() => popup.style.display = 'none', 300);
-                }, 2000);
-
-            } catch (err) {
-                console.error("Invalid JSON from server:", xhr.responseText);
             }
-        }
 
+            if (messages.length === 0 && !isError) messages.push("Done!");
+        } catch (err) {
+            console.error("Invalid JSON from server:", xhr.responseText);
+            messages.push("Error parsing JSON response");
+            isError = true;
+        }
+    } else {
+        return; // unsupported content type
+    }
+
+    // Show popup
+    if (messages.length > 0) {
+        popup.innerText = messages.join('\n');
+        popup.classList.remove('alert-success', 'alert-danger');
+        popup.classList.add(isError ? 'alert-danger' : 'alert-success');
+        popup.style.display = 'block';
+        popup.style.opacity = '1';
+
+        // Fade out
+        setTimeout(() => {
+            popup.style.opacity = '0';
+            setTimeout(() => popup.style.display = 'none', 300);
+        }, 2000);
+    }
+}
 
         // Attach to all HTMX requests globally
-        document.body.addEventListener('htmx:afterRequest', showPopup);
+        document.body.addEventListener('htmx:afterSwap', showPopup);
     </script>
 
     <script src="/static/js/json-enc.js"></script>
