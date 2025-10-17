@@ -1,34 +1,11 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
-
-
-
-
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./backend/templates/**/*.html",
     "./backend/core/templates/**/*.html",
-    "./backend/**/*.js",
-  ],
-  safelist: [
-    'bg-red-600',
-    'bg-red-700',
-    'text-white',
-  ],
+    "./backend/**/*.js",  ],
   theme: {
-    extend: {
-      colors: {
-        primary: "#5B21B6",
-        secondary: "#F59E0B",
-        accent: "#EC4899",
-      },
-      fontFamily: {
-        sans: ['Inter', ...defaultTheme.fontFamily.sans],
-        heading: ['Poppins', ...defaultTheme.fontFamily.sans],
-      },
-    },
+    extend: {},
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-  ],
-};
+  plugins: [],
+}

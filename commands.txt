@@ -11,5 +11,7 @@ Ssmislicks00?
 Rebuild tailwind
 npx tailwindcss -i ./backend/core/static/css/input.css -o ./backend/core/static/tailwind.css --minify --verbose
 
+npx tailwindcss -i ./backend/core/static/css/input.css -o ./backend/core/static/tailwind.css --watch
+
 
 docker exec -it fastapi_htmx_dev python /app/backend/scripts/manage_users.py admin --password 1234 --admin --caller "Main"

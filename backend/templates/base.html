@@ -32,52 +32,82 @@
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Header -->
  <div x-data="{ active: 'customers', loaded: { customers: false, events: false, calls: false } }">
-    <header class="bg-white shadow sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto p-3 w-full flex items-center justify-between">
-            <div class="text-xl font-semibold">{{ "Call Center" | t }}</div>
-            <nav class="flex space-x-4">
 
-<!-- User info + logout grouped, aligned left -->
-<div class="card d-flex flex-row align-items-center p-2 mb-0" style="background-color: #f8f9fa; max-width: 250px;">
-    <span>
-        {{ user }} {{ caller }}
-    </span>
 
-<form method="get" action="/logout" class="mb-0 ms-2">
-    <button type="submit" class="btn-light">
-        {{ "Logout" | t }}
+
+<header class="bg-white shadow sticky top-0 z-10" x-data="{ open: false }">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <!-- App name -->
+    <div class="text-xl font-semibold">
+      {{ "APPNAME" | t }}
+    </div>
+
+    <!-- Mobile menu toggle -->
+    <button @click="open = !open" class="md:hidden p-2 rounded hover:bg-gray-100">
+      <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+           viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+           viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M6 18L18 6M6 6l12 12" />
+      </svg>
     </button>
-</form></div>
 
+    <!-- NAVIGATION (Desktop) -->
+    <nav class="hidden md:flex items-center space-x-4">
+      <!-- User Info -->
+      <div class="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded">
+        <span>{{ user }} {{ caller }}</span>
+        <form method="get" action="/logout" class="inline">
+          <button type="submit" class="text-sm text-gray-600 hover:text-red-600">
+            {{ "Logout" | t }}
+          </button>
+        </form>
+      </div>
 
-                <!-- User -->
-                <button 
-                    @click="
-                        active = 'user';
-                        if(!loaded.user) {
-                            $refs.userContent.click();
-                            loaded.user = true;
-                        }
-                    "
-                    :class="{'bg-gray-200': active === 'user'}"
-                    class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "User" | t }}
-                </button>
+      <!-- Shared buttons template -->
+      <template x-ref="navButtons">
+        <button 
+          @click="
+            active = 'user';
+            if(!loaded.user) {
+              $refs.userContent.click();
+              loaded.user = true;
+            }
+          "
+          :class="{'bg-gray-200': active === 'user'}"
+          class="px-3 py-2 rounded hover:bg-gray-200">
+          {{ "User" | t }}
+        </button>
 
+        <button 
+          @click="
+            active = 'companies';
+            if(!loaded.companies) {
+              $refs.companiesContent.click();
+              loaded.companies = true;
+            }
+          "
+          :class="{'bg-gray-200': active === 'companies'}"
+          class="px-3 py-2 rounded hover:bg-gray-200">
+          {{ "Companies" | t }}
+        </button>
 
-                <!-- Companies -->
-                <button 
-                    @click="
-                        active = 'companies';
-                        if(!loaded.companies) {
-                            $refs.companiesContent.click();
-                            loaded.companies = true;
-                        }
-                    "
-                    :class="{'bg-gray-200': active === 'companies'}"
-                    class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "Companies" | t }}
-                </button>
+        <button 
+          @click="
+            active = 'invoice';
+            if(!loaded.invoice) {
+              $refs.invoiceContent.click();
+              loaded.invoice = true;
+            }
+          "
+          :class="{'bg-gray-200': active === 'invoice'}"
+          class="px-3 py-2 rounded hover:bg-gray-200">
+          {{ "Invoices" | t }}
+        </button>
 
                 <!-- 
 
@@ -117,28 +147,39 @@
                     "
                     :class="{'bg-gray-200': active === 'calls'}"
                     class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "Call Center" | t }}
+                    {{ "APPNAME" | t }}
                 </button>
             -->
 
-                                <!-- Invoice -->
-                <button 
-                    @click="
-                        active = 'invoice';
-                        if(!loaded.invoice) {
-                            $refs.invoiceContent.click();
-                            loaded.invoice = true;
-                        }
-                    "
-                    :class="{'bg-gray-200': active === 'invoice'}"
-                    class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "Invoices" | t }}
-                </button>
 
+      </template>
 
-            </nav>
-        </div>
-    </header>
+      <!-- Render them -->
+      <div x-html="$refs.navButtons.innerHTML"></div>
+    </nav>
+  </div>
+
+  <!-- NAVIGATION (Mobile dropdown) -->
+  <div x-show="open" x-transition class="md:hidden border-t bg-white">
+    <div class="px-4 py-3 space-y-3">
+      <!-- User Info -->
+      <div class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded">
+        <span>{{ user }} {{ caller }}</span>
+        <form method="get" action="/logout">
+          <button type="submit" class="text-sm text-gray-600 hover:text-red-600">
+            {{ "Logout" | t }}
+          </button>
+        </form>
+      </div>
+
+      <!-- Reuse same buttons -->
+      <div x-html="$refs.navButtons.innerHTML" 
+           @click="open = false" 
+           class="flex flex-col gap-2"></div>
+    </div>
+  </div>
+</header>
+
 
     <!-- Hidden HTMX triggers -->
     <div style="display:none">

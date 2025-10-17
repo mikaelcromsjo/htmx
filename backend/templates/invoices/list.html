@@ -1,7 +1,9 @@
 
 <div id="invoice-container">
     <div id="invoice-list">
-        <table class="table-auto w-full border">
+            <div class="overflow-x-auto">
+
+        <table class="table-auto w-full border overflow-x-auto">
             <thead>
                 <tr>
                     <th class="px-2 py-1 border">{{ "ID" | t }}</th>
@@ -47,7 +49,7 @@
                 {% endfor %}
             </tbody>
         </table>
-
+            </div>
         <div class="mt-2 flex gap-2">
 
             <button hx-get="/invoices/new" 
