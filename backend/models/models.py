@@ -179,9 +179,9 @@ class Invoice(BaseMixin, Base):
 
     id = Column(Integer, primary_key=True, index=True)
     number = Column(Integer, nullable=True)
-    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=True)
     # Relationship to customer
-    customer = relationship("Customer")
+    company = relationship("Company")
 
     date = Column(DateTime, nullable=True)
     extra = Column(MutableDict.as_mutable(JSON), default=dict)    
@@ -189,7 +189,7 @@ class Invoice(BaseMixin, Base):
 class InvoiceUpdate(BaseModel):
     number: Optional[int] = None
     extra: Optional[Dict[str, Any]] = None
-    customer_id: Optional[int] = None
+    company_id: Optional[int] = None
     date: Optional[datetime] = None
 
     class Config:

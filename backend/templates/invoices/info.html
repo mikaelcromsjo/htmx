@@ -22,7 +22,7 @@
     {% endif %}
   </div>
 <br>
-  <!-- Header: Company & Customer Info -->
+  <!-- Header: Company & Company Info -->
   <div class="flex justify-between items-start border-b pb-6 mb-6 w-50">
     <!-- Company Info -->
     <div class="space-y-1">
@@ -34,14 +34,14 @@
       <p><strong>{{ "VAT" | t }}:</strong> {{ invoice_data.vat_number }}</p>
     </div>
 
-    <!-- Customer Info -->
+    <!-- Company Info -->
     <div class="text-right space-y-1">
-      <strong class="text-lg">{{ invoice.customer.extra.customer_name }}</strong>
-      <p>{{ invoice.customer.extra.address_line1 }}</p>
-      <p>{{ invoice.customer.extra.address_line2 }}</p>
-      <p>{{ invoice.customer.extra.postal_code }} {{ invoice.customer.extra.postal_address }}</p>
-      <p>{{ invoice.customer.extra.country }}</p>
-      <p><strong>{{ "VAT" | t }}:</strong> {{ invoice.customer.extra.org_nr }}</p>
+      <strong class="text-lg">{{ invoice.company.extra.company_name }}</strong>
+      <p>{{ invoice.company.extra.address_line1 }}</p>
+      <p>{{ invoice.company.extra.address_line2 }}</p>
+      <p>{{ invoice.company.extra.postal_code }} {{ invoice.company.extra.postal_address }}</p>
+      <p>{{ invoice.company.extra.country }}</p>
+      <p><strong>{{ "VAT" | t }}:</strong> {{ invoice.company.extra.org_nr }}</p>
     </div>
   </div>
 <br>

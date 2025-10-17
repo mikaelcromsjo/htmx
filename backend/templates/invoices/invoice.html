@@ -26,7 +26,7 @@
     </tr>
   </table>
 
-  <!-- Company & Customer Info -->
+  <!-- Company & Company Info -->
 
   <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
     <tr>
@@ -39,12 +39,12 @@
         <strong>VAT:</strong> {{ invoice_data.vat_number }}
       </td>
       <td style="vertical-align: top; padding: 5px;">
-        <strong>{{ invoice.customer.extra.customer_name }}</strong><br>
-        {{ invoice.customer.extra.address_line1 }}<br>
-        {{ invoice.customer.extra.address_line2 }}<br>
-        {{ invoice.customer.extra.postal_code }} {{ invoice.customer.extra.postal_address }}<br>
-        {{ invoice.customer.extra.country }}<br>
-        <strong>VAT:</strong> {{ invoice.customer.extra.org_nr }}
+        <strong>{{ invoice.company.extra.company_name }}</strong><br>
+        {{ invoice.company.extra.address_line1 }}<br>
+        {{ invoice.company.extra.address_line2 }}<br>
+        {{ invoice.company.extra.postal_code }} {{ invoice.company.extra.postal_address }}<br>
+        {{ invoice.company.extra.country }}<br>
+        <strong>VAT:</strong> {{ invoice.company.extra.org_nr }}
       </td>
     </tr>
   </table>
