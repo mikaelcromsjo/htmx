@@ -21,7 +21,7 @@ from templates import templates
 from core.database import engine
 from core.models.base import Base
 from models.models import Invoice, InvoiceUpdate
-from models.models import Update, Customer
+from models.models import Update, Company
 from core.functions.helpers import populate
 from core.auth import get_current_user
 from datetime import date
@@ -62,10 +62,10 @@ def new_invoice(
 ):
     invoice = Invoice.empty()
 
-    customers = db.query(Customer).all()
+    companies = db.query(Company).all()
 
     return templates.TemplateResponse(
-        "invoices/edit.html", {"request": request, "invoice": invoice, "editable": True, "customers": customers}
+        "invoices/edit.html", {"request": request, "invoice": invoice, "editable": True, "companies": companies}
     )               
 
 # -----------------------------
@@ -89,7 +89,8 @@ def invoice_detail(
 
     # Get current user
     current_user = get_current_user(request, db)
-    customers = db.query(Customer).filter(Customer.caller_id == current_user.caller_id).all()
+#    companies = db.query(Companies).filter(Customer.caller_id == current_user.caller_id).all()
+    companies = db.query(Company).filter().all()
 
 
     # Invoice company data for testing
@@ -118,7 +119,7 @@ def invoice_detail(
                 "request": request, 
                 "invoice": invoice, 
                 "invoice_data": invoice_data, 
-                "customers": customers
+                "companies": companies
             }
         )
     elif list == "pdf":
@@ -128,7 +129,7 @@ def invoice_detail(
                 request=request,
                 invoice=invoice,
                 invoice_data=invoice_data,
-                customers=customers
+                companies=companies
             )
 
             bg_path = os.path.join(os.getcwd(), "core/static/images/invoice.png")
@@ -194,7 +195,7 @@ def invoice_detail(
     else:
         # Render full template
         return templates.TemplateResponse(
-            "invoices/edit.html", {"request": request, "invoice": invoice, "editable": True, "customers": customers}
+            "invoices/edit.html", {"request": request, "invoice": invoice, "editable": True, "companies": companies}
         )
      
 

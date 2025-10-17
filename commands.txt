@@ -4,7 +4,7 @@ docker compose up -d
 
 
 open ssh
-ssh -i C:\Users\mikae\Documents\Project\AIBot\key root@65.21.244.96
+ssh -i C:\Users\mikae\Documents\Project\Server\key root@65.21.244.96
 Ssmislicks00?
 
 

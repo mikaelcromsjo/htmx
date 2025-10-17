@@ -77,8 +77,6 @@ def company_new(
             "mode": "edit",
             "categories": categories,
             "callers": callers, 
-            "organisations": organisations, 
-            "personalities": personalities, 
         }
     )
 

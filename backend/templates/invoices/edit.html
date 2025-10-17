@@ -25,11 +25,11 @@
 
     <!-- Customer -->
     <div class="mb-2">
-        <label class="block font-semibold">{{ "Customer" | t }}</label>
-        <select name="customer_id" class="border p-1 w-full">
-            <option value="" {% if invoice.customer is none %}selected{% endif %}>{{ "Select..." | t }}</option>
-            {% for customer in customers %}
-              <option value="{{ customer.id }}" {% if invoice.customer_id == customer.id %}selected{% endif %}>{{ customer.first_name }}</option>
+        <label class="block font-semibold">{{ "Company" | t }}</label>
+        <select name="company_id" class="border p-1 w-full">
+            <option value="" {% if invoice.company is none %}selected{% endif %}>{{ "Select..." | t }}</option>
+            {% for company in companies %}
+              <option value="{{ company.id }}" {% if invoice.company_id == company.id %}selected{% endif %}>{{ company.extra.company_name }}</option>
             {% endfor %}
         </select>
     </div>
