@@ -12,6 +12,9 @@
         }
     }"
 >
+
+    <h2 class="text-xl font-semibold">{{ "User Information" | t }}</h2>
+
     <!-- ID (hidden) -->
     <div class="mb-2 hidden">
         <label class="block font-semibold">{{ 'ID' | t }}</label>
@@ -59,6 +62,9 @@
         <label class="block font-semibold">{{ 'VAT' | t }}</label>
         <input type="text" name="extra.vat" value="{{ user.extra.vat or '' }}" class="border p-1 w-full"/>
     </div>
+
+    <h2 class="text-xl font-semibold">{{ "Bank Information" | t }}</h2>
+
 
     <!-- Bank Name -->
     <div class="mb-2">

@@ -1,6 +1,6 @@
 
 <div class="max-w-4xl mx-auto p-8 bg-white shadow-md rounded-lg font-sans text-gray-800">
-<h1 class="!text-4xl font-bold mb-4">{{ "Invoice" | t }}</h1>
+<h1 class="text-xl font-bold mb-4">{{ "Invoice" | t }}</h1>
 
   <!-- Invoice Details -->
     <div class="grid grid-cols-2 gap-4 mb-6">
@@ -26,7 +26,7 @@
   <div class="flex justify-between items-start border-b pb-6 mb-6 w-50">
     <!-- Company Info -->
     <div class="space-y-1">
-      <h1 class="text-2xl font-bold">{{ invoice_data.name }}</h1>
+      <h2 class="text-xl font-bold">{{ invoice_data.name }}</h2>
       <p>{{ invoice_data.address_line1 }}</p>
       <p>{{ invoice_data.address_line2 }}</p>
       <p>{{ invoice_data.postal_code }} {{ invoice_data.postal_address }}</p>
@@ -36,7 +36,7 @@
 
     <!-- Company Info -->
     <div class="text-right space-y-1">
-      <strong class="text-lg">{{ invoice.company.extra.company_name }}</strong>
+      <h2 class="text-xl font-bold">{{ invoice.company.extra.company_name }}</h2>
       <p>{{ invoice.company.extra.address_line1 }}</p>
       <p>{{ invoice.company.extra.address_line2 }}</p>
       <p>{{ invoice.company.extra.postal_code }} {{ invoice.company.extra.postal_address }}</p>

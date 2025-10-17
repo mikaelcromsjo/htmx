@@ -147,7 +147,7 @@
                     "
                     :class="{'bg-gray-200': active === 'calls'}"
                     class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "APPNAME" | t }}
+                    {{ "Call Center" | t }}
                 </button>
             -->
 
@@ -229,7 +229,6 @@
     tabindex="-1" 
     role="dialog"
     @keydown.escape.window="$store.modal.open = false"
-    @click.self="$store.modal.open = false"
     style="background-color: rgba(0,0,0,0.5);"
 >
   <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
