@@ -99,6 +99,32 @@ class CustomerUpdate(BaseModel):
     code_name: Optional[bool] = False            # Checkbox → bool
 
 
+# -------------------------------------------------
+# Companies Model (SQLAlchemy ORM)
+# -------------------------------------------------
+class Company(BaseMixin, Base):
+    __tablename__ = "companies"
+
+    id = Column(Integer, primary_key=True, index=True)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    email = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True)
+    comment = Column(String, nullable=True)
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)
+
+
+class CompanyUpdate(BaseModel):
+    first_name: str
+    last_name: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    comment: Optional[str] = None
+    caller: Optional[int] = None                 # Dropdown → int
+    extra: Optional[Dict[str, Any]] = None
+
+
 # -----------------------------
 # SQLAlchemy ORM Event model
 # -----------------------------

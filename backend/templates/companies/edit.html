@@ -1,0 +1,123 @@
+ <div x-init="$store.modal.title = '{{ "Company" | t }}: {{ company.first_name }} {{ company.last_name }}'"></div> 
+
+<form
+    hx-post="{{ url_for('upsert_company') }}"
+    hx-target="#company-list"
+    hx-swap="innerHTML"
+    hx-ext="json-enc"
+    hx-headers='{"Content-Type": "application/json"}'
+    hx-on:htmx:configRequest="(evt) => {
+        const data = evt.detail.parameters;
+        for (const key in data) {
+            if (data[key] === '') data[key] = null;
+        }
+    }"
+>
+
+    {% if company.id %}
+    <!-- ID -->
+    <div class="mb-2 hidden">
+        <label class="block font-semibold">{{ "ID" | t }}</label>
+        <input type="text" name="id" value="{{ company.id }}" class="border p-1 w-full"/>
+    </div>
+    {% endif %}
+
+
+<!-- Company Name -->
+<div class="mb-2">
+    <label class="block font-semibold">{{ 'Company Name' | t }}</label>
+    <input type="text" name="extra.company_name" value="{{ company.extra.company_name or '' }}" class="border p-1 w-full"/>
+</div>
+
+<!-- Organization Number -->
+<div class="mb-2">
+    <label class="block font-semibold">{{ 'Organization Number' | t }}</label>
+    <input type="text" name="extra.org_nr" value="{{ company.extra.org_nr or '' }}" class="border p-1 w-full"/>
+</div>
+
+
+<!-- Address Line 1 -->
+<div class="mb-2">
+    <label class="block font-semibold">{{ 'Address Line 1' | t }}</label>
+    <input type="text" name="extra.address_line1" value="{{ company.extra.address_line1 or '' }}" class="border p-1 w-full"/>
+</div>
+
+<!-- Address Line 2 -->
+<div class="mb-2">
+    <label class="block font-semibold">{{ 'Address Line 2' | t }}</label>
+    <input type="text" name="extra.address_line2" value="{{ company.extra.address_line2 or '' }}" class="border p-1 w-full"/>
+</div>
+
+<!-- Postal Code -->
+<div class="mb-2">
+    <label class="block font-semibold">{{ 'Postal Code' | t }}</label>
+    <input type="text" name="extra.postal_code" value="{{ company.extra.postal_code or '' }}" class="border p-1 w-full"/>
+</div>
+
+<div class="mb-2">
+    <label class="block font-semibold">{{ 'Postal Address' | t }}</label>
+    <input type="text" name="extra.postal_address" value="{{ company.extra.postal_address or '' }}" class="border p-1 w-full"/>
+</div>
+
+<!-- Country -->
+<div class="mb-2">
+    <label class="block font-semibold">{{ 'Country' | t }}</label>
+    <input type="text" name="extra.country" value="{{ company.extra.country or '' }}" class="border p-1 w-full"/>
+</div>
+
+
+    <!-- First Name -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ "First Name" | t }}</label>
+        <input type="text" name="first_name" value="{{ company.first_name or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Last Name -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ "Last Name" | t }}</label>
+        <input type="text" name="last_name" value="{{ company.last_name or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ "Email" | t }}</label>
+        <input type="email" name="email" value="{{ company.email or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- CC Email -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ 'CC Email' | t }}</label>
+        <input type="text" name="extra.cc_email" value="{{ company.extra.cc_email or '' }}" class="border p-1 w-full"/>
+    </div>
+
+
+    <!-- Phone -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ "Phone" | t }}</label>
+        <input type="text" name="phone" value="{{ company.phone or '' }}" class="border p-1 w-full"/>
+    </div>
+
+    <!-- Caller -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ "Caller" | t }}</label>
+        <select name="caller_id" class="border p-1 w-full">
+            <option value="" {% if company.caller is none %}selected{% endif %}>{{ "Select..." | t }}</option>
+            {% for caller in callers %}
+              <option value="{{ caller.id }}" {% if company.caller_id == caller.id %}selected{% endif %}>{{ caller.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Comment -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ "Comment" | t }}</label>
+        <textarea name="comment" class="border p-1 w-full">{{ company.comment or '' }}</textarea>
+    </div>
+
+
+    <div class="flex justify-end mt-4">
+        <button @click="$store.modal.open = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>
+    </div>
+
+
+</form>

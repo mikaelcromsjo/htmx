@@ -65,7 +65,22 @@
                 </button>
 
 
-                <!-- Customers -->
+                <!-- Companies -->
+                <button 
+                    @click="
+                        active = 'companies';
+                        if(!loaded.companies) {
+                            $refs.companiesContent.click();
+                            loaded.companies = true;
+                        }
+                    "
+                    :class="{'bg-gray-200': active === 'companies'}"
+                    class="px-3 py-2 rounded hover:bg-gray-200">
+                    {{ "Companies" | t }}
+                </button>
+
+                <!-- 
+
                 <button 
                     @click="
                         active = 'customers';
@@ -79,7 +94,6 @@
                     {{ "Customers" | t }}
                 </button>
 
-                <!-- Events -->
                 <button 
                     @click="
                         active = 'events';
@@ -93,7 +107,6 @@
                     {{ "Events" | t }}
                 </button>
 
-                <!-- Call Center -->
                 <button 
                     @click="
                         active = 'calls';
@@ -106,6 +119,7 @@
                     class="px-3 py-2 rounded hover:bg-gray-200">
                     {{ "Call Center" | t }}
                 </button>
+            -->
 
                                 <!-- Invoice -->
                 <button 
@@ -133,6 +147,7 @@
         <button x-ref="eventContent" hx-get="{{ url_for('events_list') }}" hx-target="#event_content" hx-push-url="false"></button>
         <button x-ref="callsContent" hx-get="{{ url_for('calls_dashboard') }}" hx-target="#calls_content" hx-push-url="false"></button>
         <button x-ref="invoiceContent" hx-get="{{ url_for('invoices_list') }}" hx-target="#invoice_content" hx-push-url="false"></button>
+        <button x-ref="companiesContent" hx-get="{{ url_for('companies_list') }}" hx-target="#companies_content" hx-push-url="false"></button>
     </div>
     <!-- Main content -->
     <main class="max-w-7xl mx-auto p-4 w-full">
@@ -142,8 +157,11 @@
 
         <!-- Customers -->         
         <div id="customer_content" x-show="active === 'customers'" class="bg-white rounded shadow p-4">
-            {% block content %}{% endblock %}
         </div>
+
+        <div id="companies_content" x-show="active === 'companies'" class="bg-white rounded shadow p-4">
+        </div>
+
 
         <!-- Events -->
         <div id="event_content" x-show="active === 'events'" class="bg-white rounded shadow p-4">
