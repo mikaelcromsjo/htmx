@@ -1,0 +1,124 @@
+<div class="content" style="width: 600px; margin: 0 auto; font-family: Arial, sans-serif; font-size: 12px; color: #333;">
+
+  <!-- Invoice Title -->
+  <h1 style="margin-bottom: 20px;">Invoice</h1>
+
+  <!-- Invoice Details -->
+  <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
+    <tr>
+      <td style="vertical-align: top; padding: 5px;">
+        <strong>Invoice #:</strong> {{ invoice.number }}<br>
+        <strong>Invoice Date:</strong> {{ invoice.date.strftime('%Y-%m-%d') if invoice.date else '' }}<br>
+        <strong>Due Date:</strong> {{ invoice.extra.due_date if invoice.extra.due_date else '' }}<br>
+        {% if invoice.extra.reference %}
+        <strong>Reference:</strong> {{ invoice.extra.reference }}<br>
+        {% endif %}
+        {% if invoice.extra.payment_terms %}
+        <strong>Payment Terms:</strong> {{ invoice.extra.payment_terms }}
+        {% endif %}
+      </td>
+      {% if invoice_data.note %}
+      <td style="vertical-align: top; text-align: right; padding: 5px;">
+        <strong>Note:</strong><br>
+        {{ invoice_data.note }}
+      </td>
+      {% endif %}
+    </tr>
+  </table>
+
+  <!-- Company & Customer Info -->
+
+  <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
+    <tr>
+      <td style="vertical-align: top; padding: 5px;">
+        <strong>{{ invoice_data.name }}</strong><br>
+        {{ invoice_data.address_line1 }}<br>
+        {{ invoice_data.address_line2 }}<br>
+        {{ invoice_data.postal_code }} {{ invoice_data.postal_address }}<br>
+        {{ invoice_data.country }}<br>
+        <strong>VAT:</strong> {{ invoice_data.vat_number }}
+      </td>
+      <td style="vertical-align: top; padding: 5px;">
+        <strong>{{ invoice.customer.extra.customer_name }}</strong><br>
+        {{ invoice.customer.extra.address_line1 }}<br>
+        {{ invoice.customer.extra.address_line2 }}<br>
+        {{ invoice.customer.extra.postal_code }} {{ invoice.customer.extra.postal_address }}<br>
+        {{ invoice.customer.extra.country }}<br>
+        <strong>VAT:</strong> {{ invoice.customer.extra.org_nr }}
+      </td>
+    </tr>
+  </table>
+
+  <!-- Items Table -->
+  {% set rows = invoice.extra.row if invoice.extra and invoice.extra.row else {} %}
+  {% set ns = namespace(subtotal=0) %}
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <thead>
+      <tr>
+        <th style="border: 1px solid #ccc; padding: 5px; text-align: left;">Description</th>
+        <th style="border: 1px solid #ccc; padding: 5px; text-align: right;">Price</th>
+        <th style="border: 1px solid #ccc; padding: 5px; text-align: right;">Quantity</th>
+        <th style="border: 1px solid #ccc; padding: 5px; text-align: right;">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for key, row in rows.items() %}
+        {% set price = row['price'] | float(0) %}
+        {% set qty = row['qty'] | float(0) %}
+        {% set line_total = price * qty %}
+        {% set ns.subtotal = ns.subtotal + line_total %}
+        <tr>
+          <td style="border: 1px solid #ccc; padding: 5px;">{{ row['description'] }}</td>
+          <td style="border: 1px solid #ccc; padding: 5px; text-align: right;">{{ "%.2f"|format(price) }}</td>
+          <td style="border: 1px solid #ccc; padding: 5px; text-align: right;">{{ "%.2f"|format(qty) }}</td>
+          <td style="border: 1px solid #ccc; padding: 5px; text-align: right;">{{ "%.2f"|format(line_total) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      {% set vat_rate = (invoice.extra.vat | float(0)) / 100 %}
+      {% set vat_amount = ns.subtotal * vat_rate %}
+      <tr>
+        <td colspan="3" style="padding: 5px; text-align: right;">Subtotal</td>
+        <td style="padding: 5px; text-align: right;">{{ "%.2f"|format(ns.subtotal) }}</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="padding: 5px; text-align: right;">VAT ({{ "%.0f"|format(vat_rate * 100) }}%)</td>
+        <td style="padding: 5px; text-align: right;">{{ "%.2f"|format(vat_amount) }}</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="padding: 5px; text-align: right;"><strong>Total</strong></td>
+        <td style="padding: 5px; text-align: right;"><strong>{{ "%.2f"|format(ns.subtotal + vat_amount) }}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- Extra Note -->
+  {% if invoice.extra.note %}
+  <div style="margin-bottom: 20px;">
+    <strong>Note:</strong><br>
+    {{ invoice.extra.note }}
+  </div>
+  {% endif %}
+
+
+</div>
+
+
+     <div class="footer">
+  <!-- Payment Details -->
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+    <tr>
+      <td style="vertical-align: top; padding: 5px;">
+        {% if invoice_data.bank_name %}Bank: {{ invoice_data.bank_name }}<br>{% endif %}
+        {% if invoice_data.iban %}IBAN: {{ invoice_data.iban }}<br>{% endif %}
+        {% if invoice_data.bic %}BIC/SWIFT: {{ invoice_data.bic }}<br>{% endif %}
+      </td>
+      <td style="vertical-align: top; padding: 5px; text-align: right;">
+        {% if invoice_data.bankgiro %}Bankgiro: {{ invoice_data.bankgiro }}<br>{% endif %}
+        {% if invoice_data.plusgiro %}Plusgiro: {{ invoice_data.plusgiro }}<br>{% endif %}
+        {% if invoice.extra.reference %}Reference: {{ invoice.extra.reference }}<br>{% endif %}
+      </td>
+    </tr>
+  </table>
+  </div>

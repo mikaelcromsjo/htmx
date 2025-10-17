@@ -37,6 +37,10 @@
                         >
                             {{ "Delete" | t }}
                         </button>
+<button @click="window.open('{{ url_for('invoice_detail', invoice_id=invoice.id) }}?list=pdf', '_blank')">
+    {{ "PDF" | t }}
+</button>      
+
                     </td>
 
                 </tr>

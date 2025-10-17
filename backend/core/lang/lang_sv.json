@@ -133,5 +133,7 @@
   "Payment details": "Payment details",
   "Postal Address": "Postal Address",
   "Bill To": "Bill To",
-  "Invoice #": "Invoice #"
+  "Invoice #": "Invoice #",
+  "Pdf": "Pdf",
+  "PDF": "PDF"
 }

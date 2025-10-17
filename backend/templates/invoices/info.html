@@ -1,9 +1,9 @@
+<h1 class="!text-5xl font-bold mb-4">{{ "Invoice" | t }}</h1>
 <div class="max-w-4xl mx-auto p-8 bg-white shadow-md rounded-lg font-sans text-gray-800">
 
 
   <!-- Invoice Details -->
-  <h1>{{ "Invoice" | t }}</h1>
-  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="grid grid-cols-2 gap-4 mb-6">
     <div class="space-y-1">
       <p><strong>{{ "Invoice #" | t }}</strong> {{ invoice.number }}</p>
       <p><strong>{{ "Invoice Date" | t }}:</strong> {{ invoice.date.strftime('%Y-%m-%d') if invoice.date else '' }}</p>
@@ -21,7 +21,7 @@
     </div>
     {% endif %}
   </div>
-
+<br>
   <!-- Header: Company & Customer Info -->
   <div class="flex justify-between items-start border-b pb-6 mb-6 w-50">
     <!-- Company Info -->
@@ -44,7 +44,7 @@
       <p><strong>{{ "VAT" | t }}:</strong> {{ invoice.customer.extra.org_nr }}</p>
     </div>
   </div>
-
+<br>
 
   <!-- Items Table -->
   {% set rows = invoice.extra.row if invoice.extra and invoice.extra.row else {} %}

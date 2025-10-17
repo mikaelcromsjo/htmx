@@ -19,11 +19,23 @@ alembic
 # Data validation and settings management (integrates tightly with FastAPI)
 pydantic
 
+# Form parsing
 python-multipart
 
+# Security & signing
 itsdangerous
-
 python-jose[cryptography]
 
+# Password hashing
 passlib[bcrypt]==1.7.4
 bcrypt==3.2.0
+
+# PDF generation (WeasyPrint)
+weasyprint>=58.0
+pydyf>=0.10.0
+cffi>=1.15.1
+tinycss2>=1.3.0
+cssselect2>=0.8.0
+pyphen>=0.9.1
+Pillow>=9.1.0
+fontTools>=4.0.0

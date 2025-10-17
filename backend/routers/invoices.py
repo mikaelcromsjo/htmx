@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer, String, DateTime, JSON, select
 from sqlalchemy.orm import Session, declarative_base
 from typing import Optional
 from datetime import datetime
-
+import os
 
 from typing import List, Optional
 from core.models.base import Base
@@ -26,6 +26,10 @@ from core.functions.helpers import populate
 from core.auth import get_current_user
 from datetime import date
 
+from fastapi import FastAPI, Request
+from fastapi.responses import Response
+from fastapi.templating import Jinja2Templates
+from weasyprint import HTML, CSS
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
 
@@ -117,6 +121,76 @@ def invoice_detail(
                 "customers": customers
             }
         )
+    elif list == "pdf":
+            # Render full invoice template to HTML
+            template_response = templates.get_template("invoices/invoice.html")
+            html_content = template_response.render(
+                request=request,
+                invoice=invoice,
+                invoice_data=invoice_data,
+                customers=customers
+            )
+
+            bg_path = os.path.join(os.getcwd(), "core/static/images/invoice.png")
+            css = CSS(string=f"""
+            @page {{
+                size: A4;
+                margin: 0cm;
+                @bottom-center {{
+                    content: element(footer);
+                }}
+                background: url('file://{bg_path}') no-repeat center center;
+                background-size: cover;
+            }}
+
+            body {{
+                font-family: sans-serif;
+                font-size: 12px;
+            }}
+
+            .footer {{
+                position: running(footer);
+                width: 600px;
+                font-size: 11px;
+                color: #444;
+                    text-align: left;
+                padding-bottom: 100px;
+            }}
+
+            .content {{
+                padding: 1cm; /* adds spacing inside the page */
+                padding-bottom: 5cm; /* space for footer */
+            }}            
+
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+            }}
+
+            table, th, td {{
+                border: 1px solid #ccc;
+            }}
+
+            th, td {{
+                padding: 5px;
+            }}
+            """)            
+            
+            # Generate PDF
+            pdf_bytes = HTML(string=html_content).write_pdf(stylesheets=[css])
+
+            return Response(
+                content=pdf_bytes,
+                media_type="application/pdf",
+#                headers={
+#                    "Content-Disposition": f'attachment; filename="invoice_{invoice.id}.pdf"'
+#                }
+                headers={
+                    "Content-Disposition": "inline; filename=invoice.pdf"
+                }
+            )    
+
+
     else:
         # Render full template
         return templates.TemplateResponse(
