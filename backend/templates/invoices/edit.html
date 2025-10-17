@@ -35,14 +35,24 @@
     </div>
 
 
-    <!-- Date -->
-    <div class="mb-2">
-        <label class="block">{{ "Date" | t }}</label>
-        <input type="datetime-local" name="date" data-save="true" value="{{ invoice.date }}" class="border p-1 w-full"/>
-    </div>
+<div class="mb-2">
+    <label class="block">{{ "Date" | t }}</label>
+<input type="datetime-local" name="date" value="{{ invoice.date or '' }}"/>
+</div>
 
 
-    <!-- Extra -->
+<div class="mb-2">
+    <label class="block font-semibold">{{ 'Due Date' | t }}</label>
+<input type="date"
+       name="extra.due_date"
+       value="{{ invoice.extra.get('due_date') or '' }}"/>
+
+<div class="mb-2">
+    <label class="block font-semibold">{{ 'VAT (%)' | t }}</label>
+    <input type="number" step="0.01" name="extra.vat" value="{{ invoice.extra.vat or '25' }}" class="border p-1 w-full"/>
+</div>
+
+
     <div class="mb-2">
         <label class="block font-semibold">{{ 'Note' | t }}</label>
         <input type="text" name="extra.note" value="{{ invoice.extra.note or '' }}" class="border p-1 w-full"/>
@@ -93,6 +103,10 @@
             <td id="subtotal">0.00</td>
         </tr>
         <tr>
+            <td colspan="3" style="text-align:right;">{{ "VAT" | t }}:</td>
+            <td id="vat_amount">0.00</td>
+        </tr>
+       <tr>
             <td colspan="3" style="text-align:right;">{{ "Total" | t }}:</td>
             <td id="total">0.00</td>
         </tr>
@@ -123,11 +137,22 @@
       subtotal += lineTotal;
     });
 
+// VAT rate (e.g. 25%)
+  const vatInput = document.querySelector('[name="extra.vat"]') || document.getElementById("vat");
+  const vatRate = vatInput ? parseFloat(vatInput.value) / 100 : 0;
+
+  // Calculate VAT and total
+  const vatAmount = subtotal * vatRate;
+  const total = subtotal + vatAmount;
+
     document.getElementById("subtotal").textContent = subtotal.toFixed(2);
-    document.getElementById("total").textContent = subtotal.toFixed(2);
+   document.getElementById("vat_amount").textContent = vatAmount.toFixed(2);    
+  document.getElementById("total").textContent = total.toFixed(2);
   }
 
   document.getElementById("invoiceTable").addEventListener("input", updateTotals);
+  const vatField = document.querySelector('input[name="extra.vat"]');
+  if (vatField) vatField.addEventListener("input", updateTotals);
 
   document.getElementById("addRow").addEventListener("click", (e) => {
     e.preventDefault(); // avoid form submit

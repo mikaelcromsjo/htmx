@@ -15,7 +15,8 @@ from core.models.models import BaseMixin, Update
 from typing import List, Optional, Dict, Any
 
 from sqlalchemy.ext.mutable import MutableDict
-
+from sqlalchemy import Date
+from datetime import date
 
 
 # models set up in routes# ------------------------------------------------------
@@ -163,6 +164,7 @@ class InvoiceUpdate(BaseModel):
     number: Optional[int] = None
     extra: Optional[Dict[str, Any]] = None
     customer_id: Optional[int] = None
+    date: Optional[datetime] = None
 
     class Config:
         orm_mode = True

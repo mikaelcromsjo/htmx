@@ -1,28 +1,121 @@
-    {% if invoice.id %}
-    <div><strong>{{ "ID" | t }}:</strong> {{ invoice.id }}</div>
+<div class="max-w-4xl mx-auto p-8 bg-white shadow-md rounded-lg font-sans text-gray-800">
+
+
+  <!-- Invoice Details -->
+  <h1>{{ "Invoice" | t }}</h1>
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="space-y-1">
+      <p><strong>{{ "Invoice #" | t }}</strong> {{ invoice.number }}</p>
+      <p><strong>{{ "Invoice Date" | t }}:</strong> {{ invoice.date.strftime('%Y-%m-%d') if invoice.date else '' }}</p>
+      <p><strong>{{ "Due Date" | t }}:</strong> {{ invoice.extra.due_date if invoice.extra.due_date else '' }}</p>
+      {% if invoice.extra.reference %}
+      <p><strong>{{ "Reference" | t }}:</strong> {{ invoice.extra.reference }}</p>
+      {% endif %}
+      {% if invoice.extra.payment_terms %}
+      <p><strong>{{ "Payment Terms" | t }}:</strong> {{ invoice.extra.payment_terms }}</p>
+      {% endif %}
+    </div>
+    {% if invoice_data.note %}
+    <div class="text-right text-gray-700">
+      <strong>{{ "Note" | t }}:</strong> <br>{{ invoice_data.note }}
+    </div>
     {% endif %}
+  </div>
 
-    <div><strong>{{ "Number" | t }}:</strong> {{ invoice.number }}</div>
-
-    <div><strong>{{ "Customer" | t }}:</strong> 
-        {{ invoice.customer.first_name if invoice.customer else "-" }}
+  <!-- Header: Company & Customer Info -->
+  <div class="flex justify-between items-start border-b pb-6 mb-6 w-50">
+    <!-- Company Info -->
+    <div class="space-y-1">
+      <h1 class="text-2xl font-bold">{{ invoice_data.name }}</h1>
+      <p>{{ invoice_data.address_line1 }}</p>
+      <p>{{ invoice_data.address_line2 }}</p>
+      <p>{{ invoice_data.postal_code }} {{ invoice_data.postal_address }}</p>
+      <p>{{ invoice_data.country }}</p>
+      <p><strong>{{ "VAT" | t }}:</strong> {{ invoice_data.vat_number }}</p>
     </div>
 
-    <div><strong>{{ "Date" | t }}:</strong> {{ invoice.date.strftime('%Y-%m-%d %H:%M') if invoice.date else "-" }}</div>
+    <!-- Customer Info -->
+    <div class="text-right space-y-1">
+      <strong class="text-lg">{{ invoice.customer.extra.customer_name }}</strong>
+      <p>{{ invoice.customer.extra.address_line1 }}</p>
+      <p>{{ invoice.customer.extra.address_line2 }}</p>
+      <p>{{ invoice.customer.extra.postal_code }} {{ invoice.customer.extra.postal_address }}</p>
+      <p>{{ invoice.customer.extra.country }}</p>
+      <p><strong>{{ "VAT" | t }}:</strong> {{ invoice.customer.extra.org_nr }}</p>
+    </div>
+  </div>
 
-    {% if invoice.extra.note %}
-    <div><strong>{{ "Note" | t }}:</strong> {{ invoice.extra.note }}</div>
-    {% endif %}
 
+  <!-- Items Table -->
+  {% set rows = invoice.extra.row if invoice.extra and invoice.extra.row else {} %}
+  {% set ns = namespace(subtotal=0) %}
+  <div class="overflow-x-auto mb-6">
+    <table class="w-full border border-gray-300">
+      <thead class="bg-gray-100 text-gray-700 font-semibold">
+        <tr>
+          <th class="px-4 py-3 text-left">{{ "Description" | t }}</th>
+          <th class="px-4 py-3 text-right">{{ "Price" | t }}</th>
+          <th class="px-4 py-3 text-right">{{ "Quantity" | t }}</th>
+          <th class="px-4 py-3 text-right">{{ "Total" | t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, row in rows.items() %}
+          {% set price = row['price'] | float(0) %}
+          {% set qty = row['qty'] | float(0) %}
+          {% set line_total = price * qty %}
+          {% set ns.subtotal = ns.subtotal + line_total %}
+          <tr class="border-t hover:bg-gray-50">
+            <td class="px-4 py-2">{{ row['description'] }}</td>
+            <td class="px-4 py-2 text-right">{{ "%.2f"|format(price) }}</td>
+            <td class="px-4 py-2 text-right">{{ "%.2f"|format(qty) }}</td>
+            <td class="px-4 py-2 text-right">{{ "%.2f"|format(line_total) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot class="text-gray-800 font-semibold">
+        {% set vat_rate = (invoice.extra.vat | float(0)) / 100 %}
+        {% set vat_amount = ns.subtotal * vat_rate %}
+        <tr class="border-t">
+          <td colspan="3" class="px-4 py-2 text-right">{{ "Subtotal" | t }}</td>
+          <td class="px-4 py-2 text-right">{{ "%.2f"|format(ns.subtotal) }}</td>
+        </tr>
+        <tr class="border-t">
+          <td colspan="3" class="px-4 py-2 text-right">{{ "VAT" | t }} ({{ "%.0f"|format(vat_rate * 100) }}%)</td>
+          <td class="px-4 py-2 text-right">{{ "%.2f"|format(vat_amount) }}</td>
+        </tr>
+        <tr class="border-t bg-gray-100 font-bold text-indigo-600">
+          <td colspan="3" class="px-4 py-2 text-right">{{ "Total" | t }}</td>
+          <td class="px-4 py-2 text-right">{{ "%.2f"|format(ns.subtotal + vat_amount) }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 
-{% set rows = invoice.extra.row if invoice.extra and invoice.extra.row else {} %}
-{% set ns = namespace(subtotal=0) %}
+  <!-- Extra Note -->
+  {% if invoice.extra.note %}
+  <div class="mb-6">
+    <h4 class="text-lg font-semibold">{{ "Note" | t }}</h4>
+    <p class="text-gray-700">{{ invoice.extra.note }}</p>
+  </div>
+  {% endif %}
 
-{% for key, row in rows.items() %}
-    {% set price = row['price'] | float(0) %}
-    {% set qty = row['qty'] | float(0) %}
-    {% set ns.subtotal = ns.subtotal + (price * qty) %}
-{% endfor %}
+  <!-- Payment Details Footer -->
+  <div class="border-t pt-6 text-sm text-gray-700 space-y-1">
+    <h4 class="font-semibold">{{ "Payment Details" | t }}</h4>
+  <div class="flex justify-between items-start border-b pb-6 mb-6 w-50">
+    <div class="space-y-1">
 
-<div><strong>{{ "Subtotal" | t }}:</strong> {{ "%.2f"|format(ns.subtotal) }}</div>
-<div><strong>{{ "Total" | t }}:</strong> {{ "%.2f"|format(ns.subtotal) }}</div>
+    {% if invoice_data.bank_name %}{{ "Bank" | t }}: {{ invoice_data.bank_name }}<br>{% endif %}
+    {% if invoice_data.iban %}{{ "IBAN" | t }}: {{ invoice_data.iban }}<br>{% endif %}
+    {% if invoice_data.bic %}{{ "BIC/SWIFT" | t }}: {{ invoice_data.bic }}<br>{% endif %}
+    </div>
+    <div class="space-y-1">
+    {% if invoice_data.bankgiro %}{{ "Bankgiro" | t }}: {{ invoice_data.bankgiro }}<br>{% endif %}
+    {% if invoice_data.plusgiro %}{{ "Plusgiro" | t }}: {{ invoice_data.plusgiro }}<br>{% endif %}
+    {% if invoice.extra.reference %}{{ "Reference" | t }}: {{ invoice.extra.reference }}<br>{% endif %}
+    </div>
+  </div>
+  </div>
+
+</div>

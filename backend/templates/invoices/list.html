@@ -5,6 +5,8 @@
             <thead>
                 <tr>
                     <th class="px-2 py-1 border">{{ "ID" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Number" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Customer" | t }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -12,6 +14,8 @@
                 <tr hx-get="{{ url_for('invoice_detail', invoice_id=invoice.id) }}?list=short" hx-target="#invoice-info"
                     hx-trigger="click" class="cursor-pointer hover:bg-gray-100">
                     <td class="px-2 py-1 border">{{ invoice.id }}</td>
+                    <td class="px-2 py-1 border">{{ invoice.number }}</td>
+                    <td class="px-2 py-1 border">{{ invoice.customer.first_name }}</td>
                     <td class="px-2 py-1 border text-center" 
                         @click.stop
                         >

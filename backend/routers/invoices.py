@@ -24,6 +24,7 @@ from models.models import Invoice, InvoiceUpdate
 from models.models import Update, Customer
 from core.functions.helpers import populate
 from core.auth import get_current_user
+from datetime import date
 
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
@@ -86,6 +87,25 @@ def invoice_detail(
     current_user = get_current_user(request, db)
     customers = db.query(Customer).filter(Customer.caller_id == current_user.caller_id).all()
 
+
+    # Invoice company data for testing
+    invoice_data = {
+        "name": "My Company AB",
+        "address_line1": "Company Street 1",
+        "address_line2": "Suite 100",
+        "postal_code": "54321",
+        "postal_address": "Berga",
+        "country": "Sweden",
+        "vat_number": "SE9876543210",
+        "bank_name": "banknamn",
+        "iban": "345678",
+        "bic": "43345678",
+        "bankgiro": "bg-43345678",
+        "plusgiro": "pg-43345678",
+        "note": "This is a test invoice for demonstration purposes."
+    }
+
+
     if list == "short":
         # Render short template
         return templates.TemplateResponse(
@@ -93,6 +113,7 @@ def invoice_detail(
             {
                 "request": request, 
                 "invoice": invoice, 
+                "invoice_data": invoice_data, 
                 "customers": customers
             }
         )
@@ -152,6 +173,12 @@ async def upsert_invoice(
 
 
     data_dict = update_data.model_dump(exclude_unset=True)
+
+#    date_str = data_dict.get("date") 
+#    if date_str:
+#        data_dict["date"] = datetime.strptime(date_str, "%Y-%m-%d")
+#    else:
+#        data_dict["date"] = None
 
     # Ensure 'extra' exists and is a dict
     if 'extra' not in data_dict or not isinstance(data_dict['extra'], dict):
