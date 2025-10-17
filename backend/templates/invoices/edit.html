@@ -61,16 +61,16 @@
     <table id="invoiceTable" class="w-full min-w-full divide-y divide-gray-200">
     <thead class="bg-gray-50">
         <tr>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th scope="col" class="px-3 py-1">
             {{ "Description" | t }}
         </th>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th scope="col" class="px-3 py-1">
             {{ "Price" | t }}
         </th>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th scope="col" class="px-3 py-1">
             {{ "Qty" | t }}
         </th>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <th scope="col" class="px-3 py-1">
             {{ "Total" | t }}
         </th>
         </tr>
@@ -79,7 +79,7 @@
         {# --- Load existing rows from Jinja context --- #}
         {% set rows = invoice.extra.row if invoice.extra and invoice.extra.row else {} %}
         {% for key, row in rows.items() %}
-        <tr class="hover:bg-gray-50">
+        <tr class="">
             <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="text" name="extra.row.{{ key }}.description" value="{{ row.description }}" placeholder="{{ "Description" | t }}"></td>
             <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.{{ key }}.price" value="{{ row.price }}" step="0.01" min="0"></td>
             <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.{{ key }}.qty" value="{{ row.qty }}" step="1" min="0"></td>

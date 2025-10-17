@@ -61,7 +61,7 @@
                                 showPopup(event);
                                 htmx.ajax('GET', '{{ url_for('customers_list') }}', {target:'#customer-container'}); "
                             hx-trigger="confirmed"
-                            x-confirm="Are you sure you want to delete this customer?"
+                            x-confirm="{{'Are you sure you want to delete this record?' | t }}"
                         >
                                                     {{ "Delete" | t }}
                         </button>   
