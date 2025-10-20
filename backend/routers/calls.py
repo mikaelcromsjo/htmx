@@ -73,6 +73,7 @@ async def customer_data(
     user = Depends(get_current_user)
 ):
     
+    user = user.username
 
     customer = db.query(Customer).filter(Customer.id == int(customer_id)).first()
     if not customer:
