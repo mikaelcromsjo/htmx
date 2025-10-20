@@ -85,6 +85,8 @@ async def customer_data(
 
     to_remove = []
     print("Web Socket")
+    print("User_Not_Working", user)
+
 
     for ws in active_connections.get(user, []):
         try:
@@ -478,7 +480,6 @@ async def websocket_endpoint(websocket: WebSocket):
         return
 
     print("User", user)
-#    user = "Alice"
 
 
     if user not in active_connections:
