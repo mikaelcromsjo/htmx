@@ -87,7 +87,7 @@
   "Wrong person": "Fel person",
   "Events": "Evenemang",
   "Fix": "Fixera",
-  "Call Center": "Fakturabolaget",
+  "Call Center": "Ringare",
   "Aktivism": "Aktivism",
   "User": "Användare",
   "Address": "Adress",
@@ -139,8 +139,8 @@
   "Company": "Företag",
   "New Company": "Nytt Företag",
   "Company Name": "Företagsnamn",
-  "APPNAME": "Fakturabolaget",
-  "Are you sure you want to delete this record?": "Are you sure you want to delete this record?",
+  "APPNAME": "",
+  "Are you sure you want to delete this record?": "Är du säker?",
   "User Information": "Användarinformation",
   "Bank Information": "Bankinformation"
 }
