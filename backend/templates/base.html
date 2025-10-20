@@ -8,8 +8,8 @@
 
     <link rel="stylesheet" href="/static/css/output.css">
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-
     <link rel="stylesheet" href="/static/css/tailwind.css">
+
 
     <!-- HTMX and Alpine.js from /static -->
     <script src="/static/htmx.min.js"></script>
@@ -405,7 +405,7 @@ function showPopup(evt) {
 
 
         async function fetchToken() {
-            const res = await fetch(`http://${location.host}/get-ws-token`, {
+            const res = await fetch(`https://${location.host}/get-ws-token`, {
                 credentials: "include"
             });
             const data = await res.json();
@@ -415,12 +415,12 @@ function showPopup(evt) {
         async function connectWS() {
             await fetchToken();
 
-            ws = new WebSocket(`ws://${location.host}/calls/ws?token=${wsToken}`);
+            ws = new WebSocket(`wss://${location.host}/calls/ws?token=${wsToken}`);
 
             ws.onopen = () => console.log("WebSocket connected!");
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
- //               console.log("Recieved", data)
+                console.log("Recieved", data)
                 if (data.call) {
                     const fieldset = document.querySelector('#call-fields');
                     // Enable the fieldset itself
