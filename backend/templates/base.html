@@ -70,6 +70,12 @@
 
       <!-- Shared buttons template -->
       <template x-ref="navButtons">
+
+
+        {%- set call = 1 -%}
+        {%- set faktura = 0 -%}
+
+        {%- if faktura -%}
         <button 
           @click="
             active = 'user';
@@ -108,8 +114,8 @@
           class="px-3 py-2 rounded hover:bg-gray-200">
           {{ "Invoices" | t }}
         </button>
-
-                <!-- 
+        {%- endif -%}
+        {%- if call -%}
 
                 <button 
                     @click="
@@ -149,7 +155,7 @@
                     class="px-3 py-2 rounded hover:bg-gray-200">
                     {{ "Call Center" | t }}
                 </button>
-            -->
+            {%- endif -%}
 
 
       </template>
@@ -249,14 +255,16 @@
   </div>
 </div>
 
-<!--
+{%- if call -%}
+<!-- Mobile View -->
     <script>
         if (/Mobi|Android/i.test(navigator.userAgent)) {
                 window.location.href = "/calls/number";
         }
     </script>
--->
-    <!-- Popup div -->
+{%- elseif -%}
+
+<!-- Popup div -->
     <div id="popup" class="alert position-fixed top-0 start-50 translate-middle-x"
         style="display:none; padding:10px 20px; border-radius:5px; z-index:1000; transition: opacity 0.3s;">
     </div>
