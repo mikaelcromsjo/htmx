@@ -141,7 +141,10 @@
   "New Company": "Nytt Företag",
   "Company Name": "Företagsnamn",
   "APPNAME": "",
-  "Are you sure you want to delete this record?": "Är du säker?",
+  "Are you sure you want to delete this record?": "Är du säker att du vill ta bort raden?",
+  "Confirm": "Bekräfta",
+  "Cancle": "Avbryt",
+  "Yes": "Ja",
   "User Information": "Användarinformation",
   "Bank Information": "Bankinformation"
 }

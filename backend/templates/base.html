@@ -347,14 +347,14 @@ function showPopup(evt) {
         <template x-if="show">
             <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                 <div class="bg-white rounded-lg shadow-xl p-6 w-80">
-                    <h2 class="text-lg font-semibold">Confirm</h2>
+                    <h2 class="text-lg font-semibold">{{ "Confirm" | t }}</h2>
                     <p class="mt-2 text-sm text-gray-600" x-text="message"></p>
                     <div class="mt-4 flex justify-end space-x-2">
                         <button @click="cancel()" class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300">
-                            Cancel
+                            {{ "Cancel" | t }}
                         </button>
                         <button @click="proceed()" class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700">
-                            Yes
+                            {{ "Yes" | t }}
                         </button>
                     </div>
                 </div>
