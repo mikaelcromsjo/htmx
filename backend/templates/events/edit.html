@@ -2,7 +2,7 @@
  
 <form 
     hx-post="{{ url_for('upsert_event') }}"
-    hx-target="#event-list" 
+    hx-target="#event-container" 
     hx-ext="json-enc"
     hx-swap="innerHTML"
     hx-on="htmx:afterRequest: $store.modal.open = false"
