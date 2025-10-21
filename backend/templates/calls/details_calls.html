@@ -100,12 +100,12 @@ Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
 </div>
 
 <!-- Customer Call Info fragment -->
-<div id="call-info" hx-swap-oob="true">
-      {% for call in calls %}
-<div disabled class="flex-grow-1 overflow-auto mt-2 border p-2" style="background:#f8f9fa;">
-{{ call.call_date.strftime('%y-%m-%d %H:%M') }} | 
-{{call.note}}
-</div>
+<div id="call-info" hx-swap-oob="true" class="d-flex flex-column flex-grow-1 overflow-auto mt-2 border p-2" style="background:#f8f9fa;">
 
+    {% for call in calls %}
+    <div class="mb-2 p-2 border-bottom">
+        {{ call.call_date.strftime('%y-%m-%d %H:%M') }} | {{ call.note }}
+    </div>
     {% endfor %}
+
 </div>
