@@ -125,8 +125,7 @@
 
     <!-- Row 2 -->
     <div class="row" style="height:40vh;">
-        <div class="col-md-3 border-end p-3 d-flex flex-column" >
-
+        <div class="col-md-3 border-end p-3 d-flex flex-column" style="min-height:100%; max-height:400px">
             {{ "Calls" | t }}
             <div class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
                 <div id="calls">
@@ -139,9 +138,9 @@
 
         <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
             {{ "Call Info" | t }}
-            <div id="call-info" hx-swap-oob="true" class="d-flex flex-column flex-grow-1 overflow-auto mt-2 border p-2" style="background:#f8f9fa;">
+            <div id="call-info" class="flex-grow-1 overflow-auto mt-2 border p-2">
                 
-                <div class="flex-grow-1 overflow-auto mt-2 border p-2" style="background:#f8f9fa;"></div>
+                <div style="background:#f8f9fa;"></div>
             </div>
         </div>
 
