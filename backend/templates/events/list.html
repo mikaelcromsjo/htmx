@@ -13,7 +13,8 @@
             </thead>
             <tbody>
                 {% for event in events %}
-                <tr hx-get="{{ url_for('event_detail', event_id=event.id) }}?list=short" hx-target="#event-info"
+                <tr hx-get="{{ url_for('event_detail', event_id=event.id) }}?list=short" 
+                    hx-target="#event-container"
                     hx-trigger="click" class="cursor-pointer hover:bg-gray-100">
                     <td class="px-2 py-1 border">{{ event.id }}</td>
                     <td class="px-2 py-1 border">{{ event.name }}</td>
