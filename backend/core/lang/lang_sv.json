@@ -143,8 +143,9 @@
   "APPNAME": "",
   "Are you sure you want to delete this record?": "Är du säker att du vill ta bort raden?",
   "Confirm": "Bekräfta",
-  "Cancle": "Avbryt",
+  "Cancel": "Avbryt",
   "Yes": "Ja",
+  "Call Customer": "Ring kund",
   "User Information": "Användarinformation",
   "Bank Information": "Bankinformation"
 }
