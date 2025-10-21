@@ -79,7 +79,12 @@ def get_translator_cached(lang_code: str):
         if lang_code not in _translators_cache:
             _translators_cache[lang_code] = get_translator(lang_code)
         return _translators_cache[lang_code]
-    
+
+def translator_clear_cache():
+    """Clear the global translator cache in a thread-safe way."""
+    with _cache_lock:
+        _translators_cache.clear()
+
 
 # --- FastAPI app setup ---
 app = FastAPI(title="HTMX + Alpine.js Prototype", debug=True)
@@ -131,8 +136,10 @@ def list_models():
 @app.on_event("startup")
 def on_startup():
 
-    for lang in SUPPORTED_LANGUAGES:
-        _translators_cache[lang] = get_translator(lang)
+    with _cache_lock:
+        _translators_cache.clear()
+        for lang in SUPPORTED_LANGUAGES:
+            _translators_cache[lang] = get_translator(lang)
 
     # Check DB connection
     try:
@@ -188,6 +195,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 @app.get("/login")
 async def login_get(request: Request):
+        
     # If already logged in, redirect to home
     if request.session.get("authenticated"):
         return RedirectResponse(url="/")
@@ -196,6 +204,13 @@ async def login_get(request: Request):
 # --- Routes ---
 @app.post("/login")
 async def login_post(request: Request, username: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+
+    lang_code = request.cookies.get("lang_code")
+    if not lang_code:
+        accept_language = request.headers.get("accept-language", "")
+        lang_code = get_best_language_match(accept_language, SUPPORTED_LANGUAGES)
+
+    templates.env.filters["t"] = get_translator(lang_code)
 
 
     user = db.query(User).filter(User.username == username).first()
@@ -223,14 +238,6 @@ def get_ws_token(request: Request):
 @app.get("/logout")
 @app.post("/logout")
 async def logout(request: Request):
-
-
-    lang_code = request.cookies.get("lang_code")
-    if not lang_code:
-        accept_language = request.headers.get("accept-language", "")
-        lang_code = get_best_language_match(accept_language, SUPPORTED_LANGUAGES)
-
-    templates.env.filters["t"] = get_translator(lang_code)
 
     request.session.clear()
     return templates.TemplateResponse(
@@ -323,7 +330,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
 
 
 def get_best_language_match(accept_language: str, supported: list[str]) -> str:
