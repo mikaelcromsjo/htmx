@@ -299,7 +299,7 @@
     Reset layout
   </button>
 
-  <script>
+<script>
 function setupSplit(ids, key) {
   const saved = JSON.parse(localStorage.getItem(key));
   const defaults = Array(ids.length).fill(100 / ids.length);
@@ -308,15 +308,31 @@ function setupSplit(ids, key) {
     gutterSize: 6,
     cursor: 'col-resize',
     minSize: 100,
-    onDragEnd(sizes) { localStorage.setItem(key, JSON.stringify(sizes)); }
+    onDragEnd(sizes) {
+      localStorage.setItem(key, JSON.stringify(sizes));
+    }
   });
 }
 
+// Run Split setup after the DOM loads normally
 document.addEventListener('DOMContentLoaded', () => {
-  setupSplit(['col1','col2','col3','col4'], 'layout-topRow');
-  setupSplit(['col5','col6','col7'], 'layout-bottomRow');
+  if (document.querySelectorAll('#col1').length)
+    setupSplit(['col1','col2','col3','col4'], 'layout-topRow');
+  if (document.querySelectorAll('#col5').length)
+    setupSplit(['col5','col6','col7'], 'layout-bottomRow');
 });
 
+// Run Split again after HTMX content loads/swaps
+document.body.addEventListener('htmx:afterSwap', (e) => {
+  console.log("HTMX content swapped:", e.target);
+  // Check if the swapped content includes one of your layout rows
+  if (e.target.querySelector('#col1')) {
+    setupSplit(['col1','col2','col3','col4'], 'layout-topRow');
+  }
+  if (e.target.querySelector('#col5')) {
+    setupSplit(['col5','col6','col7'], 'layout-bottomRow');
+  }
+});
 </script>
 
 <script>
