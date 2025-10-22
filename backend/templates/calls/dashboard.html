@@ -7,8 +7,6 @@
      hx-swap="none">
 </div>
 
-<script src="https://unpkg.com/split.js/dist/split.min.js"></script>
-
 <div class="container-fluid border">
     <!-- Row 1 -->
  <div id="topRow" class="d-flex border-bottom" style="height:45vh;">
@@ -314,7 +312,7 @@ function setupSplit(ids, key) {
   });
 }
 
-// Run Split setup after the DOM loads normally
+// 1. Initial DOM load
 document.addEventListener('DOMContentLoaded', () => {
   if (document.querySelectorAll('#col1').length)
     setupSplit(['col1','col2','col3','col4'], 'layout-topRow');
@@ -322,18 +320,19 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSplit(['col5','col6','col7'], 'layout-bottomRow');
 });
 
-// Run Split again after HTMX content loads/swaps
-document.body.addEventListener('htmx:afterSwap', (e) => {
-  console.log("HTMX content swapped:", e.target);
-  // Check if the swapped content includes one of your layout rows
-  if (e.target.querySelector('#col1')) {
+// 2. After any HTMX swap
+document.body.addEventListener('htmx:afterSwap', (event) => {
+  const t = event.target;
+
+  if (t.querySelector('#col1')) {
     setupSplit(['col1','col2','col3','col4'], 'layout-topRow');
   }
-  if (e.target.querySelector('#col5')) {
+  if (t.querySelector('#col5')) {
     setupSplit(['col5','col6','col7'], 'layout-bottomRow');
   }
 });
 </script>
+
 
 <script>
 const buttons = document.querySelectorAll('.btn-select');
@@ -350,14 +349,3 @@ function removeHightlight(){
 
 </script>
 
-<!-- 🧩 Then your script that calls Split() -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  console.log("Split test start");
-  console.log("Split exists?", typeof Split);
-  console.log("TopRow children:", document.querySelectorAll('#topRow > div').length);
-
-  // now Split will be defined
-  Split(['#col1', '#col2', '#col3', '#col4'], { gutterSize: 8 });
-});
-</script>
