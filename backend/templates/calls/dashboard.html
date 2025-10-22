@@ -122,9 +122,114 @@
       {{ "Call Info" | t }}
       <div id="call-info" class="overflow-auto mt-2 border p-2"><div style="background:#f8f9fa;"></div></div>
     </div>
-    <div id="col7" class="border-end p-3 overflow-auto bg-light" style="flex:0 0 auto;">
-      <!-- Actions, filters, forms omitted for brevity but keep structure -->
+<!-- Action Column -->
+<div id="col7" class="border-end p-3 overflow-auto bg-light" style="flex:0 0 auto;">
+
+  <!-- Filters -->
+  <div class="d-flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light">
+    <template x-for="(value, type) in Alpine.store('eventFilters')" :key="type">
+      <label class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" x-model="Alpine.store('eventFilters')[type]">
+        <span
+          x-text="{
+            activism: '{{ 'Activism' | t }}',
+            lectures: '{{ 'Lectures' | t }}',
+            parties: '{{ 'Parties' | t }}',
+            politics: '{{ 'Politics' | t }}'
+          }[type] || (type.charAt(0).toUpperCase() + type.slice(1))">
+        </span>
+      </label>
+    </template>
+
+    <label class="form-check form-check-inline">
+      <input class="form-check-input" type="checkbox">
+      <span>{{ "Fix" | t }}</span>
+    </label>
+  </div>
+
+  <!-- Save Form -->
+  <form id="save-form"
+        hx-post="{{ url_for('save_call') }}"
+        hx-ext="json-enc"
+        hx-swap="none"
+        hx-trigger="submit"
+        hx-on="htmx:afterRequest:
+            document.getElementById('current_call').value =
+              JSON.parse(event.detail.xhr.responseText).call_id;
+            htmx.trigger('#customer-calls', 'load-customer')">
+
+    <!-- Event Status Options -->
+    <div class="d-flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light"
+         x-data
+         :key="$store.eventCustomer.status"
+         x-effect="
+           $el.querySelectorAll('input[name=event_status]').forEach(radio => {
+             radio.checked = (radio.value == $store.eventCustomer.status)
+           })
+         ">
+
+      <label class="form-check form-check-inline">
+        <input name="event_status" value="1" class="form-check-input" type="radio">
+        <span>{{ "Interested" | t }}</span>
+      </label>
+      <label class="form-check form-check-inline">
+        <input name="event_status" value="2" class="form-check-input" type="radio">
+        <span>{{ "Not interested" | t }}</span>
+      </label>
+      <label class="form-check form-check-inline">
+        <input name="event_status" value="3" class="form-check-input" type="radio">
+        <span>{{ "Paid" | t }}</span>
+      </label>
+
+      <!-- Hidden alarm picker -->
+      <input type="datetime-local"
+             name="event_alarm_date"
+             id="alarm_input"
+             class="absolute w-0 h-0 opacity-0 pointer-events-none">
+
+      <input type="hidden" name="event_id" :value="$store.event.id">
+      <input type="hidden" name="customer_id" :value="$store.customer.id">
+      <input type="hidden" name="id" id="current_call">
+
+      <div class="mb-2 relative">
+        <button type="button"
+                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                onclick="document.getElementById('alarm_input').showPicker()">
+          {{ "Alarm" | t }}
+        </button>
+      </div>
     </div>
+
+    <!-- Call Comment + Status Buttons -->
+    <fieldset id="call-fields" disabled class="d-block mb-3">
+      <label class="fw-semibold mb-1 d-block">{{ "Call Comment" | t }}</label>
+      <textarea name="note" class="form-control mb-3" rows="3"></textarea>
+
+      <!-- Status Buttons -->
+      <div class="d-flex flex-wrap gap-2">
+        <input type="hidden" name="status" id="status_value">
+        <button type="button"
+                class="btn btn-success btn-select"
+                onclick="document.getElementById('status_value').value='1'; highlightButton(this);">
+          {{ "Answer" | t }}
+        </button>
+        <button type="button"
+                class="btn btn-danger btn-select"
+                onclick="document.getElementById('status_value').value='2'; highlightButton(this);">
+          {{ "No answer" | t }}
+        </button>
+        <button type="button"
+                class="btn btn-warning btn-select"
+                onclick="document.getElementById('status_value').value='3'; highlightButton(this);">
+          {{ "Called me" | t }}
+        </button>
+      </div>
+    </fieldset>
+
+    <!-- Save Button -->
+    <button type="submit" class="btn btn-success mt-2">{{ "Save" | t }}</button>
+  </form>
+</div>
   </div>
 </div>
 
