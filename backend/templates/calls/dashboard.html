@@ -200,21 +200,29 @@
       </div>
     </div>
 
-    <!-- Call Comment + Status Buttons -->
- <div class="d-flex flex-wrap gap-2 align-items-center">
-  <fieldset id="call-fields" disabled class="d-flex gap-2 align-items-center m-0 border-0 p-0">
-    <input type="hidden" name="status" id="status_value">
-    <button type="button" class="btn btn-success btn-select"
-            onclick="document.getElementById('status_value').value='1'; highlightButton(this);">
-      {{ "Answer" | t }}
-    </button>
-    <button type="button" class="btn btn-danger btn-select"
-            onclick="document.getElementById('status_value').value='2'; highlightButton(this);">
-      {{ "No answer" | t }}
-    </button>
-  </fieldset>
+<!-- Call Comment + Status Buttons -->
+<fieldset id="call-fields" disabled class="d-inline-flex flex-wrap gap-2 align-items-center mb-3 w-100">
+  <label class="fw-semibold mb-1 d-block w-100">{{ "Call Comment" | t }}</label>
+  <textarea name="note" class="form-control mb-3 w-100" rows="3"></textarea>
 
-  <button type="button" class="btn btn-warning btn-select"
+  <!-- Status Buttons (inside fieldset so they can be disabled) -->
+  <input type="hidden" name="status" id="status_value">
+  <button type="button"
+          class="btn btn-success btn-select"
+          onclick="document.getElementById('status_value').value='1'; highlightButton(this);">
+    {{ "Answer" | t }}
+  </button>
+  <button type="button"
+          class="btn btn-danger btn-select"
+          onclick="document.getElementById('status_value').value='2'; highlightButton(this);">
+    {{ "No answer" | t }}
+  </button>
+</fieldset>
+
+<!-- Other Buttons (always enabled) -->
+<div class="d-inline-flex flex-wrap gap-2 align-items-center">
+  <button type="button"
+          class="btn btn-warning btn-select"
           onclick="document.getElementById('status_value').value='3'; highlightButton(this);">
     {{ "Called me" | t }}
   </button>
