@@ -7,12 +7,15 @@
      hx-swap="none">
 </div>
 
+<script src="https://unpkg.com/split.js/dist/split.min.js"></script>
+
 <div class="container-fluid border">
     <!-- Row 1 -->
-    <div class="row border-bottom" style="height: 40vh;">
-        <!-- Customers Column -->
-        <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
-            <div class="fw-semibold">{{ "Customers" | t }}</div>
+ <div id="topRow" class="d-flex border-bottom" style="height:45vh;">
+    
+    <!-- Customers Column -->
+    <div id="col1" class="border-end p-3 flex-1 overflow-auto bg-light">
+                    <div class="fw-semibold">{{ "Customers" | t }}</div>
             <div id="calls-customer-list" class="flex-grow-1 overflow-auto mt-2" x-data>
 {% for customer in customers %}
 <div class="p-2 border-bottom cursor-pointer d-flex justify-content-between align-items-center"
@@ -56,8 +59,8 @@
         </div>
 
         <!-- Customer Info Column -->
-        <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
-            <div class="fw-semibold">{{ "Customer Info" | t }}</div>
+    <div id="col2" class="border-end p-3 flex-1 overflow-auto bg-light">
+                    <div class="fw-semibold">{{ "Customer Info" | t }}</div>
 
             <div class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
                 <div id="customer-details">
@@ -76,8 +79,8 @@
         </div>
 
         <!-- Events Column -->
-        <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
-            <div class="fw-semibold">{{ "Events" | t }}</div>
+    <div id="col3" class="border-end p-3 flex-1 overflow-auto bg-light">
+                    <div class="fw-semibold">{{ "Events" | t }}</div>
             <div id="call-events" class="flex-grow-1 overflow-auto mt-2">
                 <div id="calls-event-list">
                     <div x-data="{
@@ -117,15 +120,18 @@
         </div>
 
         <!-- Event Info Column -->
-        <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
-            <div class="fw-semibold">{{ "Event Info" | t }}</div>
+    <div id="col4" class="border-end p-3 flex-1 overflow-auto bg-light">
+                    <div class="fw-semibold">{{ "Event Info" | t }}</div>
             <div id="event-details" class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;"></div>
         </div>
     </div>
 
     <!-- Row 2 -->
-    <div class="row" style="height:40vh;">
-        <div class="col-md-3 border-end p-3 d-flex flex-column" style="min-height:100%; max-height:400px">
+  <div id="bottomRow" class="d-flex" style="height:45vh;">
+    
+    <!-- Calls Column --> 
+<div id="col5" class="border-end p-3 flex-1 overflow-auto bg-light">
+
             {{ "Calls" | t }}
             <div class="flex-grow-1 overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
                 <div id="calls">
@@ -136,16 +142,19 @@
             </div>
         </div>
 
-        <div class="col-md-3 border-end p-3 d-flex flex-column" style="height:100%;">
-            {{ "Call Info" | t }}
+               <!-- Call Info Column --> 
+<div id="col6" class="border-end p-3 flex-1 overflow-auto bg-light">
+                {{ "Call Info" | t }}
             <div id="call-info" class="flex-grow-1 overflow-auto mt-2 border p-2">
                 
                 <div style="background:#f8f9fa;"></div>
             </div>
         </div>
 
-        <div class="col-md-6 border-end p-3 d-flex flex-column" style="height:100%;">
-            <!-- Filters -->
+        <!-- Action Column --> 
+<div id="col7" class="border-end p-3 flex-1 overflow-auto bg-light">
+    
+    <!-- Filters -->
             <div class="d-flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light">
 <template x-for="(value, type) in Alpine.store('eventFilters')" :key="type">
   <label class="form-check form-check-inline">
@@ -285,6 +294,26 @@
     </div>
 </div>
 
+  <button class="btn btn-sm btn-outline-secondary mt-2"
+          onclick="localStorage.clear(); location.reload();">
+    Reset layout
+  </button>
+
+  <script>
+function setupSplit(ids, key) {
+  const saved = JSON.parse(localStorage.getItem(key));
+  const defaults = Array(ids.length).fill(100 / ids.length);
+  Split(ids.map(id => '#' + id), {
+    sizes: saved || defaults,
+    gutterSize: 6,
+    cursor: 'col-resize',
+    minSize: 100,
+    onDragEnd(sizes) { localStorage.setItem(key, JSON.stringify(sizes)); }
+  });
+}
+setupSplit(['col1','col2','col3','col4'], 'layout-topRow');
+setupSplit(['col5','col6','col7'], 'layout-bottomRow');
+</script>
 
 <script>
 const buttons = document.querySelectorAll('.btn-select');
