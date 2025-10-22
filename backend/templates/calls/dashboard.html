@@ -350,16 +350,14 @@ function removeHightlight(){
 
 </script>
 
+<!-- 🧩 Then your script that calls Split() -->
 <script>
-console.log("Split test start");
-console.log("Split exists?", typeof Split);
-console.log("TopRow children:", document.querySelectorAll('#topRow > div').length);
+document.addEventListener('DOMContentLoaded', () => {
+  console.log("Split test start");
+  console.log("Split exists?", typeof Split);
+  console.log("TopRow children:", document.querySelectorAll('#topRow > div').length);
 
-Split(['#col1','#col2','#col3','#col4'], {
-  gutterSize: 8,
-  minSize: 100,
-  onDragEnd: s => console.log("sizes:", s)
+  // now Split will be defined
+  Split(['#col1', '#col2', '#col3', '#col4'], { gutterSize: 8 });
 });
-
-console.log("Gutters now:", document.querySelectorAll('.gutter').length);
 </script>
