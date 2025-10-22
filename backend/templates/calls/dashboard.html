@@ -312,13 +312,6 @@ function setupSplit(ids, key) {
   });
 }
 
-// 1. Initial DOM load
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.querySelectorAll('#col1').length)
-    setupSplit(['col1','col2','col3','col4'], 'layout-topRow');
-  if (document.querySelectorAll('#col5').length)
-    setupSplit(['col5','col6','col7'], 'layout-bottomRow');
-});
 
 // 2. After any HTMX swap
 document.body.addEventListener('htmx:afterSwap', (event) => {
@@ -348,4 +341,34 @@ function removeHightlight(){
 }
 
 </script>
+
+<script>
+const htmxEvents = [
+  "htmx:configRequest",
+  "htmx:beforeRequest",
+  "htmx:sendError",
+  "htmx:beforeSwap",
+  "htmx:afterSwap",
+  "htmx:afterSettle",
+  "htmx:load",
+  "htmx:beforeOnLoad",
+  "htmx:afterRequest",
+];
+
+htmxEvents.forEach(eventName => {
+  document.body.addEventListener(eventName, (e) => {
+    console.log(`✅ Event fired: ${eventName}`, e.target);
+  });
+});
+
+// Extra: empty handler to see if event triggers
+document.body.addEventListener('htmx:afterSwap', (e) => {
+  console.log("📌 empty afterSwap fired for", e.target);
+});
+
+document.body.addEventListener('htmx:afterSettle', (e) => {
+  console.log("📌 empty afterSettle fired for", e.target);
+});
+</script>
+
 
