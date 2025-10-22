@@ -36,7 +36,7 @@
 
 
 <header class="bg-white shadow sticky top-0 z-10" x-data="{ open: false }">
-  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+  <div class="max-w-7xl mx-auto px-4 py-1 flex items-center justify-between">
     <!-- App name -->
     <div class="text-xl font-semibold">
       {{ "APPNAME" | t }}
@@ -197,7 +197,7 @@
         <button x-ref="companiesContent" hx-get="{{ url_for('companies_list') }}" hx-target="#companies_content" hx-push-url="false"></button>
     </div>
     <!-- Main content -->
-    <main class="max-w-7xl mx-auto p-4 w-full">
+    <main class="mx-auto p-1 w-full">
         <!-- User -->         
         <div id="user_content" x-show="active === 'user'" class="bg-white rounded shadow p-4">
         </div>
