@@ -10,7 +10,7 @@
 <div class="container-fluid border">
 
   <!-- Row 1: TopRow -->
-  <div id="topRow" class="d-flex border-bottom" style="height:45vh;">
+  <div id="topRow" class="d-flex border-bottom" style="height:43vh;">
     <!-- Customers Column -->
     <div id="col1" class="border-end p-3 overflow-auto bg-light" style="flex:0 0 auto;">
       <div class="fw-semibold">{{ "Customers" | t }}</div>
@@ -107,7 +107,7 @@
   </div>
 
   <!-- Row 2: BottomRow -->
-  <div id="bottomRow" class="d-flex" style="height:45vh;">
+  <div id="bottomRow" class="d-flex" style="height:43vh;">
     <div id="col5" class="border-end p-3 overflow-auto bg-light" style="flex:0 0 auto;">
       {{ "Calls" | t }}
       <div class="overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
@@ -201,33 +201,28 @@
     </div>
 
     <!-- Call Comment + Status Buttons -->
-    <fieldset id="call-fields" disabled class="d-block mb-3">
-      <label class="fw-semibold mb-1 d-block">{{ "Call Comment" | t }}</label>
-      <textarea name="note" class="form-control mb-3" rows="3"></textarea>
+ <div class="d-flex flex-wrap gap-2 align-items-center">
+  <fieldset id="call-fields" disabled class="d-flex gap-2 align-items-center m-0 border-0 p-0">
+    <input type="hidden" name="status" id="status_value">
+    <button type="button" class="btn btn-success btn-select"
+            onclick="document.getElementById('status_value').value='1'; highlightButton(this);">
+      {{ "Answer" | t }}
+    </button>
+    <button type="button" class="btn btn-danger btn-select"
+            onclick="document.getElementById('status_value').value='2'; highlightButton(this);">
+      {{ "No answer" | t }}
+    </button>
+  </fieldset>
 
-      <!-- Status Buttons -->
-      <div class="d-flex flex-wrap gap-2">
-        <input type="hidden" name="status" id="status_value">
-        <button type="button"
-                class="btn btn-success btn-select"
-                onclick="document.getElementById('status_value').value='1'; highlightButton(this);">
-          {{ "Answer" | t }}
-        </button>
-        <button type="button"
-                class="btn btn-danger btn-select"
-                onclick="document.getElementById('status_value').value='2'; highlightButton(this);">
-          {{ "No answer" | t }}
-        </button>
-        <button type="button"
-                class="btn btn-warning btn-select"
-                onclick="document.getElementById('status_value').value='3'; highlightButton(this);">
-          {{ "Called me" | t }}
-        </button>
-      </div>
-    </fieldset>
+  <button type="button" class="btn btn-warning btn-select"
+          onclick="document.getElementById('status_value').value='3'; highlightButton(this);">
+    {{ "Called me" | t }}
+  </button>
 
-    <!-- Save Button -->
-    <button type="submit" class="btn btn-success mt-2">{{ "Save" | t }}</button>
+  <button type="submit" class="btn btn-success">
+    {{ "Save" | t }}
+  </button>
+</div>
   </form>
 </div>
   </div>
