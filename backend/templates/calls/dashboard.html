@@ -311,8 +311,12 @@ function setupSplit(ids, key) {
     onDragEnd(sizes) { localStorage.setItem(key, JSON.stringify(sizes)); }
   });
 }
-setupSplit(['col1','col2','col3','col4'], 'layout-topRow');
-setupSplit(['col5','col6','col7'], 'layout-bottomRow');
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupSplit(['col1','col2','col3','col4'], 'layout-topRow');
+  setupSplit(['col5','col6','col7'], 'layout-bottomRow');
+});
+
 </script>
 
 <script>
@@ -328,4 +332,18 @@ function removeHightlight(){
     buttons.forEach(b => b.classList.remove('highlight'));
 }
 
+</script>
+
+<script>
+console.log("Split test start");
+console.log("Split exists?", typeof Split);
+console.log("TopRow children:", document.querySelectorAll('#topRow > div').length);
+
+Split(['#col1','#col2','#col3','#col4'], {
+  gutterSize: 8,
+  minSize: 100,
+  onDragEnd: s => console.log("sizes:", s)
+});
+
+console.log("Gutters now:", document.querySelectorAll('.gutter').length);
 </script>
