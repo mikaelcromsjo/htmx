@@ -29,7 +29,8 @@
                     document.getElementById('current_call').value = '';
                     Alpine.store('event').id = '';
                     document.getElementById('status_value').value='';
-                    document.querySelector('#call-fields').disabled = true;
+                    disableCallButtons();
+                    disableStatus();
                     removeHightlight()    
                 }
              "
@@ -85,7 +86,7 @@
                     'bg-primary bg-opacity-25 fw-bold text-primary': Alpine.store('event').id === {{ event.id }},
                     'bg-white fw-normal text-dark': Alpine.store('event').id !== {{ event.id }}
                   }"
-                  @click="Alpine.store('event').id = {{ event.id }}"
+                  @click="Alpine.store('event').id = {{ event.id }}; enableStatus();"
                   hx-get="{{ url_for('calls_event_detail', event_id=event.id) }}?list=short"
                   hx-target="#event-details"
                   hx-swap="innerHTML"
@@ -142,7 +143,7 @@
     </template>
 
     <label class="form-check form-check-inline">
-      <input class="form-check-input" type="checkbox">
+      <input id="fix" class="form-check-input" type="checkbox">
       <span>{{ "Fix" | t }}</span>
     </label>
   </div>
@@ -169,17 +170,45 @@
          ">
 
       <label class="form-check form-check-inline">
-        <input name="event_status" value="1" class="form-check-input" type="radio">
+        <input name="event_status" disabled value="1" class="status-disable form-check-input" type="radio">
         <span>{{ "Interested" | t }}</span>
       </label>
       <label class="form-check form-check-inline">
-        <input name="event_status" value="2" class="form-check-input" type="radio">
+        <input name="event_status" disabled value="2" class="status-disable form-check-input" type="radio">
         <span>{{ "Not interested" | t }}</span>
       </label>
       <label class="form-check form-check-inline">
-        <input name="event_status" value="3" class="form-check-input" type="radio">
+        <input name="event_status" disabled value="3" class="status-disable form-check-input" type="radio">
         <span>{{ "Paid" | t }}</span>
       </label>
+
+    </div>
+
+<!-- Call Comment + Status Buttons -->
+  <label class="fw-semibold mb-1 d-block w-100">{{ "Call Comment" | t }}</label>
+  <textarea name="note" class="form-control mb-3 w-100" rows="3"></textarea>
+
+  <input type="hidden" name="status" id="status_value">
+
+  
+<div class="d-inline-flex flex-wrap gap-2 align-items-center">
+  <button type="button"
+          class="btn btn-success btn-select call-disable"  disabled
+          onclick="document.getElementById('status_value').value='1'; highlightButton(this);">
+    {{ "Answer" | t }}
+  </button>
+  <button type="button"
+          class="btn btn-danger btn-select call-disable"  disabled
+          onclick="document.getElementById('status_value').value='2'; highlightButton(this);">
+    {{ "No answer" | t }}
+  </button>
+
+<!-- Other Buttons (always enabled) -->
+  <button type="button"
+          class="btn btn-warning btn-select"
+          onclick="document.getElementById('status_value').value='3'; highlightButton(this);">
+    {{ "Called me" | t }}
+  </button>
 
       <!-- Hidden alarm picker -->
       <input type="datetime-local"
@@ -191,41 +220,13 @@
       <input type="hidden" name="customer_id" :value="$store.customer.id">
       <input type="hidden" name="id" id="current_call">
 
-      <div class="mb-2 relative">
-        <button type="button"
-                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+      <div class="relative">
+        <button type="button" class="btn btn-success bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 onclick="document.getElementById('alarm_input').showPicker()">
           {{ "Alarm" | t }}
         </button>
       </div>
-    </div>
 
-<!-- Call Comment + Status Buttons -->
-<fieldset id="call-fields" disabled class="d-inline-flex flex-wrap gap-2 align-items-center mb-3 w-100">
-  <label class="fw-semibold mb-1 d-block w-100">{{ "Call Comment" | t }}</label>
-  <textarea name="note" class="form-control mb-3 w-100" rows="3"></textarea>
-
-  <!-- Status Buttons (inside fieldset so they can be disabled) -->
-  <input type="hidden" name="status" id="status_value">
-  <button type="button"
-          class="btn btn-success btn-select"
-          onclick="document.getElementById('status_value').value='1'; highlightButton(this);">
-    {{ "Answer" | t }}
-  </button>
-  <button type="button"
-          class="btn btn-danger btn-select"
-          onclick="document.getElementById('status_value').value='2'; highlightButton(this);">
-    {{ "No answer" | t }}
-  </button>
-</fieldset>
-
-<!-- Other Buttons (always enabled) -->
-<div class="d-inline-flex flex-wrap gap-2 align-items-center">
-  <button type="button"
-          class="btn btn-warning btn-select"
-          onclick="document.getElementById('status_value').value='3'; highlightButton(this);">
-    {{ "Called me" | t }}
-  </button>
 
   <button type="submit" class="btn btn-success">
     {{ "Save" | t }}
@@ -235,6 +236,98 @@
 </div>
   </div>
 </div>
+
+<script>
+function autoSaveForm() {
+  const form = document.getElementById('save-form');
+  if (!form) return;
+
+  const submitForm = () => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+  // Auto-submit on any input/select change
+  form.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('change', submitForm);
+  });
+
+  form.querySelectorAll('input, button').forEach(el => {
+    el.addEventListener('click', submitForm);
+  });
+
+
+  // Auto-submit on textarea blur (unfocus)
+  form.querySelectorAll('textarea').forEach(el => {
+    el.addEventListener('blur', submitForm);
+  });
+}
+
+autoSaveForm();
+</script>
+
+<script>
+            function enableCallButtons() {
+                // Select all elements with class 'call_disable'
+                const buttons = document.querySelectorAll('.call-disable');
+                
+                // Loop through and enable each one
+                buttons.forEach(button => {
+                    button.disabled = false;
+                });
+            }
+
+            function disableCallButtons() {
+                // Select all elements with class 'call_disable'
+                const buttons = document.querySelectorAll('.call-disable');
+                
+                // Loop through and enable each one
+                buttons.forEach(button => {
+                    button.disabled = true;
+                });
+            }
+
+            function enableStatus() {
+                // Select all elements with class 'call_disable'
+                const buttons = document.querySelectorAll('.status-disable');
+                
+                // Loop through and enable each one
+                buttons.forEach(button => {
+                    button.disabled = false;
+                });
+            }
+
+            function disableStatus() {
+                // Select all elements with class 'call_disable'
+                const buttons = document.querySelectorAll('.status-disable');
+                
+                // Loop through and enable each one
+                buttons.forEach(button => {
+                    button.disabled = true;
+                });
+            }
+
+
+          </script>
+
+
+
+<script>
+const buttons = document.querySelectorAll('.btn-select');
+buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('highlight'));
+        btn.classList.add('highlight');
+    });
+});
+
+function removeHightlight(){
+    buttons.forEach(b => b.classList.remove('highlight'));
+}
+
+function highlightButton(button) {
+    removeHightlight(); // Remove highlight from all buttons first
+    button.classList.add('highlight'); // Add highlight to the clicked or specified button
+}
+
+</script>
 
 <!-- Include Split.js -->
 <script src="https://unpkg.com/split.js/dist/split.min.js"></script>

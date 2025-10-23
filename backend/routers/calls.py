@@ -60,10 +60,7 @@ def call_center_dashboard(
 
 from sqlalchemy import desc
 from state import user_data, active_connections
-
 from core.models.models import BaseMixin, Update, User
-
-
 
 @router.get("/customer_data", name="customer_data", response_class=HTMLResponse, response_model=None)
 async def customer_data(
@@ -85,16 +82,9 @@ async def customer_data(
     # Broadcast to all connected receivers
 
     to_remove = []
-    print("Web Socket")
-    print("User_Not_Working", user)
-
 
     for ws in active_connections.get(user, []):
         try:
-            print("Sending to web sockets")
-            print("Current user:", user)
-            print("Active connections for this user:", active_connections.get(user, []))
-            print("User data to send:", user_data.get(user))            
             await ws.send_json(user_data[user])
         except RuntimeError:
             # WebSocket is closed, mark for removal
@@ -115,7 +105,9 @@ async def customer_data(
         .all()
     )    
 
-    calls = db.query(Call).filter(Call.customer_id == int(customer_id)).order_by(desc(Call.id)).all()
+    # Limit to 50 calls
+    calls = db.query(Call).filter(Call.customer_id == int(customer_id)).order_by(desc(Call.id)).limit(50).all()
+
     return templates.TemplateResponse(
         "calls/details_calls.html",
         {
@@ -239,7 +231,6 @@ async def save_call(
     event_id = update_data.event_id
     event_status = getattr(update_data, "event_status", None)
     customer_id = update_data.customer_id
-
 
     # Get the CustomerEvent match
     event_customer = db.query(EventCustomer).filter_by(

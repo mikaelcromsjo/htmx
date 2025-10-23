@@ -2,11 +2,13 @@
 <div id="customer-details" hx-swap-oob="true">
 
 <div x-data x-init='
-Alpine.store("eventFilters").activism = {{ customer.likes_activism | tojson }};
-Alpine.store("eventFilters").lectures  = {{ customer.likes_lectures | tojson }};
-Alpine.store("eventFilters").parties  = {{ customer.likes_parties | tojson }};
-Alpine.store("eventFilters").politics = {{ customer.likes_politics | tojson }};
-Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
+        if (!document.getElementById("fix").checked) {
+          Alpine.store("eventFilters").activism = {{ customer.likes_activism | tojson }};
+          Alpine.store("eventFilters").lectures  = {{ customer.likes_lectures | tojson }};
+          Alpine.store("eventFilters").parties  = {{ customer.likes_parties | tojson }};
+          Alpine.store("eventFilters").politics = {{ customer.likes_politics | tojson }};
+        }
+        Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
         '>
 </div>
 
