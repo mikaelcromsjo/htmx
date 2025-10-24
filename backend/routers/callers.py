@@ -14,7 +14,7 @@ from templates import templates
 
 from models.models import Customer, Call, Event, Caller
 from core.functions.helpers import render
-from functions.customers import get_selected_ids, get_customers, SelectedIDs
+from functions.customers import get_selected_ids, get_customers, get_user_customers, SelectedIDs
 
 
 router = APIRouter(prefix="/calls", tags=["calls"])

@@ -36,12 +36,14 @@ def call_center_dashboard(
     request: Request,
     selected_ids: Optional[SelectedIDs] = None,
     db: Session = Depends(get_db),
+    user = Depends(get_current_user)
 ):
     """
     Single route to render the call center dashboard for both GET and POST.
     """
     ids = get_selected_ids(request, selected_ids)
-    customers = get_customers(db, ids)
+
+    customers = get_customers(db, user, ids)
     query = db.query(Call)
     calls = query.all()
     query = db.query(Event)
@@ -70,28 +72,28 @@ async def customer_data(
     user = Depends(get_current_user)
 ):
     
-    user = user.username
+    username = user.username
 
     customer = db.query(Customer).filter(Customer.id == int(customer_id)).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
 
 
-    user_data.setdefault(user, {})["name"] = customer.first_name + " " + customer.last_name
-    user_data.setdefault(user, {})["number"] = customer.phone
+    user_data.setdefault(username, {})["name"] = customer.first_name + " " + customer.last_name
+    user_data.setdefault(username, {})["number"] = customer.phone
     # Broadcast to all connected receivers
 
     to_remove = []
 
-    for ws in active_connections.get(user, []):
+    for ws in active_connections.get(username, []):
         try:
-            await ws.send_json(user_data[user])
+            await ws.send_json(user_data[username])
         except RuntimeError:
             # WebSocket is closed, mark for removal
             to_remove.append(ws)
 
     for ws in to_remove:
-        active_connections[user].remove(ws)
+        active_connections[username].remove(ws)
 
 
     customer = (
@@ -168,7 +170,7 @@ def number(
     request: Request,
     filter: Optional[str] = None,
     db: Session = Depends(get_db),
-    user: str = Depends(get_current_user)
+    user = Depends(get_current_user)
 ):
     
     return templates.TemplateResponse(

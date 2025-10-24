@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session, joinedload
 from core.models.base import Base
 from fastapi import Request
 from pydantic import BaseModel, Field
-
+from core.functions.helpers import build_filters
 from typing import List, Optional
+
 
 class SelectedIDs(BaseModel):
     ids: List[int] = Field(..., alias="selected_ids")
@@ -24,11 +25,25 @@ def get_selected_ids(request: Request, selected_ids: Optional[SelectedIDs]) -> L
     # Otherwise, pull from session
     return request.session.get("selected_ids", [])
 
-def get_customers(db: Session, ids: List[int]):
+def get_customers(db: Session, user, ids: List[int]):
     """
     Helper to query customers from DB based on IDs.
     """
     query = db.query(Customer)
+    if user.admin != 1:
+        query = query.filter(Customer.caller_id == user.caller.id)
     if ids:
         return query.filter(Customer.id.in_(ids)).all()
+    return query.all()
+
+def get_user_customers(db, request, user):
+    query = db.query(Customer)
+    if user.admin != 1:
+        query = query.filter(Customer.caller_id == user.caller.id)
+
+    filter_dict = request.session.get("customer_filters", {})
+    filters = build_filters(filter_dict, Customer)
+
+    if filters:
+        query = query.filter(*filters)
     return query.all()

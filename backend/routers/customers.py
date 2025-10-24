@@ -19,6 +19,11 @@ from models.models import Customer, CustomerUpdate, Caller
 from core.functions.helpers import populate, build_filters
 
 from models.models import Update
+from core.auth import get_current_user
+from core.models.models import BaseMixin, Update, User
+
+from functions.customers import get_user_customers
+
 
 
 # -------------------------------------------------
@@ -30,57 +35,23 @@ router = APIRouter(prefix="/customers", tags=["customers"])
 # List Customers
 # Returns an HTMX fragment with list.html
 # -------------------------------------------------
+
+
+
 @router.get("/", response_class=HTMLResponse, name="customers_list")
 def customers_list(
     request: Request,
-    filter: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user),
 ):
-    
-
-    
-    query = db.query(Customer)
-    if filter:
-        query = query.filter(Customer.name.ilike(f"%{filter}%"))
-    customers = query.all()
-
-    return render(
-        "customers/list.html",
-        {"request": request, 
-         "customers": customers, 
-         "filter": filter},
-    )
-
-
-# -------------------------------------------------
-# Customer Detail
-# Returns customers/edit.html
-# -------------------------------------------------
-
-
-@router.get("/new", response_class=HTMLResponse) 
-def customer_new(
-    request: Request,
-    db: Session = Depends(get_db)
-):
-
-    customer = Customer.empty()
-
-    query = db.query(Caller)
-    callers = query.all()
+        
+    customers = get_user_customers(db, request, user)
 
     return templates.TemplateResponse(
-        "customers/edit.html",
-        {
-            "request": request, 
-            "customer": customer, 
-            "mode": "edit",
-            "categories": categories,
-            "callers": callers, 
-            "organisations": organisations, 
-            "personalities": personalities, 
-        }
+        "customers/list.html",
+        {"request": request, "customers": customers}
     )
+
 
 
 
@@ -89,6 +60,7 @@ async def upsert_customer(
     request: Request,
     update_data: Update,
     db: Session = Depends(get_db),
+    user = Depends(get_current_user)
 ):
 
     # Determine if this is an update or create
@@ -139,7 +111,8 @@ async def upsert_customer(
     db.refresh(data_record)
 
     # Render updated list (HTMX swap)
-    customers = db.query(Customer).all()
+    customers = get_user_customers(db, request, user)
+
     response =  templates.TemplateResponse(
         "customers/list.html",
         {
@@ -151,19 +124,15 @@ async def upsert_customer(
     response.headers["HX-Popup-Message"] = "Saved"
     return response
 
-
-
-
 @router.get("/customer/{customer_id}", response_class=HTMLResponse)
 def customer_detail(
     request: Request,
     customer_id: str,
+    user = Depends(get_current_user),
     list: str | None = Query(default=None),
     db: Session = Depends(get_db)
 ):
     
-    # Capture all query parameters as a dict
-    query_params = dict(request.query_params)
 
     if (customer_id and int(customer_id) > 0):
         customer = db.query(Customer).filter(Customer.id == int(customer_id)).first()
@@ -177,18 +146,18 @@ def customer_detail(
         )
     else:
         customer = Customer.empty()
+        customer.caller_id = user.caller_id
 
+    # if admin else only current caller.
     callers = (
         db.query(Caller)
+        .filter(Caller.id == user.caller.id)
         .all()
     )
 
     customer.caller_id = int(customer.caller_id) if customer.caller_id is not None else None
 
     print(customer.to_dict())
-
-# Example: log all query params
-    print(f"Query params received: {query_params}")
 
     if list == "short":
         # Render short template
@@ -244,7 +213,6 @@ def customer_filter(
     )
 
     filter_dict = {}
-#    filters = build_filters(data_dict, Customer)
 
     return templates.TemplateResponse(
         "customers/filter.html",
@@ -265,23 +233,16 @@ async def set_filter(
     request: Request,
     update_data: Update,
     db: Session = Depends(get_db),
+    user = Depends(get_current_user),
 ):
     data_dict = update_data.model_dump()
     print (data_dict)
 
-    # build SQLAlchemy filters
-    filters = build_filters(data_dict, Customer)
 
     # save filters definition (not SQLAlchemy objects) in session
     request.session["customer_filters"] = data_dict  
 
-    # later you can re-run build_filters(request.session["customer_filters"], Customer)
-
-    query = db.query(Customer)
-    filters = build_filters(data_dict, Customer)
-    if filters:
-        query = query.filter(*filters)
-    customers = query.all()
+    customers = get_user_customers(db, request, user)
 
     return templates.TemplateResponse(
         "customers/list.html",

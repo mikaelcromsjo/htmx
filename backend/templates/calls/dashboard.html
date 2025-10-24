@@ -75,11 +75,11 @@
           <div x-data="{ isVisible(event) { let filters = Alpine.store('eventFilters'); if(!filters) return true; return Object.keys(filters).some(type => filters[type] && event[type]); }}">
             <div id="event-list" x-data>
               {% for event in events %}
-              <div x-show="isVisible({ 
+              <div x-show="event.extra_visilble_all || isVisible({ 
                     activism: {{ 'true' if event.type_activism else 'false' }},
                     lectures: {{ 'true' if event.type_lectures else 'false' }},
                     parties: {{ 'true' if event.type_parties else 'false' }},
-                    politics: {{ 'true' if event.type_politics else 'false' }}
+                    politics: {{ 'true' if event.type_politics else 'false' }},
                   })"
                   class="p-2 border-bottom cursor-pointer"
                   :class="{
