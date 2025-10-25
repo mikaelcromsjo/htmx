@@ -11,8 +11,6 @@
         Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
         '>
 </div>
-
-    
    
 {% if customer.email %}
 <div class="mb-1"><strong>{{ "Email" | t }}:</strong> {{ customer.email }}</div>
@@ -71,6 +69,11 @@
   </div>
 {% endif %}
 
+{% if customer.comment %}
+<div class="mb-1"><strong>{{ "Comment" | t }}:</strong> {{ customer.comment }}</div>
+{% endif %}
+
+ 
 
 
 </div>

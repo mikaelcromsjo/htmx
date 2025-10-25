@@ -122,6 +122,7 @@ async def upsert_customer(
     )
     # Set the popup message in a custom header
     response.headers["HX-Popup-Message"] = "Saved"
+    response.headers["HX-Trigger"] = "dashboardReload"
     return response
 
 @router.get("/customer/{customer_id}", response_class=HTMLResponse)

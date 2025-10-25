@@ -32,7 +32,17 @@
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Header -->
- <div x-data="{ active: 'customers', loaded: { customers: false, events: false, calls: false } }">
+ <div x-data="{ active: 'customers', loaded: { customers: false, events: false, calls: false } }"
+  x-init="
+    // Automatically load the customers content at startup
+    $nextTick(() => {
+      if (!loaded.customers && $refs.customerContent) {
+        $refs.customerContent.click();
+        loaded.customers = true;
+      }
+    })
+  ">
+
 
 
 
@@ -485,6 +495,7 @@ connectWS();
 <script defer>
 
     document.addEventListener('alpine:init', () => {
+
     Alpine.store('eventFilters', {
         activism: true,
         lectures: true,
@@ -516,11 +527,20 @@ connectWS();
     });
 
 
+
+
 });
 
 </script>
+
 
 <!-- empty title when modal.open is false-->
 <div x-data x-effect="$store.modal.open || ($store.modal.title = '')"></div>
 
 <meta name="htmx-history-cache-size" content="0">
+
+<script>
+document.body.addEventListener('dashboardReload', () => {
+  htmx.ajax('GET', '/calls/dashboard', { target: '#calls_content' });
+});
+</script>

@@ -22,17 +22,16 @@
                 'bg-white fw-normal text-dark': Alpine.store('customer').id !== {{ customer.id }}
              }"
              @click="
-                if (Alpine.store('customer').id !== {{ customer.id }}) {
                     Alpine.store('customer').id = {{ customer.id }};
                     $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
                     document.querySelector('#save-form').reset(); 
                     document.getElementById('current_call').value = '';
                     Alpine.store('event').id = '';
+                    Alpine.store('call').id  =  '';   
                     document.getElementById('status_value').value='';
                     disableCallButtons();
                     disableStatus();
-                    removeHightlight()    
-                }
+                    removeHightlight() 
              "
             hx-swap="none">
           <span>{{ customer.first_name }} {{ customer.last_name }}</span>
@@ -61,10 +60,12 @@
           {% endfor %}
         </div>
       </div>
+      <!--
       <div class="mt-2">
         {{ "Comment" | t }}
         <textarea class="form-control mt-1" x-model="Alpine.store('customer').comment" rows="3"></textarea>
       </div>
+      -->
     </div>
 
     <!-- Events Column -->
@@ -75,12 +76,12 @@
           <div x-data="{ isVisible(event) { let filters = Alpine.store('eventFilters'); if(!filters) return true; return Object.keys(filters).some(type => filters[type] && event[type]); }}">
             <div id="event-list" x-data>
               {% for event in events %}
-              <div x-show="event.extra_visilble_all || isVisible({ 
-                    activism: {{ 'true' if event.type_activism else 'false' }},
-                    lectures: {{ 'true' if event.type_lectures else 'false' }},
-                    parties: {{ 'true' if event.type_parties else 'false' }},
-                    politics: {{ 'true' if event.type_politics else 'false' }},
-                  })"
+              <div   x-show="{{ 'true' if event.extra_visilble_all else 'false' }} || isVisible({
+    activism: {{ 'true' if event.type_activism else 'false' }},
+    lectures: {{ 'true' if event.type_lectures else 'false' }},
+    parties: {{ 'true' if event.type_parties else 'false' }},
+    politics: {{ 'true' if event.type_politics else 'false' }}
+  })"
                   class="p-2 border-bottom cursor-pointer"
                   :class="{
                     'bg-primary bg-opacity-25 fw-bold text-primary': Alpine.store('event').id === {{ event.id }},

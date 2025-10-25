@@ -7,7 +7,9 @@ from sqlalchemy import Column, Integer, String, DateTime, JSON, select
 from sqlalchemy.orm import Session, declarative_base
 from typing import Optional
 from datetime import datetime
-
+from datetime import date
+from sqlalchemy import select, and_
+from datetime import date, timedelta
 
 from typing import List, Optional
 from core.models.base import Base
@@ -62,7 +64,7 @@ def new_event(
 # -----------------------------
 # Event Detail Modal (HTMX fragment)
 # -----------------------------
-@router.get("event/{event_id}", response_class=HTMLResponse)
+@router.get("/event/{event_id}", response_class=HTMLResponse)
 def event_detail(
     request: Request,
     event_id: int,
@@ -70,12 +72,10 @@ def event_detail(
     db: Session = Depends(get_db),
 ):
     
-    # Capture all query parameters as a dict
-    query_params = dict(request.query_params)
 
     event = db.get(Event, event_id)
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
+        event = Event().empty()
     
     if list == "short":
         # Render short template
@@ -150,6 +150,7 @@ async def upsert_event(
     )
     # Set the popup message in a custom header
     response.headers["HX-Popup-Message"] = "Saved"
+    response.headers["HX-Trigger"] = "dashboardReload"
     return response
 
 
@@ -165,3 +166,35 @@ def delete_event(event_id: str, db: Session = Depends(get_db)):
     db.commit()
     return {"detail": f"Event {event.name} deleted successfully"}
 
+@router.post("/set_filter", name="set_filter", response_class=HTMLResponse)
+async def set_filter(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    data = await request.json()
+
+    start_str = data.get("event_date_filter-start")
+    end_str = data.get("event_date_filter-end")
+
+    event_date_filter_start = date.fromisoformat(start_str) if start_str else None
+    event_date_filter_end = date.fromisoformat(end_str) + timedelta(days=1) if end_str else None
+
+    query = select(Event)
+
+    if event_date_filter_start and event_date_filter_end:
+        query = query.where(
+            Event.start_date >= event_date_filter_start,
+            Event.start_date < event_date_filter_end
+        )
+    elif event_date_filter_start:
+        query = query.where(Event.start_date >= event_date_filter_start)
+    elif event_date_filter_end:
+        query = query.where(Event.start_date < event_date_filter_end)
+    # else: no filter, return all events
+
+    events = db.execute(query).scalars().all()
+
+    return templates.TemplateResponse(
+        "events/list.html",
+        {"request": request, "events": events}
+    )

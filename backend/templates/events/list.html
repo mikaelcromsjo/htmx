@@ -1,61 +1,70 @@
-
 <div id="event-container">
     <div id="event-list">
-    <div class="overflow-x-auto">
-        <table class="table-auto w-full border overflow-x-auto">
-            <thead>
-                <tr>
-                    <th class="px-2 py-1 border">{{ "ID" | t }}</th>
-                    <th class="px-2 py-1 border">{{ "Name" | t }}</th>
-                    <th class="px-2 py-1 border">{{ "Start Date" | t }}</th>
-                    <th class="px-2 py-1 border">{{ "Command" | t }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in events %}
-                <tr hx-get="{{ url_for('event_detail', event_id=event.id) }}?list=short" 
-                    hx-target="#event-info"
-                    hx-trigger="click" class="cursor-pointer hover:bg-gray-100">
-                    <td class="px-2 py-1 border">{{ event.id }}</td>
-                    <td class="px-2 py-1 border">{{ event.name }}</td>
-                    <td class="px-2 py-1 border">{{ event.start_date }}</td>
-                    <td class="px-2 py-1 border text-center" 
-                        @click.stop
-                        >
+        <div class="overflow-x-auto">
+            <table class="table-auto w-full border overflow-x-auto">
+                <thead>
+                    <tr>
+                        <th class="px-2 py-1 border">{{ "ID" | t }}</th>
+                        <th class="px-2 py-1 border">{{ "Name" | t }}</th>
+                        <th class="px-2 py-1 border">{{ "Start Date" | t }}</th>
+                        <th class="px-2 py-1 border">{{ "Command" | t }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr hx-get="{{ url_for('event_detail', event_id=event.id) }}?list=short" hx-target="#event-info"
+                        hx-trigger="click" class="cursor-pointer hover:bg-gray-100">
+                        <td class="px-2 py-1 border">{{ event.id }}</td>
+                        <td class="px-2 py-1 border">{{ event.name }}</td>
+                        <td class="px-2 py-1 border">{{ event.start_date }}</td>
+                        <td class="px-2 py-1 border text-center" @click.stop>
 
-                        <button 
-                            hx-get="{{ url_for('event_detail', event_id=event.id) }}"
-                            hx-target="#modal-container"
-                            hx-swap="innerHTML"
-                            @click="$store.modal.open = true"
-                        >
-                            {{ "Edit" | t }}
-                        </button>                
-                        
-                        <button 
-                            hx-post="{{ url_for('delete_event', event_id=event.id) }}"
-                            hx-on="htmx:afterRequest: showPopup(event); htmx.ajax('GET', '{{ url_for('events_list') }}', {target:'#event-container'});"
-                            hx-trigger="confirmed"
-                            x-confirm="{{ 'Are you sure you want to delete this record?' | t }}"
-                        >
-                            {{ "Delete" | t }}
-                        </button>
-                    </td>
+                            <button hx-get="{{ url_for('event_detail', event_id=event.id) }}"
+                                hx-target="#modal-container" hx-swap="innerHTML" @click="$store.modal.open = true">
+                                {{ "Edit" | t }}
+                            </button>
 
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-        <div class="mt-2 flex gap-2">
+                            <button hx-post="{{ url_for('delete_event', event_id=event.id) }}"
+                                hx-on="htmx:afterRequest: showPopup(event); htmx.ajax('GET', '{{ url_for('events_list') }}', {target:'#event-container'});"
+                                hx-trigger="confirmed"
+                                x-confirm="{{'Are you sure you want to delete this record?' | t }}">
+                                {{ "Delete" | t }}
+                            </button>
+                        </td>
 
-            <button hx-get="/events/new" 
-                    hx-target="#modal-container"
-                    @click="$store.modal.open = true"
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
+                    <div class="mt-2 flex gap-2">
+
+            <button hx-get="/events/event/0" hx-target="#modal-container" @click="$store.modal.open = true"
                 class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                 {{ "New Event" | t }}
             </button>
+            </div>
+
+        </div>
+        <div class="mt-2 flex gap-2">
+
+
+            <form hx-post="/events/set_filter" hx-target="#event-container" hx-swap="innerHTML" hx-ext="json-enc"
+                class="space-y-4">
+
+                <!-- Event date range -->
+                <div class="mb-2">
+                    <div class="flex gap-2 items-center">
+                        <input type="date" name="event_date_filter-start" value="" class="border p-1">
+                        <span>to</span>
+                        <input type="date" name="event_date_filter-end" value="" class="border p-1">
+                        <button type="submit" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+                            Apply filters
+                        </button>
+                    </div>
+                </div>
+            </form>
+
         </div>
     </div>
     <div class="mt-4" id="event-info">
