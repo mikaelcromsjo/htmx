@@ -27,9 +27,17 @@ class Alarm(BaseMixin, Base):
 
     id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
-    event_id = Column(Integer, ForeignKey("events.id"), nullable=True)
-    date = Column(DateTime, default=datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%dT%H:%M"))
+    customer = relationship("Customer")
+#    event_id = Column(Integer, ForeignKey("events.id"), nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    date = Column(DateTime, nullable=False)
     note = Column(String, nullable=True)
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)
+
+class AlarmUpdate(BaseModel):
+    customer_id: int
+    date: datetime
+    note: Optional[str] = None
 
 
 # -------------------------------------------------
@@ -48,29 +56,21 @@ class Customer(BaseMixin, Base):
     description_phone = Column(String, nullable=True)
     location = Column(String, nullable=True)
     contributes = Column(Integer, nullable=True) # 1 not, 2 contributes, 3 Silver, 4 Gold
-
     caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True)
     # Relationship to caller
-    caller = relationship("Caller", back_populates="customers")
-    
+    caller = relationship("Caller", back_populates="customers")    
     previous_caller = Column(JSON, default=[])
     previous_categories = Column(JSON, default=[])
-
     comment = Column(String, nullable=True)
     sub_caller = Column(String, nullable=True)
     organisations = Column(JSON, default=[])
-
     categories = Column(JSON, default=[])
-
     personality_type = Column(Integer, nullable=True) # 0 Unknown, 1 Yellow, 2 Blue, 3 Red, 4 Green,  
-
     controlled = Column(Boolean, default=False)
-
     likes_parties = Column(Boolean, default=False)
     likes_politics = Column(Boolean, default=False)
     likes_lectures = Column(Boolean, default=False)
     likes_activism = Column(Boolean, default=False)
-
     tags = Column(JSON, default=[])
     extra = Column(MutableDict.as_mutable(JSON), default=dict)
 
