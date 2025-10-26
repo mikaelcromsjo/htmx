@@ -28,16 +28,12 @@ class Alarm(BaseMixin, Base):
     id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     customer = relationship("Customer")
-#    event_id = Column(Integer, ForeignKey("events.id"), nullable=True)
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     date = Column(DateTime, nullable=False)
     note = Column(String, nullable=True)
     extra = Column(MutableDict.as_mutable(JSON), default=dict)
 
-class AlarmUpdate(BaseModel):
-    customer_id: int
-    date: datetime
-    note: Optional[str] = None
 
 
 # -------------------------------------------------

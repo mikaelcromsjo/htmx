@@ -1,0 +1,11 @@
+{% if alarm.note %}
+<div class="mb-1"><strong>{{ "Note" | t }}:</strong> {{ alarm.note }}</div>
+{% endif %}
+
+{% if alarm.date %}
+<div class="mb-1"><strong>{{ "Date" | t }}:</strong> {{ alarm.date.strftime('%Y-%m-%d %H:%M') }}</div>
+{% endif %}
+
+{% if alarm.customer %}
+<div class="mb-1"><strong>{{ "Customer" | t }}:</strong> {{ alarm.customer.first_name }} {{ alarm.customer.last_name }}</div>
+{% endif %}
