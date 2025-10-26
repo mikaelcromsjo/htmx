@@ -29,8 +29,9 @@
                     Alpine.store('event').id = '';
                     Alpine.store('call').id  =  '';   
                     document.getElementById('status_value').value='';
-                    disableCallButtons();
-                    disableStatus();
+                    disableCall();
+                    disableEvent();
+                    enableCustomer();
                     removeHightlight() 
              "
             hx-swap="none">
@@ -87,7 +88,8 @@
                     'bg-primary bg-opacity-25 fw-bold text-primary': Alpine.store('event').id === {{ event.id }},
                     'bg-white fw-normal text-dark': Alpine.store('event').id !== {{ event.id }}
                   }"
-                  @click="Alpine.store('event').id = {{ event.id }}; enableStatus();"
+                  @click="Alpine.store('event').id = {{ event.id }}; 
+                  enableEvent();"
                   hx-get="{{ url_for('calls_event_detail', event_id=event.id) }}?list=short"
                   hx-target="#event-details"
                   hx-swap="innerHTML"
@@ -171,15 +173,15 @@
          ">
 
       <label class="form-check form-check-inline">
-        <input name="event_status" disabled value="1" class="status-disable form-check-input" type="radio">
+        <input name="event_status" disabled value="1" class="auto-save event-disable form-check-input" type="radio">
         <span>{{ "Interested" | t }}</span>
       </label>
       <label class="form-check form-check-inline">
-        <input name="event_status" disabled value="2" class="status-disable form-check-input" type="radio">
+        <input name="event_status" disabled value="2" class="auto-save event-disable form-check-input" type="radio">
         <span>{{ "Not interested" | t }}</span>
       </label>
       <label class="form-check form-check-inline">
-        <input name="event_status" disabled value="3" class="status-disable form-check-input" type="radio">
+        <input name="event_status" disabled value="3" class="auto-save event-disable form-check-input" type="radio">
         <span>{{ "Paid" | t }}</span>
       </label>
 
@@ -187,51 +189,72 @@
 
 <!-- Call Comment + Status Buttons -->
   <label class="fw-semibold mb-1 d-block w-100">{{ "Call Comment" | t }}</label>
-  <textarea name="note" class="form-control mb-3 w-100" rows="3"></textarea>
+  <textarea name="note" class="customer-disable form-control mb-3 w-100" disabled rows="3"></textarea>
 
   <input type="hidden" name="status" id="status_value">
 
   
 <div class="d-inline-flex flex-wrap gap-2 align-items-center">
   <button type="button"
-          class="btn btn-success btn-select call-disable"  disabled
+          class="auto-save btn btn-success btn-select call-disable"  disabled
           onclick="document.getElementById('status_value').value='1'; highlightButton(this);">
     {{ "Answer" | t }}
   </button>
   <button type="button"
-          class="btn btn-danger btn-select call-disable"  disabled
+          class="auto-save btn btn-danger btn-select call-disable"  disabled
           onclick="document.getElementById('status_value').value='2'; highlightButton(this);">
     {{ "No answer" | t }}
   </button>
 
-<!-- Other Buttons (always enabled) -->
   <button type="button"
-          class="btn btn-warning btn-select"
+          class="customer-disable auto-save btn btn-warning btn-select" disabled
           onclick="document.getElementById('status_value').value='3'; highlightButton(this);">
-    {{ "Called me" | t }}
+    {{ "Outside Call" | t }}
   </button>
 
-      <!-- Hidden alarm picker -->
-      <input type="datetime-local"
-             name="event_alarm_date"
-             id="alarm_input"
-             class="absolute w-0 h-0 opacity-0 pointer-events-none">
+<!-- Hidden alarm modal -->
+<div id="alarm_modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-xl p-6 w-80">
+    <h2 class="text-lg font-semibold mb-4">{{ "Set Alarm" | t }}</h2>
+    {{ "Note" | t }}
+    <textarea name="alarm-note" class="form-control mb-3 w-100" rows="3"></textarea>
 
-      <input type="hidden" name="event_id" :value="$store.event.id">
-      <input type="hidden" name="customer_id" :value="$store.customer.id">
-      <input type="hidden" name="id" id="current_call">
+    <input type="datetime-local"
+           name="event_alarm_date"
+           id="alarm_input"
+           class="w-full border rounded-lg p-2 mb-4">
+    <div class="flex justify-end space-x-2">
+      <button type="button"
+              class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+              onclick="document.getElementById('alarm_modal').classList.add('hidden')">
+        {{ 'Cancel' | t }}
+      </button>
+      <button type="submit"
+              class="customer-disable px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600" disabled
+              onclick="document.getElementById('alarm_modal').classList.add('hidden')">
+        {{ 'Save' | t }}
+      </button>
+    </div>
+  </div>
+</div>
 
-      <div class="relative">
-        <button type="button" class="btn btn-success bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                onclick="document.getElementById('alarm_input').showPicker()">
-          {{ "Alarm" | t }}
-        </button>
-      </div>
+<input type="hidden" name="event_id" :value="$store.event.id">
+<input type="hidden" name="customer_id" :value="$store.customer.id">
+<input type="hidden" name="id" id="current_call">
 
+<div class="relative">
+  <button type="button"
+          class="customer-disable btn btn-success bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300" disabled
+          onclick="document.getElementById('alarm_modal').classList.remove('hidden')">
+    {{ "Alarm" | t }}
+  </button>
+</div>
 
-  <button type="submit" class="btn btn-success">
+<!--
+  <button type="submit" class="customer-disable  btn btn-success" disabled>
     {{ "Save" | t }}
   </button>
+  -->
 </div>
   </form>
 </div>
@@ -246,17 +269,16 @@ function autoSaveForm() {
   const submitForm = () => form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
 
   // Auto-submit on any input/select change
-  form.querySelectorAll('input, select').forEach(el => {
+  form.querySelectorAll('input.auto-save').forEach(el => {
     el.addEventListener('change', submitForm);
   });
 
-  form.querySelectorAll('input, button').forEach(el => {
+  form.querySelectorAll('button.auto-save').forEach(el => {
     el.addEventListener('click', submitForm);
   });
 
-
   // Auto-submit on textarea blur (unfocus)
-  form.querySelectorAll('textarea').forEach(el => {
+  form.querySelectorAll('textarea.auto-save').forEach(el => {
     el.addEventListener('blur', submitForm);
   });
 }
@@ -265,41 +287,42 @@ autoSaveForm();
 </script>
 
 <script>
-            function enableCallButtons() {
-                // Select all elements with class 'call_disable'
+            function enableCall() {
                 const buttons = document.querySelectorAll('.call-disable');
-                
-                // Loop through and enable each one
+                buttons.forEach(button => {
+                    button.disabled = false;
+                });
+            }
+            function enableEvent() {
+                const buttons = document.querySelectorAll('.event-disable');
+                buttons.forEach(button => {
+                    button.disabled = false;
+                });
+            }
+            function enableCustomer() {
+                const buttons = document.querySelectorAll('.customer-disable');
                 buttons.forEach(button => {
                     button.disabled = false;
                 });
             }
 
-            function disableCallButtons() {
-                // Select all elements with class 'call_disable'
+
+            function disableCall() {
                 const buttons = document.querySelectorAll('.call-disable');
-                
-                // Loop through and enable each one
                 buttons.forEach(button => {
                     button.disabled = true;
                 });
             }
 
-            function enableStatus() {
-                // Select all elements with class 'call_disable'
-                const buttons = document.querySelectorAll('.status-disable');
-                
-                // Loop through and enable each one
+            function disableEvent() {
+                const buttons = document.querySelectorAll('.event-disable');
                 buttons.forEach(button => {
-                    button.disabled = false;
+                    button.disabled = true;
                 });
             }
 
-            function disableStatus() {
-                // Select all elements with class 'call_disable'
-                const buttons = document.querySelectorAll('.status-disable');
-                
-                // Loop through and enable each one
+            function disableCustomer() {
+                const buttons = document.querySelectorAll('.customer-disable');
                 buttons.forEach(button => {
                     button.disabled = true;
                 });

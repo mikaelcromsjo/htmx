@@ -156,5 +156,8 @@
   "Alarms": "Alarms",
   "New Alarm": "New Alarm",
   "Alarm Types": "Alarm Types",
-  "Nr": "Nr"
+  "Nr": "Nr",
+  "Event": "Event",
+  "Set Alarm": "Set Alarm",
+  "Outside Call": "Outside Call"
 }

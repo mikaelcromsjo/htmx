@@ -221,6 +221,8 @@ from core.functions.helpers import populate
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 
+
+
 @router.post("/call/save", name="save_call", response_class=HTMLResponse)
 async def save_call(
     request: Request,
@@ -233,7 +235,8 @@ async def save_call(
     # update event status
     event_id = update_data.event_id
     event_status = getattr(update_data, "event_status", None)
-    customer_id = update_data,customer_id
+    customer_id = update_data.customer_id
+
 
     # save Alarm if event_alarm_date
     event_alarm_date = getattr(update_data, "event_alarm_date", None)
@@ -255,7 +258,7 @@ async def save_call(
         # Try to find existing alarm for this user & customer
         alarm = (
             db.query(Alarm)
-            .filter_by(customer_id=customer_id, user_id=user.id)
+            .filter_by(customer_id=customer_id, user_id=user.id, event_id=event_id)
             .first()
         )
 
@@ -278,11 +281,13 @@ async def save_call(
         except Exception as e:
             db.rollback()
             print("Failed to save alarm:", e)
-            
-        # Get the CustomerEvent match
-        event_customer = db.query(EventCustomer).filter_by(
-            customer_id=customer_id, event_id=event_id
-        ).first()
+
+
+
+    # Get the CustomerEvent match
+    event_customer = db.query(EventCustomer).filter_by(
+        customer_id=customer_id, event_id=event_id
+    ).first()
 
     # Check if event_customer exists
     if (event_id and event_status):
@@ -332,7 +337,7 @@ async def save_call(
             db.add(call)
 
         # set caller_id from logged in user
-        call.caller_id = user.caller_id  # <--- FIX här
+        call.caller_id = user.caller_id
 
         try:
             db.commit()
@@ -341,7 +346,11 @@ async def save_call(
             db.rollback()
             raise
 
-    responce = JSONResponse(content={"detail": "Updated record"})
+    if (status):
+        responce = JSONResponse(content={"detail": "Saved", "call_id": call.id})
+    else:
+        responce = JSONResponse(content={"detail": "Saved"})
+
     responce.headers["HX-Trigger"] = "alarmsReload"
     return responce
 

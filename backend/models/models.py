@@ -29,6 +29,7 @@ class Alarm(BaseMixin, Base):
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     customer = relationship("Customer")
     event_id = Column(Integer, ForeignKey("events.id"), nullable=True)
+    event = relationship("Event")
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     date = Column(DateTime, nullable=False)
     note = Column(String, nullable=True)

@@ -7,6 +7,7 @@
                         <th class="px-2 py-1 border">{{ "Nr" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Date" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Customer" | t }}</th>
+                        <th class="px-2 py-1 border">{{ "Event" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Note" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Command" | t }}</th>
                     </tr>
@@ -18,14 +19,16 @@
                         <td class="px-2 py-1 border">{{ loop.index }}</td>
                         <td class="px-2 py-1 border">{{ alarm.date }}</td>
                         <td class="px-2 py-1 border">{{ alarm.customer.first_name }} {{ alarm.customer.last_name }}</td>
+                        <td class="px-2 py-1 border">{{ alarm.event.name }}</td>
                         <td class="px-2 py-1 border">{{ alarm.note }}</td>
                         <td class="px-2 py-1 border text-center" @click.stop>
 
+                            <!--
                             <button hx-get="{{ url_for('alarm_detail', alarm_id=alarm.id) }}"
                                 hx-target="#modal-container" hx-swap="innerHTML" @click="$store.modal.open = true">
                                 {{ "Edit" | t }}
                             </button>
-
+-->
                             <button hx-post="{{ url_for('delete_alarm', alarm_id=alarm.id) }}"
                                 hx-on="htmx:afterRequest: showPopup(alarm); htmx.ajax('GET', '{{ url_for('alarms_list') }}', {target:'#alarm-container'});"
                                 hx-trigger="confirmed"
