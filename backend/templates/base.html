@@ -220,7 +220,7 @@
         <button x-ref="callsContent" hx-get="{{ url_for('calls_dashboard') }}" hx-target="#calls_content" hx-push-url="false"></button>
         <button x-ref="invoiceContent" hx-get="{{ url_for('invoices_list') }}" hx-target="#invoice_content" hx-push-url="false"></button>
         <button x-ref="companiesContent" hx-get="{{ url_for('companies_list') }}" hx-target="#companies_content" hx-push-url="false"></button>
-        <button x-ref="alarmsContent" hx-get="{{ url_for('alarms_list') }}" hx-target="#alarms_content" hx-push-url="false"></button>
+        <button x-ref="alarmsContent" hx-get="{{ url_for('alarms_list') }}" hx-target="#alarm_content" hx-push-url="false"></button>
     </div>
     <!-- Main content -->
     <main class="mx-auto p-1 w-full">
@@ -244,7 +244,7 @@
         <div id="calls_content" x-show="active === 'calls'" class="bg-white rounded shadow p-4">
         </div>
 
-        <div id="alarms_content" x-show="active === 'alarms'" class="bg-white rounded shadow p-4">
+        <div id="alarm_content" x-show="active === 'alarms'" class="bg-white rounded shadow p-4">
         </div>
 
         <div id="invoice_content" x-show="active === 'invoice'" class="bg-white rounded shadow p-4">
@@ -301,6 +301,7 @@
     <script>
 
 function showPopup(evt) {
+    console.log("popup")
     let xhr = evt.detail.xhr;
     let contentType = xhr.getResponseHeader('Content-Type') || '';
     let status = xhr.status;
@@ -557,13 +558,22 @@ connectWS();
 <meta name="htmx-history-cache-size" content="0">
 
 <script>
-document.body.addEventListener('dashboardReload', () => {
+function reloadDashboard() {
   htmx.ajax('GET', '/calls/dashboard', { target: '#calls_content' });
-});
+  console.log("dashboard reload");
+}
 
-document.body.addEventListener('alarmsReload', () => {
-  htmx.ajax('GET', '/alarms/', { target: '#alarms_content' });
-  console.log("alarms reload")
-});
+function reloadAlarms() {
+  htmx.ajax('GET', '/alarms/', { target: '#alarm_content' });
+  console.log("alarms reload");
+}
 
+function reloadEvents() {
+  htmx.ajax('GET', '/events/', { target: '#event_content' });
+  console.log("events reload");
+}
+
+// Attach event listeners once, so custom events still work
+document.body.addEventListener('dashboardReload', reloadDashboard);
+document.body.addEventListener('alarmsReload', reloadAlarms);
 </script>

@@ -217,7 +217,7 @@
     <div class="bg-white rounded-2xl shadow-xl p-6 w-80">
     <h2 class="text-lg font-semibold mb-4">{{ "Set Alarm" | t }}</h2>
     {{ "Note" | t }}
-    <textarea name="alarm-note" class="form-control mb-3 w-100" rows="3"></textarea>
+    <textarea id="alarm_note" name="alarm_note" class="form-control mb-3 w-100" rows="3"></textarea>
 
     <input type="datetime-local"
            name="event_alarm_date"
@@ -245,7 +245,7 @@
 <div class="relative">
   <button type="button"
           class="customer-disable btn btn-success bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300" disabled
-          onclick="document.getElementById('alarm_modal').classList.remove('hidden')">
+          onclick="showAlarmModal()">
     {{ "Alarm" | t }}
   </button>
 </div>
@@ -350,6 +350,30 @@ function highlightButton(button) {
     removeHightlight(); // Remove highlight from all buttons first
     button.classList.add('highlight'); // Add highlight to the clicked or specified button
 }
+
+
+  function showAlarmModal() {
+    const modal = document.getElementById("alarm_modal");
+    const input = document.getElementById("alarm_input");
+    const note = document.getElementById("alarm_note");
+
+        note.value="";
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Format local date/time (not UTC)
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const hours = String(today.getHours()).padStart(2, '0');
+        const minutes = String(today.getMinutes()).padStart(2, '0');
+
+        // Combine into local datetime string
+        const localDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        input.value = localDateTime;
+
+    modal.classList.remove("hidden");
+  }
 
 </script>
 

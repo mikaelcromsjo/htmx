@@ -10,6 +10,7 @@ from datetime import datetime
 from datetime import date
 from sqlalchemy import select, and_
 from datetime import date, timedelta
+from core.auth import get_current_user
 
 from typing import List, Optional
 from core.models.base import Base
@@ -36,11 +37,15 @@ def alarms_list(
     request: Request,
     filter: Optional[str] = None,
     db: Session = Depends(get_db),
+    user = Depends(get_current_user),
 ):
-    query = select(Alarm)
-    if filter:
-        query = query.where(Alarm.name.contains(filter))
-    alarms = db.execute(query).scalars().all()
+    today = date.today()
+    alarms = (
+        db.query(Alarm)
+        .filter((Alarm.user_id == user.id) & (Alarm.date >= today))
+        .all()
+    )
+
     return templates.TemplateResponse(
         "alarms/list.html", {"request": request, "alarms": alarms}
     )
@@ -107,6 +112,7 @@ def delete_alarm(alarm_id: str, db: Session = Depends(get_db)):
     db.commit()
     return {"detail": f"Alarm deleted successfully"}
 
+
 @router.post("/set_filter", name="set_filter", response_class=HTMLResponse)
 async def set_filter(
     request: Request,
@@ -124,13 +130,13 @@ async def set_filter(
 
     if alarm_date_filter_start and alarm_date_filter_end:
         query = query.where(
-            Alarm.start_date >= alarm_date_filter_start,
-            Alarm.start_date < alarm_date_filter_end
+            Alarm.date >= alarm_date_filter_start,
+            Alarm.date < alarm_date_filter_end
         )
     elif alarm_date_filter_start:
-        query = query.where(Alarm.start_date >= alarm_date_filter_start)
+        query = query.where(Alarm.date >= alarm_date_filter_start)
     elif alarm_date_filter_end:
-        query = query.where(Alarm.start_date < alarm_date_filter_end)
+        query = query.where(Alarm.date < alarm_date_filter_end)
     # else: no filter, return all alarms
 
     alarms = db.execute(query).scalars().all()

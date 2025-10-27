@@ -30,7 +30,7 @@
                             </button>
 -->
                             <button hx-post="{{ url_for('delete_alarm', alarm_id=alarm.id) }}"
-                                hx-on="htmx:afterRequest: showPopup(alarm); htmx.ajax('GET', '{{ url_for('alarms_list') }}', {target:'#alarm-container'});"
+                                hx-on="htmx:afterRequest: showPopup(event); reloadAlarms();"
                                 hx-trigger="confirmed"
                                 x-confirm="{{'Are you sure you want to delete this record?' | t }}">
                                 {{ "Delete" | t }}
@@ -43,13 +43,13 @@
             </table>
 
                     <div class="mt-2 flex gap-2">
-
+<!--
             <button hx-get="/alarms/alarm/0" hx-target="#modal-container" @click="$store.modal.open = true"
                 class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                 {{ "New Alarm" | t }}
             </button>
             </div>
-
+-->
         </div>
         <div class="mt-2 flex gap-2">
 

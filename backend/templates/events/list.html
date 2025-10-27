@@ -25,7 +25,7 @@
                             </button>
 
                             <button hx-post="{{ url_for('delete_event', event_id=event.id) }}"
-                                hx-on="htmx:afterRequest: showPopup(event); htmx.ajax('GET', '{{ url_for('events_list') }}', {target:'#event-container'});"
+                                hx-on="htmx:afterRequest: showPopup(event); reloadEvents();"
                                 hx-trigger="confirmed"
                                 x-confirm="{{'Are you sure you want to delete this record?' | t }}">
                                 {{ "Delete" | t }}

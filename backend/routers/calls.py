@@ -240,7 +240,7 @@ async def save_call(
 
     # save Alarm if event_alarm_date
     event_alarm_date = getattr(update_data, "event_alarm_date", None)
-    note = getattr(update_data, "note", None)
+    alarm_note = getattr(update_data, "alarm_note", None)
 
     if event_alarm_date:
         # Konvertera datetime-local format (t.ex. "2025-10-25T14:30") till datetime-objekt
@@ -270,7 +270,7 @@ async def save_call(
 
         # Update shared fields
         alarm.date = event_alarm_date
-        alarm.note = note or alarm.note
+        alarm.note = alarm_note or alarm.note
         alarm.extra = alarm.extra or {}
         alarm.event_id = event_id
 
