@@ -10,6 +10,7 @@ from datetime import datetime
 from datetime import date
 from sqlalchemy import select, and_
 from datetime import date, timedelta
+from core.auth import get_current_user
 
 from typing import List, Optional
 from core.models.base import Base
@@ -36,13 +37,15 @@ def events_list(
     request: Request,
     filter: Optional[str] = None,
     db: Session = Depends(get_db),
+    user = Depends(get_current_user)
 ):
     query = select(Event)
     if filter:
         query = query.where(Event.name.contains(filter))
     events = db.execute(query).scalars().all()
     return templates.TemplateResponse(
-        "events/list.html", {"request": request, "events": events}
+        "events/list.html", {"request": request, "events": events, "is_admin": user.admin,
+}
     )
 
 
@@ -105,8 +108,12 @@ async def upsert_event(
     request: Request,
     update_data: Update,
     db: Session = Depends(get_db),
+    user = Depends(get_current_user)
 ):
-
+    
+    if not user.admin:
+        raise HTTPException(status_code=401, detail="Error. Only Admin can edit events")
+    
     # Determine if this is an update or create
     event_id = update_data.model_dump().get("id")
     if event_id:
@@ -157,7 +164,12 @@ async def upsert_event(
 
 # DELETE event
 @router.post("/delete/{event_id}", name="delete_event")
-def delete_event(event_id: str, db: Session = Depends(get_db)):
+def delete_event(event_id: str, db: Session = Depends(get_db), user = Depends(get_current_user)):
+
+    if not user.admin:
+        return {"detail": f"Error. Only Admin can delete events"}
+
+
     event = db.query(Event).filter(Event.id == event_id).first()
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")

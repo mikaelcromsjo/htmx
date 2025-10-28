@@ -3,7 +3,6 @@
 <div id="customer-container">
     <div id="customer-list"
         x-data="{
-            is_admin: {{ is_admin }},
             selected: JSON.parse(localStorage.getItem('selectedCustomers') || '{}'),
             showSelect: JSON.parse(localStorage.getItem('showSelect') || 'true'),
             toggle(id) {

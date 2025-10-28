@@ -206,7 +206,7 @@ class Call(BaseMixin, Base):
     caller_id = Column(Integer, ForeignKey("callers.id"), nullable=False)    
     call_date = Column(DateTime, nullable=False)
     status = Column(JSON, default=[])
-    note = Column(String, nullable=True)
+    note = Column(String, nullable=False)
     extra = Column(MutableDict.as_mutable(JSON), default=dict)    
 
 
@@ -215,7 +215,7 @@ class CallUpdate(BaseModel):
     customer_id: int
     call_date: Optional[datetime] = None
     status: int
-    note: Optional[str] = None
+    note: str = ""
     extra: Optional[Dict[str, Any]] = None
 
     class Config:

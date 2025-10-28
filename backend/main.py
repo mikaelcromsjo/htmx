@@ -177,7 +177,7 @@ from state import user_data, active_connections
 # --- Routers ---
 # Routers should be defined in /routers/*.py and included here.
 # Each router file exposes a "router" object.
-from routers import customers, events, calls, alarms, callers, user, invoices, companies, alarms
+from routers import customers, events, calls, alarms, callers, user, invoices, companies, alarms, admin
 
 app.include_router(customers.router, tags=["customers"])
 app.include_router(events.router, tags=["events"])
@@ -188,6 +188,7 @@ app.include_router(user.router, tags=["user"])
 app.include_router(invoices.router, tags=["invoices"])
 app.include_router(companies.router, tags=["companies"])
 app.include_router(alarms.router, tags=["alarms"])
+app.include_router(admin.router, tags=["admin"])
 
 
 from fastapi import FastAPI, Request, Form
@@ -316,6 +317,7 @@ async def read_root(request: Request, user: str = Depends(get_current_user)):
             "request": request,
             "title": "Dashboard",
             "user": user.username,
+            "is_admin": user.admin,
             "caller": getattr(user.caller, "name", ""),
         },
     )

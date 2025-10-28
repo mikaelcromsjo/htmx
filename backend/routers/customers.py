@@ -202,7 +202,11 @@ def customer_detail(
 
 # DELETE customer
 @router.post("/delete/{customer_id}", name="delete_customer")
-def delete_customer(customer_id: str, db: Session = Depends(get_db)):
+def delete_customer(customer_id: str, db: Session = Depends(get_db), user = Depends(get_current_user)):
+
+    if not user.admin:
+        return {"detail": f"Error. Only Admin can delete customers"}
+
     customer = db.query(Customer).filter(Customer.id == customer_id).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")

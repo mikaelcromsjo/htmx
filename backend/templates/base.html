@@ -32,7 +32,7 @@
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Header -->
- <div x-data="{ active: 'customers', loaded: { customers: false, events: false, calls: false } }"
+ <div x-data="{ is_admin: {{ 1 if is_admin else 0 }}, active: 'customers', loaded: { customers: false, events: false, calls: false } }"
   x-init="
     // Automatically load the customers content at startup
     $nextTick(() => {
@@ -170,15 +170,23 @@
                 <button 
                     @click="
                         active = 'alarms';
-                        if(!loaded.alarms) {
-                            $refs.alarmsContent.click();
-                            loaded.alarms = true;
-                        }
+                        $refs.alarmsContent.click();
                     "
                     :class="{'bg-gray-200': active === 'alarms'}"
                     class="px-3 py-2 rounded hover:bg-gray-200">
                     {{ "Alarms" | t }}
                 </button>
+                <button 
+                    x-show = is_admin
+                    @click="
+                        active = 'admin';
+                        $refs.adminContent.click();
+                    "
+                    :class="{'bg-gray-200': active === 'alarms'}"
+                    class="px-3 py-2 rounded hover:bg-gray-200">
+                    {{ "Admin" | t }}
+                </button>
+
 
             {%- endif -%}
 
@@ -221,33 +229,25 @@
         <button x-ref="invoiceContent" hx-get="{{ url_for('invoices_list') }}" hx-target="#invoice_content" hx-push-url="false"></button>
         <button x-ref="companiesContent" hx-get="{{ url_for('companies_list') }}" hx-target="#companies_content" hx-push-url="false"></button>
         <button x-ref="alarmsContent" hx-get="{{ url_for('alarms_list') }}" hx-target="#alarm_content" hx-push-url="false"></button>
+        <button x-ref="adminContent" hx-get="{{ url_for('admin_dashboard') }}" hx-target="#admin_content" hx-push-url="false"></button>
     </div>
     <!-- Main content -->
     <main class="mx-auto p-1 w-full">
-        <!-- User -->         
         <div id="user_content" x-show="active === 'user'" class="bg-white rounded shadow p-4">
         </div>
-
-        <!-- Customers -->         
         <div id="customer_content" x-show="active === 'customers'" class="bg-white rounded shadow p-4">
         </div>
-
         <div id="companies_content" x-show="active === 'companies'" class="bg-white rounded shadow p-4">
         </div>
-
-
-        <!-- Events -->
         <div id="event_content" x-show="active === 'events'" class="bg-white rounded shadow p-4">
         </div>
-
-        <!-- Calls -->
         <div id="calls_content" x-show="active === 'calls'" class="bg-white rounded shadow p-4">
         </div>
-
         <div id="alarm_content" x-show="active === 'alarms'" class="bg-white rounded shadow p-4">
         </div>
-
         <div id="invoice_content" x-show="active === 'invoice'" class="bg-white rounded shadow p-4">
+        </div>
+        <div id="admin_content" x-show="active === 'admin'" class="bg-white rounded shadow p-4">
         </div>
 
     </main>
