@@ -190,7 +190,7 @@ class InvoiceUpdate(BaseModel):
     date: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True # orm_mode
 
 
 
@@ -219,7 +219,7 @@ class CallUpdate(BaseModel):
     extra: Optional[Dict[str, Any]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class EventUpdate(BaseModel):
@@ -241,7 +241,7 @@ class EventUpdate(BaseModel):
     extra: Optional[Dict[str, Any]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
     
 
