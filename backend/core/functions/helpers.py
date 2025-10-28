@@ -9,7 +9,10 @@ from typing import Any, Union
 from pydantic import BaseModel
 
 from templates import templates
+from sqlalchemy import func, or_, and_
 
+from sqlalchemy import JSON, String
+from sqlalchemy.dialects.postgresql import JSONB
 
 def populate(update_dict: dict, db_obj: Any, pyd_model: Type[BaseModel]) -> Any:
     """
@@ -115,20 +118,16 @@ def render(template_name: str, context: dict, base_template: str = "base.html"):
     
 from sqlalchemy import and_, or_, Date, DateTime, Boolean, String, Integer
 from sqlalchemy.inspection import inspect
-from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.dialects.postgresql import JSON, JSONB
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.types import JSON as SQLAlchemyJSON
 
 from sqlalchemy import or_, and_, inspect, Boolean, Integer, String, Date, DateTime
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.types import JSON as SQLAlchemyJSON
 
 from sqlalchemy import or_, and_, inspect, Boolean, Integer, String, Date, DateTime
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB
-from sqlalchemy.types import JSON as SQLAlchemyJSON
 
 def build_filters(data: dict, model):
+
+
     """
     Build SQLAlchemy filters from form data.
 
@@ -146,26 +145,26 @@ def build_filters(data: dict, model):
     mapper = inspect(model)
     column_types = {col.name: col.type for col in mapper.columns}
 
-    print("=== Starting build_filters ===")
+#    print("=== Starting build_filters ===")
 
     for field, value in data.items():
         if value in (None, "", []):
-            print(f"Skipping empty field: {field}")
+ #           print(f"Skipping empty field: {field}")
             continue
 
         col = getattr(model, field, None)
         if col is None:
-            print(f"Skipping unknown column: {field}")
+  #          print(f"Skipping unknown column: {field}")
             continue
 
         col_type = column_types.get(field)
-        print(f"\nProcessing field: {field}")
-        print(f"  Column type: {col_type}")
-        print(f"  Raw value: {value}")
+   #     print(f"\nProcessing field: {field}")
+    #    print(f"  Column type: {col_type}")
+     #   print(f"  Raw value: {value}")
 
         # Determine filter type for this field
         filter_type = data.get(f"{field}_type", "like")
-        print(f"  Filter type: {filter_type}")
+#        print(f"  Filter type: {filter_type}")
 
         # BOOLEAN handling (direct column value)
         if isinstance(col_type, Boolean):
@@ -177,7 +176,7 @@ def build_filters(data: dict, model):
                 elif val_str == "false":
                     val = False
                 else:
-                    print(f"  Skipping invalid Boolean value for {field}: {value}")
+ #                   print(f"  Skipping invalid Boolean value for {field}: {value}")
                     continue
             else:
                 val = bool(value)
@@ -295,31 +294,65 @@ def build_filters(data: dict, model):
             filters.append(f)
             continue
 
-        # JSON / JSONB
-        if isinstance(col_type, (SQLAlchemyJSON, JSONB)):
-            vals = value if isinstance(value, list) else [value]
-            vals = [v for v in vals if v not in (None, "", [])]
-            if not vals:
-                print(f"  Skipping JSON field (empty after cleaning): {field}")
-                continue
-
-            if filter_type == "has":
-                f = or_(*[col.contains([v]) for v in vals])
-            elif filter_type == "has-all":
-                f = col.contains(vals)
-            elif filter_type == "has-not":
-                f = and_(*[~col.contains([v]) for v in vals])
-            elif filter_type == "exact":
-                f = col == vals
+        # JSON / JSONB / CSV / single value
+        if isinstance(col_type, (JSON, JSONB, String)):
+            # Normalize input into a list of search values
+            if isinstance(value, list):
+                vals = [v for v in value if v not in (None, "", [])]
+            elif isinstance(value, str):
+                # Split CSV string into individual search terms, strip spaces
+                vals = [v.strip().strip("'\"") for v in value.split(",") if v.strip()]
             else:
-                print(f"  Unknown JSON filter type: {filter_type}")
+                vals = [value]
+
+            if not vals:
                 continue
 
-            print(f"  Adding JSON filter: {f}")
-            filters.append(f)
-            continue
+            conditions = []
 
+            for v in vals:
+                # Clean value to match CSV in SQLite (remove surrounding quotes)
+                v_clean = v.strip("'\"")
+
+                # CSV matching (handles optional spaces and quotes)
+                csv_cond = or_(
+                    col.like(f'"{v_clean},%'),    # start
+                    col.like(f'{v_clean},%'),    # start
+                    col.like(f'{v_clean}, %'),   # start with space
+                    col.like(f'%,{v_clean},%'),  # middle
+                    col.like(f'%, {v_clean},%'), # middle with space
+                    col.like(f'%,{v_clean}"'),    # end
+                    col.like(f'%, {v_clean}')    # end with space
+                )
+
+                # JSON array stored as text (SQLite-safe)
+                if isinstance(col_type, (JSON, JSONB)):
+                    json_cond = col.like(f'%"{v_clean}"%')
+                    cond = or_(csv_cond, json_cond)
+                else:
+                    cond = csv_cond
+
+                conditions.append(cond)
+
+            # Combine conditions based on filter_type
+            if filter_type == "has":
+                f = or_(*conditions)
+            elif filter_type == "has-all":
+                f = and_(*conditions)
+            elif filter_type == "has-not":
+                f = and_(*[~c for c in conditions])
+            elif filter_type == "exact":
+                # Python-side order-independent exact match
+                f = {"exact_vals": vals, "column": col.key}
+            else:
+                continue
+
+            filters.append(f)
+            print(f"  Adding JSON/CSV filter: {f}")
+            continue
+        # Only print skipped if no handler matched
         print(f"  Skipped field (no matching type handler): {field}")
+
 
     print("=== Finished build_filters ===")
     print(f"Total filters added: {len(filters)}")

@@ -37,10 +37,10 @@ organisations = [
 organisations_map = {org["id"]: org["name"] for org in organisations}
 
 personalities = [
-    {"id": 0, "name": "Unknown"},
-    {"id": 1, "name": "Yellow"},
-    {"id": 2, "name": "Blue"},
-    {"id": 3, "name": "Red"},
-    {"id": 4, "name": "Green"}]
+    {"id": 0, "name": "Okänd"},
+    {"id": 1, "name": "Gul"},
+    {"id": 2, "name": "Blå"},
+    {"id": 3, "name": "Röd"},
+    {"id": 4, "name": "Grön"}]
 
 personalities_map = {p["id"]: p for p in personalities}

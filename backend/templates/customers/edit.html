@@ -134,7 +134,7 @@
 <div class="mb-2">
     <label class="block font-semibold">{{ "Personality Type" | t }}</label>
     <select name="personality_type" class="border p-1 w-full">
-        <option value="" {% if customer.personality_type is none %}selected{% endif %}>Select...</option>
+        <option value="" {% if customer.personality_type is none %}selected{% endif %}>{{ "Select..." | t }}</option>
         {% for p in personalities %}
             <option value="{{ p.id }}" {% if customer.personality_type == p.id %}selected{% endif %}>
                 {{ p.name }}
@@ -152,25 +152,25 @@
     </div>
     <div class="mb-2">
         <label class="inline-flex items-center">
-            <input type="checkbox" name="likes_parties" {% if customer.likes_parties %}checked{% endif %} class="mr-2"/>
+            <input type="checkbox" name="filter_a" {% if customer.filter_a %}checked{% endif %} class="mr-2"/>
             {{ "Likes Parties" | t }}
         </label>
     </div>
     <div class="mb-2">
         <label class="inline-flex items-center">
-            <input type="checkbox" name="likes_politics" {% if customer.likes_politics %}checked{% endif %} class="mr-2"/>
+            <input type="checkbox" name="filter_b" {% if customer.filter_b %}checked{% endif %} class="mr-2"/>
             {{ "Likes Politics" | t }}
         </label>
     </div>
     <div class="mb-2">
         <label class="inline-flex items-center">
-            <input type="checkbox" name="likes_lectures" {% if customer.likes_lectures %}checked{% endif %} class="mr-2"/>
+            <input type="checkbox" name="filter_c" {% if customer.filter_c %}checked{% endif %} class="mr-2"/>
             {{ "Likes Lectures" | t }}
         </label>
     </div>
     <div class="mb-2">
         <label class="inline-flex items-center">
-            <input type="checkbox" name="likes_activism" {% if customer.likes_activism %}checked{% endif %} class="mr-2"/>
+            <input type="checkbox" name="filter_d" {% if customer.filter_d %}checked{% endif %} class="mr-2"/>
             {{ "Likes Activism" | t }}
         </label>
     </div>
@@ -181,52 +181,13 @@
         <input type="text" name="tags" value="{{ customer.tags | default('') }}" class="border p-1 w-full"/>
     </div>
 
-<!-- Customer Name -->
+<!-- Extra 
 <div class="mb-2">
     <label class="block font-semibold">{{ 'Customer Name' | t }}</label>
     <input type="text" name="extra.customer_name" value="{{ customer.extra.customer_name or '' }}" class="border p-1 w-full"/>
 </div>
+-->
 
-<!-- Organization Number -->
-<div class="mb-2">
-    <label class="block font-semibold">{{ 'Organization Number' | t }}</label>
-    <input type="text" name="extra.org_nr" value="{{ customer.extra.org_nr or '' }}" class="border p-1 w-full"/>
-</div>
-
-<!-- CC Email -->
-<div class="mb-2">
-    <label class="block font-semibold">{{ 'CC Email' | t }}</label>
-    <input type="email" name="extra.cc_email" value="{{ customer.extra.cc_email or '' }}" class="border p-1 w-full"/>
-</div>
-
-<!-- Address Line 1 -->
-<div class="mb-2">
-    <label class="block font-semibold">{{ 'Address Line 1' | t }}</label>
-    <input type="text" name="extra.address_line1" value="{{ customer.extra.address_line1 or '' }}" class="border p-1 w-full"/>
-</div>
-
-<!-- Address Line 2 -->
-<div class="mb-2">
-    <label class="block font-semibold">{{ 'Address Line 2' | t }}</label>
-    <input type="text" name="extra.address_line2" value="{{ customer.extra.address_line2 or '' }}" class="border p-1 w-full"/>
-</div>
-
-<!-- Postal Code -->
-<div class="mb-2">
-    <label class="block font-semibold">{{ 'Postal Code' | t }}</label>
-    <input type="text" name="extra.postal_code" value="{{ customer.extra.postal_code or '' }}" class="border p-1 w-full"/>
-</div>
-
-<div class="mb-2">
-    <label class="block font-semibold">{{ 'Postal Address' | t }}</label>
-    <input type="text" name="extra.postal_address" value="{{ customer.extra.postal_address or '' }}" class="border p-1 w-full"/>
-</div>
-
-<!-- Country -->
-<div class="mb-2">
-    <label class="block font-semibold">{{ 'Country' | t }}</label>
-    <input type="text" name="extra.country" value="{{ customer.extra.country or '' }}" class="border p-1 w-full"/>
-</div>
 
     <div class="flex justify-end mt-4">
         <button @click="$store.modal.open = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>

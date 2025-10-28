@@ -64,10 +64,10 @@ class Customer(BaseMixin, Base):
     categories = Column(JSON, default=[])
     personality_type = Column(Integer, nullable=True) # 0 Unknown, 1 Yellow, 2 Blue, 3 Red, 4 Green,  
     controlled = Column(Boolean, default=False)
-    likes_parties = Column(Boolean, default=False)
-    likes_politics = Column(Boolean, default=False)
-    likes_lectures = Column(Boolean, default=False)
-    likes_activism = Column(Boolean, default=False)
+    filter_a = Column(Boolean, default=False)
+    filter_b = Column(Boolean, default=False)
+    filter_c = Column(Boolean, default=False)
+    filter_d = Column(Boolean, default=False)
     tags = Column(JSON, default=[])
     extra = Column(MutableDict.as_mutable(JSON), default=dict)
 
@@ -86,10 +86,10 @@ class CustomerUpdate(BaseModel):
     contributes: Optional[int] = None            # Dropdown → int
     caller: Optional[int] = None                 # Dropdown → int
     controlled: Optional[bool] = False           # Checkbox → bool
-    likes_parties: Optional[bool] = False        # Checkbox → bool
-    likes_politics: Optional[bool] = False
-    likes_lectures: Optional[bool] = False
-    likes_activism: Optional[bool] = False
+    filter_a: Optional[bool] = False        # Checkbox → bool
+    filter_b: Optional[bool] = False
+    filter_c: Optional[bool] = False
+    filter_d: Optional[bool] = False
     categories: Optional[List[str]] = []         # Multi-select → list
     tags: Optional[str] = ""                      # Comma-separated → list in populate()
     extra: Optional[Dict[str, Any]] = None
@@ -135,10 +135,10 @@ class Event(BaseMixin, Base):
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=True)
 
-    type_parties = Column(Boolean, default=False)
-    type_politics = Column(Boolean, default=False)
-    type_lectures = Column(Boolean, default=False)
-    type_activism = Column(Boolean, default=False)
+    type_a = Column(Boolean, default=False)
+    type_b = Column(Boolean, default=False)
+    type_c = Column(Boolean, default=False)
+    type_d = Column(Boolean, default=False)
     extra_external = Column(Boolean, default=False)
     extra_non_political = Column(Boolean, default=False)
     extra_visilble_all = Column(Boolean, default=False)
@@ -152,10 +152,10 @@ class EventUpdate(BaseModel):
     start_date: datetime
     end_date: Optional[datetime] = None
 
-    type_parties: bool = False
-    type_politics: bool = False
-    type_lectures: bool = False
-    type_activism: bool = False
+    type_a: bool = False
+    type_b: bool = False
+    type_c: bool = False
+    type_d: bool = False
     extra_external: bool = False
     extra_non_political: bool = False
     extra_visilble_all: bool = False
@@ -229,10 +229,10 @@ class EventUpdate(BaseModel):
     start_date: datetime
     end_date: Optional[datetime] = None
 
-    type_parties: bool = False
-    type_politics: bool = False
-    type_lectures: bool = False
-    type_activism: bool = False
+    type_a: bool = False
+    type_b: bool = False
+    type_c: bool = False
+    type_d: bool = False
     extra_external: bool = False
     extra_non_political: bool = False
     extra_visilble_all: bool = False

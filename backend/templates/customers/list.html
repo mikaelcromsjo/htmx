@@ -3,6 +3,7 @@
 <div id="customer-container">
     <div id="customer-list"
         x-data="{
+            is_admin: {{ is_admin }},
             selected: JSON.parse(localStorage.getItem('selectedCustomers') || '{}'),
             showSelect: JSON.parse(localStorage.getItem('showSelect') || 'true'),
             toggle(id) {
@@ -20,14 +21,12 @@ clearSelectedIds() {
             this.selected[id] = false;
         }
     }
-
     // Clear localStorage
     localStorage.removeItem('selectedCustomers');
-
     document.querySelectorAll('.customer-checkbox').forEach(cb => {
         if (cb.checked) {
             cb.checked = false;
-            cb.dispatchEvent(new Event('change')); // triggers Alpine toggle if needed
+//            cb.dispatchEvent(new Event('change')); // triggers Alpine toggle if needed
         }
     });
 },
@@ -43,7 +42,7 @@ clearSelectedIds() {
         <table class="table-auto w-full border overflow-x-auto">
             <thead>
                 <tr>
-                    <th class="px-2 py-1 border">{{ "ID" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Nr" | t }}</th>
                     <th class="px-2 py-1 border">{{ "Name" | t }}</th>
                     <th class="px-2 py-1 border">{{ "Email" | t }}</th>
                     <th class="px-2 py-1 border">{{ "Command" | t }}</th>
@@ -69,7 +68,7 @@ clearSelectedIds() {
                     hx-trigger="click"
                     class="cursor-pointer hover:bg-gray-100">
 
-                    <td class="px-2 py-1 border">{{ customer.id }}</td>
+                    <td class="px-2 py-1 border">{{ loop.index  }}</td>
                     <td class="px-2 py-1 border">{{ customer.first_name }} {{ customer.last_name }}</td>
                     <td class="px-2 py-1 border">{{ customer.email }}</td>
 
@@ -86,6 +85,7 @@ clearSelectedIds() {
                             {{ "Edit" | t }}
                         </button>                
                         <button 
+                            x-show="is_admin"
                             hx-post="{{ url_for('delete_customer', customer_id=customer.id) }}"
                             hx-on="htmx:afterRequest: 
                                 showPopup(event);

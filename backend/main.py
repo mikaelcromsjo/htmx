@@ -152,18 +152,18 @@ def on_startup():
 
     # Create all tables
     Base.metadata.create_all(bind=engine)
-    logger.info("Tables created (if missing).")
+#    logger.info("Tables created (if missing).")
 
-    logger.info("Default Admin created (if missing).")
+ #   logger.info("Default Admin created (if missing).")
     init_admin_user()
 
     # Print existing tables
-    tables = list_tables()
-    logger.info(f"Tables currently in DB: {tables}")
+#    tables = list_tables()
+#    logger.info(f"Tables currently in DB: {tables}")
 
     # Print all models registered with Base
-    models = list_models()
-    logger.info(f"Models registered with Base: {models}")
+#    models = list_models()
+#    logger.info(f"Models registered with Base: {models}")
 
 
 # Static files (CSS, JS, images) will be served from /static
@@ -316,7 +316,7 @@ async def read_root(request: Request, user: str = Depends(get_current_user)):
             "request": request,
             "title": "Dashboard",
             "user": user.username,
-            "caller": user.caller.name,
+            "caller": getattr(user.caller, "name", ""),
         },
     )
 

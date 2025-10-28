@@ -1,8 +1,8 @@
 <div x-data x-init='
-        Alpine.store("eventFilters").activism = {{ "true" if customer.likes_activism else "false" }};
+        Alpine.store("eventFilters").activism = {{ "true" if customer.filter_d else "false" }};
         Alpine.store("eventFilters").lecture  = {{ "true" if customer.likes_lecture else "false" }};
-        Alpine.store("eventFilters").parties  = {{ "true" if customer.likes_parties else "false" }};
-        Alpine.store("eventFilters").politics  = {{ "true" if customer.likes_politics else "false" }};
+        Alpine.store("eventFilters").parties  = {{ "true" if customer.filter_a else "false" }};
+        Alpine.store("eventFilters").politics  = {{ "true" if customer.filter_b else "false" }};
         Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
 '>
 </div>

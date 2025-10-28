@@ -3,10 +3,10 @@
 
 <div x-data x-init='
         if (!document.getElementById("fix").checked) {
-          Alpine.store("eventFilters").activism = {{ customer.likes_activism | tojson }};
-          Alpine.store("eventFilters").lectures  = {{ customer.likes_lectures | tojson }};
-          Alpine.store("eventFilters").parties  = {{ customer.likes_parties | tojson }};
-          Alpine.store("eventFilters").politics = {{ customer.likes_politics | tojson }};
+          Alpine.store("eventFilters").activism = {{ customer.filter_d | tojson }};
+          Alpine.store("eventFilters").lectures  = {{ customer.filter_c | tojson }};
+          Alpine.store("eventFilters").parties  = {{ customer.filter_a | tojson }};
+          Alpine.store("eventFilters").politics = {{ customer.filter_b | tojson }};
         }
         Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
         '>

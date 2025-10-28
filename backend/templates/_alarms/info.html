@@ -16,10 +16,10 @@
 
 <div class="mb-1"><strong>{{ "Event Types" | t }}:</strong>
     {% set types = [] %}
-    {% if event.type_parties %}{% set _ = types.append('Pary') %}{% endif %}
-    {% if event.type_politics %}{% set _ = types.append('Politik') %}{% endif %}
-    {% if event.type_lectures %}{% set _ = types.append('Föreläsning') %}{% endif %}
-    {% if event.type_activism %}{% set _ = types.append('Aktivism') %}{% endif %}
+    {% if event.type_a %}{% set _ = types.append('Pary') %}{% endif %}
+    {% if event.type_b %}{% set _ = types.append('Politik') %}{% endif %}
+    {% if event.type_c %}{% set _ = types.append('Föreläsning') %}{% endif %}
+    {% if event.type_d %}{% set _ = types.append('Aktivism') %}{% endif %}
     {{ types | join(', ') if types else 'None' }}
 </div>
 

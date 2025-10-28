@@ -14,14 +14,12 @@ from core.database import SessionLocal
 from core.models.models import User
 from passlib.context import CryptContext
 
-# Usage
-# docker exec -it fastapi_htmx_dev python /app/backend/scripts/manage_users.py admin --password Secret123 --admin --caller "Main Office"
-
-
+# Example usage:
+# docker exec -it fastapi_htmx_dev python /app/backend/scripts/manage_users.py admin_user --password Secret123 --admin 1 --caller "Main Office"
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def create_user(username: str, password: str, admin=False, caller_name=None):
+def create_user(username: str, password: str, admin: int = 0, caller_name=None):
     db: Session = SessionLocal()
     try:
         # Handle caller creation or lookup
@@ -36,7 +34,6 @@ def create_user(username: str, password: str, admin=False, caller_name=None):
 
         # Check if user already exists
         user = db.query(User).filter(User.username == username).first()
-
         hashed_password = pwd_context.hash(password)
 
         if user:
@@ -44,7 +41,7 @@ def create_user(username: str, password: str, admin=False, caller_name=None):
             user.password_hash = hashed_password
             user.admin = admin
             user.caller = caller
-            print(f"User '{username}' already exists — updated caller, password, and admin status.")
+            print(f"User '{username}' already exists — updated caller, password, and admin status ({admin}).")
         else:
             # Create new user
             user = User(
@@ -54,7 +51,7 @@ def create_user(username: str, password: str, admin=False, caller_name=None):
                 caller=caller
             )
             db.add(user)
-            print(f"User '{username}' created successfully.")
+            print(f"User '{username}' created successfully with admin={admin}.")
 
         db.commit()
     except Exception as e:
@@ -63,39 +60,16 @@ def create_user(username: str, password: str, admin=False, caller_name=None):
     finally:
         db.close()
 
-def create_user2(username: str, password: str, admin=False, caller_name=None):
-    db: Session = SessionLocal()
-    try:
-        caller = None
-        if caller_name:
-            caller = db.query(Caller).filter(Caller.name == caller_name).first()
-            if not caller:
-                # create caller if it doesn't exist
-                caller = Caller(name=caller_name)
-                db.add(caller)
-                db.commit()
-                db.refresh(caller)
-
-        hashed_password = pwd_context.hash(password)
-        user = User(username=username, password_hash=hashed_password, admin=admin, caller=caller)
-        db.add(user)
-        db.commit()
-        print(f"User '{username}' created successfully")
-    except Exception as e:
-        db.rollback()
-        print(f"Error creating user: {e}")
-    finally:
-        db.close()
-
 
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("username")
-    parser.add_argument("--password")
-    parser.add_argument("--admin", action="store_true")
-    parser.add_argument("--caller")
+    parser = argparse.ArgumentParser(description="Manage users in the system.")
+    parser.add_argument("username", help="Username of the user to create or update")
+    parser.add_argument("--password", help="Password for the user (prompted if omitted)")
+    parser.add_argument("--admin", type=int, default=0, help="Admin level (0=normal user, 1=admin, etc.)")
+    parser.add_argument("--caller", help="Caller name (optional)")
+
     args = parser.parse_args()
 
     password = args.password or getpass("Password: ")

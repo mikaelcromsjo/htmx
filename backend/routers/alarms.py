@@ -120,11 +120,18 @@ async def set_filter(
 ):
     data = await request.json()
 
+    from datetime import date, datetime, timedelta
+    from sqlalchemy import select
+
     start_str = data.get("alarm_date_filter-start")
     end_str = data.get("alarm_date_filter-end")
 
-    alarm_date_filter_start = date.fromisoformat(start_str) if start_str else None
-    alarm_date_filter_end = date.fromisoformat(end_str) + timedelta(days=1) if end_str else None
+    alarm_date_filter_start = (
+        datetime.fromisoformat(start_str) if start_str else None
+    )
+    alarm_date_filter_end = (
+        datetime.fromisoformat(end_str) + timedelta(days=1) if end_str else None
+    )
 
     query = select(Alarm)
 
@@ -137,10 +144,8 @@ async def set_filter(
         query = query.where(Alarm.date >= alarm_date_filter_start)
     elif alarm_date_filter_end:
         query = query.where(Alarm.date < alarm_date_filter_end)
-    # else: no filter, return all alarms
 
     alarms = db.execute(query).scalars().all()
-
     return templates.TemplateResponse(
         "alarms/list.html",
         {"request": request, "alarms": alarms}

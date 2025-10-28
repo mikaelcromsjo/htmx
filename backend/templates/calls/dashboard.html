@@ -78,10 +78,10 @@
             <div id="event-list" x-data>
               {% for event in events %}
               <div   x-show="{{ 'true' if event.extra_visilble_all else 'false' }} || isVisible({
-    activism: {{ 'true' if event.type_activism else 'false' }},
-    lectures: {{ 'true' if event.type_lectures else 'false' }},
-    parties: {{ 'true' if event.type_parties else 'false' }},
-    politics: {{ 'true' if event.type_politics else 'false' }}
+    activism: {{ 'true' if event.type_d else 'false' }},
+    lectures: {{ 'true' if event.type_c else 'false' }},
+    parties: {{ 'true' if event.type_a else 'false' }},
+    politics: {{ 'true' if event.type_b else 'false' }}
   })"
                   class="p-2 border-bottom cursor-pointer"
                   :class="{

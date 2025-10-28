@@ -44,12 +44,14 @@ def customers_list(
     db: Session = Depends(get_db),
     user = Depends(get_current_user),
 ):
-        
+    print("Admin:", user.admin)
     customers = get_user_customers(db, request, user)
-
     return templates.TemplateResponse(
         "customers/list.html",
-        {"request": request, "customers": customers}
+        {"request": request, 
+         "customers": customers,
+         "is_admin": user.admin,
+        }
     )
 
 
@@ -106,8 +108,14 @@ async def upsert_customer(
         data_record.caller = caller_instance  # assign the actual SQLAlchemy object
 
 
+    # Normalize CSV: remove extra spaces and surrounding quotes
+    if data_record.tags:
+        tags_clean = ",".join(v.strip().strip("'\"") for v in data_record.tags.split(",") if v.strip())
+        data_record.tags = tags_clean
+
     db.add(data_record)
     db.commit()
+    print(repr(data_record.tags))  # should output: 'a,c,d' without extra quotes or spaces    
     db.refresh(data_record)
 
     # Render updated list (HTMX swap)
@@ -149,12 +157,15 @@ def customer_detail(
         customer = Customer.empty()
         customer.caller_id = user.caller_id
 
-    # if admin else only current caller.
-    callers = (
-        db.query(Caller)
-        .filter(Caller.id == user.caller.id)
-        .all()
-    )
+    # all callers for all users
+    if False:
+        callers = (
+            db.query(Caller)
+            .filter(Caller.id == user.caller.id)
+            .all()
+        )
+    else:
+        callers = db.query(Caller).all()
 
     customer.caller_id = int(customer.caller_id) if customer.caller_id is not None else None
 
@@ -241,7 +252,7 @@ async def set_filter(
 
 
     # save filters definition (not SQLAlchemy objects) in session
-    request.session["customer_filters"] = data_dict  
+    request.session["customer_filters"] = data_dict 
 
     customers = get_user_customers(db, request, user)
 

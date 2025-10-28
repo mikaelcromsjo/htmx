@@ -4,7 +4,7 @@
             <table class="table-auto w-full border overflow-x-auto">
                 <thead>
                     <tr>
-                        <th class="px-2 py-1 border">{{ "ID" | t }}</th>
+                        <th class="px-2 py-1 border">{{ "Nr" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Name" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Start Date" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Command" | t }}</th>
@@ -14,7 +14,7 @@
                     {% for event in events %}
                     <tr hx-get="{{ url_for('event_detail', event_id=event.id) }}?list=short" hx-target="#event-info"
                         hx-trigger="click" class="cursor-pointer hover:bg-gray-100">
-                        <td class="px-2 py-1 border">{{ event.id }}</td>
+                        <td class="px-2 py-1 border">{{ loop.index  }}</td>
                         <td class="px-2 py-1 border">{{ event.name }}</td>
                         <td class="px-2 py-1 border">{{ event.start_date }}</td>
                         <td class="px-2 py-1 border text-center" @click.stop>

@@ -15,7 +15,7 @@
         <input type="text" name="first_name" value="{{ filters.get('first_name','') }}" class="border p-1 w-full"/>
         <select name="first_name_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
         </select>
     </div>
 
@@ -25,7 +25,7 @@
         <input type="text" name="last_name" value="{{ filters.get('last_name','') }}" class="border p-1 w-full"/>
         <select name="last_name_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
         </select>
     </div>
 
@@ -35,7 +35,7 @@
         <input type="text" name="user_id" value="{{ filters.get('user_id','') }}" class="border p-1 w-full"/>
         <select name="user_id_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
         </select>
     </div>
 
@@ -65,7 +65,7 @@
         <input type="text" name="phone" value="{{ filters.get('phone','') }}" class="border p-1 w-full"/>
         <select name="phone_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
         </select>
     </div>
 
@@ -75,7 +75,7 @@
         <input type="text" name="location" value="{{ filters.get('location','') }}" class="border p-1 w-full"/>
         <select name="location_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
         </select>
     </div>
 
@@ -91,7 +91,7 @@
         <select name="contributes_type" class="border p-1 mt-1">
             <option value="has">{{ "Has any" | t }}</option>
             <option value="has-all">{{ "Has all" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
             <option value="has-not">{{ "Does not have" | t }}</option>
         </select>
     </div>
@@ -107,7 +107,7 @@
         <select name="caller_id_type" class="border p-1 mt-1">
             <option value="has">{{ "Has any" | t }}</option>
             <option value="has-all">{{ "Has all" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
             <option value="has-not">{{ "Does not have" | t }}</option>
         </select>
     </div>
@@ -118,7 +118,7 @@
         <input type="text" name="comment" value="{{ filters.get('comment','') }}" class="border p-1 w-full"/>
         <select name="comment_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
         </select>
     </div>
 
@@ -128,7 +128,7 @@
         <input type="text" name="sub_caller" value="{{ filters.get('sub_caller','') }}" class="border p-1 w-full"/>
         <select name="sub_caller_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
         </select>
     </div>
 
@@ -146,7 +146,7 @@
         <select name="organisations_type" class="border p-1 mt-1">
             <option value="has">{{ "Has any" | t }}</option>
             <option value="has-all">{{ "Has all" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
             <option value="has-not">{{ "Does not have" | t }}</option>
         </select>
     </div>
@@ -168,7 +168,7 @@
         <select name="categories_type" class="border p-1 mt-1">
             <option value="has">{{ "Has any" | t }}</option>
             <option value="has-all">{{ "Has all" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
             <option value="has-not">{{ "Does not have" | t }}</option>
         </select>
     </div>
@@ -186,23 +186,23 @@
         <select name="personality_type_type" class="border p-1 mt-1">
             <option value="has">{{ "Has any" | t }}</option>
             <option value="has-all">{{ "Has all" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
             <option value="has-not">{{ "Does not have" | t }}</option>
         </select>
     </div>
 
     <!-- Boolean Preferences -->
     {% for field, label in [
-        ('controlled', 'Controlled'),
-        ('likes_parties', 'Likes Parties'),
-        ('likes_politics', 'Likes Politics'),
-        ('likes_lectures', 'Likes Lectures'),
-        ('likes_activism', 'Likes Activism')
+        ('controlled', 'Kontrollerad'),
+        ('filter_a', 'Intresserad av Fester'),
+        ('filter_b', 'Intresserad av Politik'),
+        ('filter_c', 'Intresserad av Föreläsningar'),
+        ('filter_d', 'Intresserad av Aktivism')
     ] %}
     <div>
         <label class="block font-semibold">{{ label }}</label>
         <select name="{{ field }}" class="border p-1 mt-1">
-            <option value="">Any</option>
+            <option value="">{{ "Any" | t }} </option>
             <option value="true" {% if filters.get(field) %}selected{% endif %}>{{ "True" | t }}</option>
             <option value="false" {% if filters.get(field) is not none and not filters.get(field) %}selected{% endif %}>{{ "False" | t }}</option>
         </select>
@@ -214,8 +214,9 @@
         <label class="block font-semibold">{{ "Tags (comma separated)" | t }}</label>
         <input type="text" name="tags" value="{{ filters.get('tags','') }}" class="border p-1 w-full"/>
         <select name="tags_type" class="border p-1 mt-1">
-            <option value="like">{{ "Contains" | t }}</option>
-            <option value="{{ "exact" | t }}">{{ "Exact" | t }}</option>
+            <option value="has">{{ "Contains" | t }}</option>
+            <option value="exact">{{ "Exact" | t }}</option>
+            <option value="has-all">{{ "All" | t }}</option>
         </select>
     </div>
 
