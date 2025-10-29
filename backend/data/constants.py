@@ -1,17 +1,20 @@
-# Example categories dictionary (replace with your actual JSON source)
-categories = {
-    "c1": {"name": "Category1", "items": {
-        "i1": "Item1",
-        "i2": "Item2"
-    }},
-    "c2": {"name": "Category2", "items": {
-        "i3": "ItemA",
-        "i4": "ItemB"
-    }},
-}
+import json
+from pathlib import Path
 
+DATA_DIR = Path("./data")
+
+def load_json(filename):
+    path = DATA_DIR / filename
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+# --- Load data ---
+categories = load_json("categories.json")
+organisations = load_json("organisations.json")
+personalities = load_json("personalities.json")
+
+# --- Transform data ---
 categories_map = {}
-
 for cid, cat in categories.items():
     # Add category itself
     categories_map[cid] = {
@@ -26,21 +29,5 @@ for cid, cat in categories.items():
             "type": "item"
         }
 
-organisations = [
-    {"id": 1, "name": "Acme Corp"},
-    {"id": 2, "name": "Globex Inc"},
-    {"id": 3, "name": "Initech"},
-    {"id": 4, "name": "Umbrella Corp"},
-    {"id": 5, "name": "Hooli"}
-]
-
 organisations_map = {org["id"]: org["name"] for org in organisations}
-
-personalities = [
-    {"id": 0, "name": "Okänd"},
-    {"id": 1, "name": "Gul"},
-    {"id": 2, "name": "Blå"},
-    {"id": 3, "name": "Röd"},
-    {"id": 4, "name": "Grön"}]
-
 personalities_map = {p["id"]: p for p in personalities}

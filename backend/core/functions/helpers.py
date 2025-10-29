@@ -357,3 +357,33 @@ def build_filters(data: dict, model):
     print("=== Finished build_filters ===")
     print(f"Total filters added: {len(filters)}")
     return filters
+
+
+import re
+
+def formatPhoneNr(number: str, country_code: str = '+46') -> str:
+    """
+    Normalize and format a phone number into international format.
+
+    - Keeps only digits and '+'.
+    - Converts '00' prefix to '+'.
+    - If missing '+', adds country_code and removes one leading 0 from the local part.
+    - Does not remove leading 0s from numbers that already start with '+'.
+    """
+    # Keep only digits and '+'
+    number = re.sub(r'[^0-9+]', '', number)
+
+    # Convert 00 -> +
+    if number.startswith('00'):
+        number = '+' + number[2:]
+
+    # If no +, add country code and remove only the first leading 0 (if present)
+    if not number.startswith('+'):
+        if number.startswith('0'):
+            number = country_code + number[1:]
+        else:
+            number = country_code + number
+
+    # Do NOT remove any 0 if the number already had a + prefix.
+    return number
+

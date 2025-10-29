@@ -14,8 +14,7 @@ from core.models.base import Base
 from core.database import get_db
 from core.functions.helpers import render
 from templates import templates
-from data.constants import categories, organisations, personalities
-from data.constants import categories_map, organisations_map, personalities_map
+import data.constants as constants
 from core.models.models import User, UserUpdate
 from core.functions.helpers import populate, build_filters
 

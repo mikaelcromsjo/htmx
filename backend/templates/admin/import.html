@@ -1,0 +1,11 @@
+<form hx-post="{{ url_for('admin_import') }}" hx-target="#import-result" enctype="multipart/form-data" class="space-y-4">
+  <label class="block font-medium">Paste CSV or Upload file</label>
+
+  <textarea name="csv_text" class="w-full p-2 border rounded h-40" placeholder="first_name,last_name,phone,email,..."></textarea>
+  <div>or</div>
+  <input type="file" name="csv_file" accept=".csv" class="block w-full" />
+
+  <button type="submit" class="bg-blue-600 px-4 py-2 rounded">Import</button>
+</form>
+
+<div id="import-result" class="mt-4 text-sm"></div>

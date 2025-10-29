@@ -1,40 +1,7 @@
-<h1 class="text-2xl font-bold mb-4">Admin Script Runner</h1>
+<h1>Dashboard</h1>
+<BR>
 
-  <form 
-    hx-post="/admin/script"
-    hx-target="#admin_content"
-    hx-swap="innerHTML"
-    class="bg-white p-4 rounded-xl shadow-md space-y-3"
-  >
-    <label class="block">
-      <span class="font-semibold">Script:</span>
-      <select name="script_name" class="border rounded p-2 w-full">
-        {% for key, path in scripts.items() %}
-          <option value="{{ key }}">{{ key }}</option>
-        {% endfor %}
-      </select>
-    </label>
-
-    <label class="block">
-      <span class="font-semibold">Arguments:</span>
-      <input type="text" name="args" placeholder=""
-             class="border rounded p-2 w-full" />
-    </label>
-
-    <button class="bg-blue-600 rounded px-4 py-2 hover:bg-blue-700">
-      Run Script
-    </button>
-  </form>
-
- 
-  <div id="output" class="mt-6">
-    {% if output %}
-      <pre class="text-green-300 p-4 rounded-xl font-mono text-sm whitespace-pre-wrap border border-gray-700 shadow-inner">
-{{ output }}
-      </pre>
-    {% else %}
-      <pre class="text-green-300 p-4 rounded-xl font-mono text-sm whitespace-pre-wrap border border-gray-700 shadow-inner">
-
-        No output yet...</pre>
-    {% endif %}
-  </div>
+    
+<button class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200" hx-target="#admin_content" hx-get="{{ url_for('admin_script') }}">Script</button>
+<button class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200" hx-target="#admin_content" hx-get="{{ url_for('admin_import') }}">Import</button>
+<button class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200" hx-target="#admin_content" hx-get="{{ url_for('admin_data') }}">Data</button>

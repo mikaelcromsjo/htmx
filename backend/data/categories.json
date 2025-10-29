@@ -1,0 +1,16 @@
+{
+  "c1": {
+    "name": "Ny2",
+    "items": {
+      "i1": "Gammal",
+      "i2": "Trist"
+    }
+  },
+  "c2": {
+    "name": "Aktiv",
+    "items": {
+      "i3": "Ledstjärna",
+      "i4": "Flygare"
+    }
+  }
+}

@@ -2,7 +2,7 @@
  
 <form 
     hx-post="{{ url_for('upsert_event') }}"
-    hx-target="#event-container" 
+    hx-target="#event-list" 
     hx-ext="json-enc"
     hx-swap="innerHTML"
     hx-on="htmx:afterRequest: $store.modal.open = false"
@@ -32,7 +32,7 @@
     <!-- Start Date -->
     <div class="mb-2">
         <label class="block">{{ "Start Date" | t }}</label>
-        <input type="datetime-local" name="start_date" data-save="true" value="{{ event.start_date }}" class="border p-1 w-full"/>
+        <input type=" name="start_date" data-save="true" value="{{ event.start_date }}" class="border p-1 w-full"/>
     </div>
 
     <!-- End Date -->
@@ -50,10 +50,10 @@
     <!-- Event Types -->
     <fieldset class="mb-2 border p-2">
         <legend class="font-bold">{{ "Event Types" | t }}</legend>
-        <label><input type="checkbox" name="type_parties" {% if event.type_parties %}checked{% endif %}/> {{ "Parties" | t }}</label><br/>
-        <label><input type="checkbox" name="type_politics" {% if event.type_politics %}checked{% endif %}/> {{ "Politics" | t }}</label><br/>
-        <label><input type="checkbox" name="type_lectures" {% if event.type_lectures %}checked{% endif %}/> {{ "Lectures" | t }}</label><br/>
-        <label><input type="checkbox" name="type_activism" {% if event.type_activism %}checked{% endif %}/> {{ "Activism" | t }}</label>
+        <label><input type="checkbox" name="type_a" {% if event.type_a %}checked{% endif %}/> {{ "Parties" | t }}</label><br/>
+        <label><input type="checkbox" name="type_b" {% if event.type_b %}checked{% endif %}/> {{ "Politics" | t }}</label><br/>
+        <label><input type="checkbox" name="type_c" {% if event.type_c %}checked{% endif %}/> {{ "Lectures" | t }}</label><br/>
+        <label><input type="checkbox" name="type_d" {% if event.type_d %}checked{% endif %}/> {{ "Activism" | t }}</label>
     </fieldset>
 
     <!-- Extra Options -->
@@ -64,6 +64,11 @@
         <label><input type="checkbox" name="extra_visilble_all" {% if event.extra_visilble_all %}checked{% endif %}/> {{ "Visible to All" | t }}</label>
     </fieldset>
 
+    <!-- Extra JSON -->
+    <div class="mb-2">
+        <label class="block">{{ "Extra JSON" | t }}</label>
+        <textarea name="extra" data-save="true" class="border p-1 w-full">{{ event.extra|tojson }}</textarea>
+    </div>
 
     <!-- Submit -->
     <div class="flex justify-end mt-4">

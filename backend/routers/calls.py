@@ -16,7 +16,7 @@ from models.models import Customer, Call, Event, EventCustomer, Caller, Alarm
 from core.functions.helpers import render
 from functions.customers import get_selected_ids, get_customers, SelectedIDs
 
-from data.constants import categories_map, organisations_map, personalities_map
+import data.constants as constants
 from core.auth import get_current_user
 
 
@@ -115,7 +115,7 @@ async def customer_data(
         {
             "request": request, 
             "customer": customer,
-            "categories_map": categories_map,
+            "categories_map": constants.categories_map,
             "organisations_map": organisations_map, 
             "personalities_map": personalities_map, 
             "callers": callers,

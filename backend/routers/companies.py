@@ -13,8 +13,7 @@ from core.models.base import Base
 from core.database import get_db
 from core.functions.helpers import render
 from templates import templates
-from data.constants import categories, organisations, personalities
-from data.constants import categories_map, organisations_map, personalities_map
+import data.constants as constants
 from models.models import Company, CompanyUpdate, Caller
 from core.functions.helpers import populate, build_filters
 
@@ -75,7 +74,7 @@ def company_new(
             "request": request, 
             "company": company, 
             "mode": "edit",
-            "categories": categories,
+            "categories": constants.categories,
             "callers": callers, 
         }
     )
@@ -196,7 +195,7 @@ def company_detail(
                 "request": request, 
                 "company": company, 
                 "company_id": company_id, 
-                "categories_map": categories_map,
+                "categories_map": constants.categories_map,
                 "organisations_map": organisations_map, 
                 "personalities_map": personalities_map, 
                 "callers": callers,
@@ -209,7 +208,7 @@ def company_detail(
             {
                 "request": request, 
                 "company": company, 
-                "categories": categories, 
+                "categories": constants.categories, 
                 "organisations": organisations, 
                 "personalities": personalities, 
                 "callers": callers,
@@ -249,7 +248,7 @@ def company_filter(
         {
             "request": request, 
             "filters": filter_dict, 
-            "categories": categories, 
+            "categories": constants.categories, 
             "organisations": organisations, 
             "personalities": personalities, 
             "callers": callers,

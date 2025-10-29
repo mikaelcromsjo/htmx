@@ -17,6 +17,9 @@ from typing import List, Optional, Dict, Any
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import Date
 from datetime import date
+from typing import Optional, List, Dict, Any
+from pydantic import BaseModel, field_validator
+from core.functions.helpers import formatPhoneNr
 
 
 # models set up in routes# ------------------------------------------------------
@@ -86,15 +89,21 @@ class CustomerUpdate(BaseModel):
     contributes: Optional[int] = None            # Dropdown → int
     caller: Optional[int] = None                 # Dropdown → int
     controlled: Optional[bool] = False           # Checkbox → bool
-    filter_a: Optional[bool] = False        # Checkbox → bool
+    filter_a: Optional[bool] = False             # Checkbox → bool
     filter_b: Optional[bool] = False
     filter_c: Optional[bool] = False
     filter_d: Optional[bool] = False
     categories: Optional[List[str]] = []         # Multi-select → list
-    tags: Optional[str] = ""                      # Comma-separated → list in populate()
+    tags: Optional[str] = ""                     # Comma-separated → list in populate()
     extra: Optional[Dict[str, Any]] = None
     code_name: Optional[bool] = False            # Checkbox → bool
 
+    # ✅ Auto-format phone number
+    @field_validator("phone")
+    def normalize_phone(cls, v: Optional[str]):
+        if v:
+            return formatPhoneNr(v)
+        return v
 
 # -------------------------------------------------
 # Companies Model (SQLAlchemy ORM)
