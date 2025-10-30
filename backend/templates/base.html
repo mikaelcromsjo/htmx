@@ -26,6 +26,37 @@
             outline-offset: 2px;
             /* optional spacing */
         }
+
+.full-table {
+  max-height: 70vh;        /* or fixed height: height: 90vh; */
+  overflow-y: auto;        /* enable vertical scrolling */
+  overflow-x: auto;        /* enable horizontal scrolling */
+  display: block;          /* required for overflow to work */
+}
+
+/* Make header sticky */
+.full-table thead {
+  position: sticky;
+  top: 0;
+  background: white;       /* prevent text behind showing through */
+  z-index: 2;              /* ensure it stays above table rows */
+}
+
+.full-table th,
+.full-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.full-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.full-table tr:hover {
+  background-color: #f1f1f1;
+}
+
     </style>
 
 </head>

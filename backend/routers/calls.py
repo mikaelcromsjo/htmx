@@ -116,8 +116,8 @@ async def customer_data(
             "request": request, 
             "customer": customer,
             "categories_map": constants.categories_map,
-            "organisations_map": organisations_map, 
-            "personalities_map": personalities_map, 
+            "organisations_map": constants.organisations_map, 
+            "personalities_map": constants.personalities_map, 
             "callers": callers,
             "customer": customer,
             "calls": calls

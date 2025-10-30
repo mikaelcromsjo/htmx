@@ -56,23 +56,23 @@ class Customer(BaseMixin, Base):
     description_phone = Column(String, nullable=True)
     location = Column(String, nullable=True)
     contributes = Column(Integer, nullable=True) # 1 not, 2 contributes, 3 Silver, 4 Gold
-    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True)
+    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True) # id number
     # Relationship to caller
-    caller = relationship("Caller", back_populates="customers")    
-    previous_caller = Column(JSON, default=[])
-    previous_categories = Column(JSON, default=[])
+    caller = relationship("Caller", back_populates="customers") 
+    previous_caller = Column(JSON, default=[]) # internal use only
+    previous_categories = Column(JSON, default=[]) # internal use only
     comment = Column(String, nullable=True)
     sub_caller = Column(String, nullable=True)
-    organisations = Column(JSON, default=[])
-    categories = Column(JSON, default=[])
+    organisations = Column(JSON, default=[]) # list of ids
+    categories = Column(JSON, default=[]) # list of ids
     personality_type = Column(Integer, nullable=True) # 0 Unknown, 1 Yellow, 2 Blue, 3 Red, 4 Green,  
     controlled = Column(Boolean, default=False)
-    filter_a = Column(Boolean, default=False)
-    filter_b = Column(Boolean, default=False)
-    filter_c = Column(Boolean, default=False)
-    filter_d = Column(Boolean, default=False)
-    tags = Column(JSON, default=[])
-    extra = Column(MutableDict.as_mutable(JSON), default=dict)
+    filter_a = Column(Boolean, default=False) # activism
+    filter_b = Column(Boolean, default=False) # lectures
+    filter_c = Column(Boolean, default=False) # parties
+    filter_d = Column(Boolean, default=False) # politics
+    tags = Column(JSON, default=[]) # comma separated list
+    extra = Column(MutableDict.as_mutable(JSON), default=dict) # internal only
 
 
 class CustomerUpdate(BaseModel):
@@ -173,7 +173,7 @@ class EventUpdate(BaseModel):
     extra: Optional[Dict[str, Any]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 
@@ -199,7 +199,7 @@ class InvoiceUpdate(BaseModel):
     date: Optional[datetime] = None
 
     class Config:
-        from_attributes = True # orm_mode
+        from_attributes = True
 
 
 

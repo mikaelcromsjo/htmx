@@ -42,7 +42,8 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 # Whitelist of scripts admins can run
 ALLOWED_SCRIPTS = {
     "manage_users": "/app/backend/scripts/manage_users.py",
-    "cleanup_logs": "/app/backend/scripts/cleanup_logs.py",
+    "stats": "/app/backend/scripts/generate_stats.py",
+    "test_data": "/app/backend/scripts/generate_test_data.py",
 }
 
 
@@ -121,11 +122,13 @@ async def run_admin_script(
         )
 
         raw_output = (result.stdout or "") + (result.stderr or "")
-        output = clean_output(raw_output)
+        output = f"Running {script_name} {args}\n\n"
+        output += clean_output(raw_output)
         output += f"\n\n[exit code: {result.returncode}]"
 
     except Exception as e:
-        output = f"⚠️ Error running script: {e}"
+        output = f"Running {script_name} {args}\n\n"
+        output += f"⚠️ Error running script: {e}"
 
     return templates.TemplateResponse(
         "admin/script.html",
@@ -358,9 +361,9 @@ def admin_data(request: Request):
         "admin/data.html",
         {
             "request": request,
-            "categories_json": json.dumps(constants.constants.categories, indent=2, ensure_ascii=False),
-            "organisations_json": json.dumps(constants.constants.organisations, indent=2, ensure_ascii=False),
-            "personalities_json": json.dumps(constants.constants.personalities, indent=2, ensure_ascii=False),
+            "categories_json": json.dumps(constants.categories, indent=2, ensure_ascii=False),
+            "organisations_json": json.dumps(constants.organisations, indent=2, ensure_ascii=False),
+            "personalities_json": json.dumps(constants.personalities, indent=2, ensure_ascii=False),
         },
     )
 
@@ -394,9 +397,9 @@ def save_data(
         "admin/data.html",
         {
             "request": request,
-            "categories_json": json.dumps(constants.constants.categories, indent=2, ensure_ascii=False),
-            "organisations_json": json.dumps(constants.constants.organisations, indent=2, ensure_ascii=False),
-            "personalities_json": json.dumps(constants.constants.personalities, indent=2, ensure_ascii=False),
+            "categories_json": json.dumps(constants.categories, indent=2, ensure_ascii=False),
+            "organisations_json": json.dumps(constants.organisations, indent=2, ensure_ascii=False),
+            "personalities_json": json.dumps(constants.personalities, indent=2, ensure_ascii=False),
             "message": "✅ Data saved and reloaded successfully!",
         },
     )
