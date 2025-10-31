@@ -181,10 +181,11 @@
 <div class="mb-2 tagify-wrapper"
      x-data
      x-init="initTagify($el)"
-     data-object-type="category">
+     data-object-type="tags">
     <label class="block font-semibold">{{ "Tags (comma separated)" | t }}</label>
-    <input type="text" name="category" value="{{ customer.category | default('') }}" class="border p-1 w-full"/>
+    <input type="text" name="tags" value="{{ customer.tags | default('') }}" class="border p-1 w-full"/>
 </div>
+
 
 <!-- Extra 
 <div class="mb-2">
