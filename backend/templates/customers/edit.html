@@ -60,11 +60,14 @@
         <input type="text" name="phone" value="{{ customer.phone or '' }}" class="border p-1 w-full"/>
     </div>
 
-    <!-- Location -->
-    <div class="mb-2">
-        <label class="block font-semibold">{{ "Location" | t }}</label>
-        <input type="text" name="location" value="{{ customer.location or '' }}" class="border p-1 w-full"/>
-    </div>
+<div class="mb-2 tagify-wrapper"
+     x-data
+     x-init="initTagify($el)"
+     data-object-type="location">
+    <label class="block font-semibold">{{ "Location" | t }}</label>
+    <input type="text" name="location" value="{{ customer.location | default('') }}" class="border p-1 w-full"/>
+</div>
+
 
     <!-- Contributes -->
     <div class="mb-2">
@@ -175,11 +178,22 @@
         </label>
     </div>
 
-    <!-- Tags -->
-    <div class="mb-2">
-        <label class="block font-semibold">{{ "Tags (comma separated)" | t }}</label>
-        <input type="text" name="tags" value="{{ customer.tags | default('') }}" class="border p-1 w-full"/>
-    </div>
+    <div class="mb-2 tagify-wrapper"
+     x-data
+     x-init="initTagify($el)"
+     data-object-type="location">
+    <label class="block font-semibold">Location</label>
+    <input type="text" name="location" value="{{ customer.location | default('') }}" class="border p-1 w-full"/>
+</div>
+
+
+<div class="mb-2 tagify-wrapper"
+     x-data
+     x-init="initTagify($el)"
+     data-object-type="category">
+    <label class="block font-semibold">{{ "Tags (comma separated)" | t }}</label>
+    <input type="text" name="category" value="{{ customer.category | default('') }}" class="border p-1 w-full"/>
+</div>
 
 <!-- Extra 
 <div class="mb-2">

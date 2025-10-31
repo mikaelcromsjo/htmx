@@ -269,12 +269,13 @@ def event_participation(session: Session, date_from, date_to, event_type, caller
                 for e in events
             ]
             fig.add_bar(
+                name=lang["statuses"][cat],   # ✅ visar rätt namn i legend / footer
                 x=events,
                 y=[stats[caller][e][cat] for e in events],
                 marker_color=colors[cat],
                 offsetgroup=idx,
                 legendgroup=cat,
-                showlegend=(idx == 0),
+                showlegend=(idx == 0),  # visar bara en gång per kategori
                 opacity=0.85,
                 hovertext=hover_text,
                 hoverinfo="text",

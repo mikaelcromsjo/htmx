@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/tailwind.css">
 
+    <!-- Include Tagify -->
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" />
 
     <!-- HTMX and Alpine.js from /static -->
     <script src="/static/htmx.min.js"></script>
@@ -607,4 +610,77 @@ function reloadEvents() {
 // Attach event listeners once, so custom events still work
 document.body.addEventListener('dashboardReload', reloadDashboard);
 document.body.addEventListener('alarmsReload', reloadAlarms);
+</script>
+
+<script>
+
+
+function initTagify(el) {
+    const input = el.querySelector('input');
+    if (!input) return;
+
+    const object_type = el.dataset.objectType;
+    if (!object_type) return;
+    if (input._tagify) return;
+
+    const tagify = new Tagify(input, {
+        whitelist: [], // fetched from /tags/all
+        dropdown: { enabled: 1, fuzzySearch: true },
+        enforceWhitelist: false,
+        delimiters: ",",
+    });
+
+    // --- Preload global suggestions ---
+    fetch(`/tags/all?object_type=${encodeURIComponent(object_type)}`)
+        .then(res => res.json())
+        .then(data => tagify.settings.whitelist = data)
+        .catch(err => console.error(`[Tagify:${object_type}] preload suggestions error:`, err));
+
+    // --- Dynamic filtering while typing ---
+    tagify.on('input', debounce(e => {
+        const q = e.detail.value;
+        if (!q) return;
+        const filtered = tagify.settings.whitelist.filter(tag => tag.toLowerCase().includes(q.toLowerCase()));
+        tagify.dropdown.show.call(tagify, q, filtered);
+    }, 200));
+
+
+// Convert input to comma-separated string just before submit
+    const form = input.closest('form');
+    if (form) {
+        form.addEventListener('submit', async e => {
+            // Get plain array of tag values
+            const tags = tagify.value.map(t => t.value);
+            
+            // Update the input for normal form submit
+            input.value = tags.join(',');
+
+            // Send new tags to global pool
+            try {
+                await fetch('/tags/save', {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        object_type: object_type,
+                        tags: JSON.stringify(tags)
+                    })
+                });
+            } catch(err) {
+                console.error(`Failed to save global tags for ${object_type}`, err);
+            }
+        });
+    }
+
+    input._tagify = tagify;
+}
+
+
+function debounce(fn, delay) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+    };
+}
+
+
 </script>

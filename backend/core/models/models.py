@@ -16,6 +16,8 @@ from typing import Optional, Dict, Any
 from passlib.context import CryptContext
 from datetime import date, time
 
+from typing import List
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -119,7 +121,7 @@ class UserUpdate(BaseModel):
     extra: Optional[Dict[str, Any]] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Py Models
 
@@ -128,4 +130,18 @@ class Update(BaseModel):
         extra = "allow"
 
 
+
+class Tag(Base):
+    __tablename__ = "tags"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+
+class TagLink(Base):
+    __tablename__ = "tag_links"
+    id = Column(Integer, primary_key=True)
+    tag_id = Column(ForeignKey("tags.id"))
+    object_id = Column(Integer, index=True)
+    object_type = Column(String, index=True)  # e.g. "location", "event"
+
+    tag = relationship("Tag")
 

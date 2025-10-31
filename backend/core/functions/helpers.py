@@ -17,8 +17,14 @@ from sqlalchemy.dialects.postgresql import JSONB
 def populate(update_dict: dict, db_obj: Any, pyd_model: Type[BaseModel]) -> Any:
     """
     Convert a raw dict (from Update) to a Pydantic model, then populate the DB model.
-    Handles empty strings for int/bool/list/dict fields.
+    Handles:
+      - Empty strings for numeric/optional fields
+      - list -> "a,b" if field is str or Optional[str]
+      - dict -> JSON string if field is str or Optional[str]
     """
+    import json
+    from typing import Union, get_origin, get_args
+
     preprocessed = {}
 
     for field_name, value in update_dict.items():
@@ -27,56 +33,97 @@ def populate(update_dict: dict, db_obj: Any, pyd_model: Type[BaseModel]) -> Any:
             continue
 
         field_type = field_info.annotation
+        origin = get_origin(field_type)
+        args = get_args(field_type)
 
-        # Convert empty string to None for Optional[int] or Optional[float]
-        if value == "" and (
-            field_type == int
-            or field_type == float
-            or (getattr(field_type, '__origin__', None) is Union and type(None) in getattr(field_type, '__args__', []))
-        ):
-            preprocessed[field_name] = None
+        # --- Handle Optional[T] ---
+        if origin is Union and type(None) in args:
+            base_type = next((a for a in args if a is not type(None)), str)
         else:
-            preprocessed[field_name] = value
+            base_type = field_type
 
-    # Now instantiate the Pydantic model (validation happens here)
+        # --- Handle empty strings → None for numeric/optional ---
+        if value == "" and (base_type in (int, float, bool) or (origin is Union and type(None) in args)):
+            preprocessed[field_name] = None
+            continue
+
+        # --- Handle list → comma-joined string if base_type is str ---
+        if base_type == str and isinstance(value, list):
+            cleaned = [str(v).strip() for v in value if str(v).strip() != ""]
+            preprocessed[field_name] = ",".join(cleaned)
+            continue
+
+        # --- Handle dict → JSON string if base_type is str ---
+        if base_type == str and isinstance(value, dict):
+            preprocessed[field_name] = json.dumps(value, ensure_ascii=False)
+            continue
+
+        # Default: pass through
+        preprocessed[field_name] = value
+
+    # --- Validate and coerce using Pydantic ---
     pyd_instance = pyd_model(**preprocessed)
 
-    # Dynamically populate the DB model
+    # --- Populate the DB object ---
     for field_name, value in pyd_instance.model_dump(exclude_unset=True).items():
         setattr(db_obj, field_name, convert_value_for_field(pyd_instance, field_name, value))
 
     return db_obj
 
+
 def convert_value_for_field(pyd_instance: BaseModel, field_name: str, value: Any):
     """
     Convert value to correct type based on Pydantic field type.
-    Handles int, bool, list, dict, Optional[...] automatically.
+    Handles Optional[T], list/dict, and str coercion properly.
     """
     from typing import get_origin, get_args, Union
+    import json
+
     field_type = pyd_instance.model_fields[field_name].annotation
     origin = get_origin(field_type)
     args = get_args(field_type)
 
-    # Optional[T]
+    # Handle Optional[T]
     if origin is Union and type(None) in args:
-        non_none_type = next((a for a in args if a != type(None)), str)
-        return _convert_value(non_none_type, value) if value not in ("", None) else None
+        target_type = next((a for a in args if a is not type(None)), str)
+        value = _convert_value(target_type, value) if value not in ("", None) else None
+    else:
+        value = _convert_value(field_type, value)
 
-    return _convert_value(field_type, value)
+    # If Pydantic expects str but got list/dict, force conversion
+    if value is not None and (field_type == str or (origin is Union and str in args)):
+        if isinstance(value, list):
+            value = ",".join(map(str, value))
+        elif isinstance(value, dict):
+            value = json.dumps(value, ensure_ascii=False)
+
+    return value
 
 
 def _convert_value(field_type, value):
+    """Internal helper for safe type conversion."""
     from typing import get_origin
     import json
 
     origin = get_origin(field_type)
 
+    if value is None:
+        return None
+
     if field_type == int:
         return int(value)
+    if field_type == float:
+        return float(value)
     if field_type == bool:
         if isinstance(value, str):
             return value.lower() in ("true", "1", "yes", "on")
         return bool(value)
+    if field_type == str:
+        if isinstance(value, list):
+            return ",".join(map(str, value))
+        if isinstance(value, dict):
+            return json.dumps(value, ensure_ascii=False)
+        return str(value)
     if origin == list:
         if isinstance(value, str):
             try:
