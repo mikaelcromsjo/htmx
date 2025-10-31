@@ -23,6 +23,18 @@
 <div class="mb-1"><strong>{{ "Location" | t }}:</strong> {{ customer.location }}</div>
 {% endif %}
 
+{% if customer.contributes %}
+<div class="mb-1"><strong>{{ "Contributes" | t }}:</strong> 
+{% if customer.contributes == 1 %}{{ "No contributions" | t }} {% endif %}
+{% if customer.contributes == 2 %}{{ "Contributes" | t }} {% endif %}
+{% if customer.contributes == 3 %}{{ "Silver" | t }}{% endif %}
+{% if customer.contributes == 4 %}{{ "Gold" | t }}{% endif %}
+{% if customer.contributes == 5 %}{{ "Platinum" | t }}{% endif %}
+</div>
+{% endif %}
+
+
+
 {% if customer.caller is not none %}
 <div class="mb-1"><strong>{{ "Caller" | t }}:</strong> {{ customer.caller.name }}</div>
 {% endif %}

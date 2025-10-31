@@ -44,6 +44,9 @@ clearSelectedIds() {
                     <th class="px-2 py-1 border">{{ "Nr" | t }}</th>
                     <th class="px-2 py-1 border">{{ "Name" | t }}</th>
                     <th class="px-2 py-1 border">{{ "Email" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Phone" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Location" | t }}</th>
+                    <th x-show="is_admin" class="px-2 py-1 border">{{ "Caller" | t }}</th>
                     <th class="px-2 py-1 border">{{ "Command" | t }}</th>
                     <th class="px-2 py-1 border text-center" 
                         x-show="showSelect" 
@@ -70,6 +73,9 @@ clearSelectedIds() {
                     <td class="px-2 py-1 border">{{ loop.index  }}</td>
                     <td class="px-2 py-1 border">{{ customer.first_name }} {{ customer.last_name }}</td>
                     <td class="px-2 py-1 border">{{ customer.email }}</td>
+                    <td class="px-2 py-1 border">{{ customer.phone }}</td>
+                    <td class="px-2 py-1 border">{{ customer.location }}</td>
+                    <td x-show="is_admin" class="px-2 py-1 border">{{ customer.caller.name }}</td>
 
                     <td class="px-2 py-1 border text-center" 
                         @click.stop

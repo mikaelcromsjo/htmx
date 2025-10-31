@@ -6,6 +6,7 @@
                     <tr>
                         <th class="px-2 py-1 border">{{ "Nr" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Date" | t }}</th>
+                        <th class="px-2 py-1 border">{{ "Reminder" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Customer" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Event" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Note" | t }}</th>
@@ -18,6 +19,7 @@
                         hx-trigger="click" class="cursor-pointer hover:bg-gray-100">
                         <td class="px-2 py-1 border">{{ loop.index }}</td>
                         <td class="px-2 py-1 border">{{ alarm.date }}</td>
+                        <td class="px-2 py-1 border">{{ alarm.reminder }}</td>
                         <td class="px-2 py-1 border">{{ alarm.customer.first_name }} {{ alarm.customer.last_name }}</td>
                         <td class="px-2 py-1 border">{{ alarm.event.name }}</td>
                         <td class="px-2 py-1 border">{{ alarm.note }}</td>

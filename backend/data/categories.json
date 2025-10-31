@@ -1,16 +1,55 @@
 {
   "c1": {
-    "name": "Ny2",
+    "name": "AKTIV",
     "items": {
-      "i1": "Gammal",
-      "i2": "Trist"
+      "i1": "Viktig",
+      "i2": "Trogen",
+      "i3": "Kommer ofta",
+      "i4": "Kommer sällan",
+      "i5": "Kommer aldrig"
     }
   },
   "c2": {
-    "name": "Aktiv",
+    "name": "INAKTIV",
     "items": {
-      "i3": "Ledstjärna",
-      "i4": "Flygare"
+      "i6": "Vill inte vara med",
+      "i7": "Kommer aldrig",
+      "i8": "Svarar inte",
+      "i9": "Medlem i NMR",
+      "i10": "Bor för långt bort",
+      "i11": "Död",
+      "i12": "Nya Tider, vill ej ha inbjudningar",
+      "i13": "Nya Tider, svarar inte"
+    }
+  },
+  "c3": {
+    "name": "INKOMMANDE",
+    "items": {
+      "i14": "Inte ringt",
+      "i15": "Ringt men inte talat med",
+      "i16": "Talat med",
+      "i17": "Nya Tider",
+      "i18": "Möjlighet att lägga in ny kategori"
+    }
+  },
+  "c4": {
+    "name": "OÖNSKAD",
+    "items": {
+      "i19": "Konfliktskapare",
+      "i20": "Skunk",
+      "i21": "Fiende",
+      "i22": "Säkerhetsrisk",
+      "i23": "Galen",
+      "i24": "Politiskt korrekt",
+      "i25": "För gammal",
+      "i26": "För krånglig"
+    }
+  },
+  "c5": {
+    "name": "ÖVRIG",
+    "items": {
+      "i27": "NYA TIDER",
+      "i28": "STÅ UPP FÖR SVERIGE"
     }
   }
 }

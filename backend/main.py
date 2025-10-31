@@ -52,6 +52,67 @@ from datetime import datetime, timedelta
 
 from core.models.models import BaseMixin, Update, User
 from threading import Lock
+# core/scheduler.py
+import asyncio
+from datetime import datetime, timezone
+from sqlalchemy.orm import Session
+from models.models import Alarm
+from core.database import SessionLocal
+
+
+async def alarm_scheduler():
+    logger.info("✅ Alarm.")
+    """Periodically check for alarms and send them via WebSocket."""
+    while True:
+        await asyncio.sleep(10)  # adjust interval as needed
+
+        db: Session = SessionLocal()
+        now = datetime.now(timezone.utc)
+
+
+        try:
+            due_alarms = (
+                db.query(Alarm)
+                .filter(Alarm.reminder <= now)
+                .filter(Alarm.date <= now)
+                .all()
+            )
+
+            for alarm in due_alarms:
+                logger.info("Alarm")
+
+                caller_id = alarm.caller_id
+                users = db.query(User).filter(User.caller_id == caller_id).all()
+
+                for user in users:
+
+                    if not user:
+                        continue
+                
+                    logger.info("✅ Send Alarm.")
+
+                    payload = {
+                        "type": "alarm",
+                        "customer": f"{alarm.customer.first_name} {alarm.customer.last_name}",
+                        "note": alarm.note,
+                        "date": alarm.date.isoformat(),
+                    }
+
+                    for ws in active_connections.get(str(user.id), []):
+                        try:
+                            await ws.send_json(payload)
+                            # Optional: mark alarm as "sent"
+                            alarm.extra["reminder_sent"] = True
+                            db.commit()
+                        except Exception as e:
+                            print(f"WebSocket send failed for {user.id}: {e}")
+
+
+        except Exception as e:
+            print("Scheduler error:", e)
+        finally:
+            db.close()
+
 
 
 import os
@@ -152,18 +213,9 @@ def on_startup():
 
     # Create all tables
     Base.metadata.create_all(bind=engine)
-#    logger.info("Tables created (if missing).")
-
- #   logger.info("Default Admin created (if missing).")
     init_admin_user()
-
-    # Print existing tables
-#    tables = list_tables()
-#    logger.info(f"Tables currently in DB: {tables}")
-
-    # Print all models registered with Base
-#    models = list_models()
-#    logger.info(f"Models registered with Base: {models}")
+    logger.info("✅ Set up Alarms.")
+    asyncio.create_task(alarm_scheduler())
 
 
 # Static files (CSS, JS, images) will be served from /static
@@ -220,7 +272,7 @@ async def login_post(request: Request, username: str = Form(...), password: str 
     if user and user.verify_password(password):
         request.session["authenticated"] = True
         request.session["admin"] = user.admin
-        request.session["user"] = user.username
+        request.session["user"] = user.id
         return RedirectResponse(url="/", status_code=303)
 
     return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid credentials"})
@@ -228,14 +280,13 @@ async def login_post(request: Request, username: str = Form(...), password: str 
 
 @app.get("/get-ws-token")
 def get_ws_token(request: Request):
-    user = request.session.get("user")
+    user = str(request.session.get("user"))
     if not user:
         raise HTTPException(status_code=401, detail="Not logged in")
     
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     token = jwt.encode({"sub": user, "exp": expire}, JWT_SECRET_KEY, algorithm=ALGORITHM)
     return {"ws_token": token}
-
 
 # Logout route
 @app.get("/logout")
@@ -247,7 +298,7 @@ async def logout(request: Request):
         "login.html",
         {
             "request": request,
-            "message": "Logged out"  # 👈 add message here
+            "message": "Logged out" 
         },
     )
 
@@ -323,18 +374,6 @@ async def read_root(request: Request, user: str = Depends(get_current_user)):
         },
     )
 
-# --- Dependency for DB session (to be imported in routers) ---
-def get_db():
-    """
-    Provides a SQLAlchemy session per request.
-    Usage in routes: db: Session = Depends(get_db)
-    """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 def get_best_language_match(accept_language: str, supported: list[str]) -> str:
     if not accept_language:
@@ -363,6 +402,7 @@ def get_best_language_match(accept_language: str, supported: list[str]) -> str:
             return code
 
     return supported[0]  # fallback
+
 
 
 

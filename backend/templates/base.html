@@ -31,7 +31,7 @@
         }
 
 .full-table {
-  max-height: 70vh;        /* or fixed height: height: 90vh; */
+  max-height: 55vh;        /* or fixed height: height: 90vh; */
   overflow-y: auto;        /* enable vertical scrolling */
   overflow-x: auto;        /* enable horizontal scrolling */
   display: block;          /* required for overflow to work */
@@ -364,10 +364,30 @@
         style="display:none; padding:10px 20px; border-radius:5px; z-index:1000; transition: opacity 0.3s;">
     </div>
 
-    <script>
+<!-- Centered modern alarm popup -->
+<div
+  x-data="{ show: false, message: '' }"
+  x-show="show"
+  x-transition.duration.300ms
+  @show-alert.window="message = $event.detail; show = true; setTimeout(() => show = false, 4000)"
+  class="fixed inset-0 flex items-center justify-center z-50 pointer-events-none"
+>
+  <div class="bg-red-600 text-white min-w-[350px] max-w-md w-full px-6 py-4 rounded-xl shadow-2xl pointer-events-auto flex flex-col items-center space-y-2">
+    <h2 class="text-2xl font-bold">Alarm</h2>
+    <p class="text-center text-white text-lg" x-text="message"></p>
+    <button 
+      @click="show=false" 
+      class="mt-2 px-4 py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition"
+    >
+      OK
+    </button>
+  </div>
+</div>
+
+
+<script>
 
 function showPopup(evt) {
-    console.log("popup")
     let xhr = evt.detail.xhr;
     let contentType = xhr.getResponseHeader('Content-Type') || '';
     let status = xhr.status;
@@ -544,6 +564,11 @@ async function connectWS() {
                     console.log("Call");
                     enableCallButtons();
                 }
+                if (data.type === 'alarm') {
+                    const message = `${data.customer}: ${data.note || "Alarm"}`;
+                    window.dispatchEvent(new CustomEvent("show-alert", { detail: message }));
+                }
+
             };
 
             // Handle close

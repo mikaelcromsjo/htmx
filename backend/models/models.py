@@ -33,8 +33,10 @@ class Alarm(BaseMixin, Base):
     customer = relationship("Customer")
     event_id = Column(Integer, ForeignKey("events.id"), nullable=True)
     event = relationship("Event")
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=False)
+    caller = relationship("Caller")
     date = Column(DateTime, nullable=False)
+    reminder = Column(DateTime, nullable=False)
     note = Column(String, nullable=True)
     extra = Column(MutableDict.as_mutable(JSON), default=dict)
 
@@ -200,7 +202,7 @@ class InvoiceUpdate(BaseModel):
 
     class Config:
         from_attributes = True
-
+    
 
 
 

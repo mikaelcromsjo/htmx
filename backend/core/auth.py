@@ -14,10 +14,10 @@ def get_current_user(
     request: Request,
     db: Session = Depends(get_db)
 ):
-    username = request.session.get("user")
-    if not username:
+    user_id = request.session.get("user")
+    if not user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    user = db.query(User).filter(User.username == username).first()
+    user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     return user

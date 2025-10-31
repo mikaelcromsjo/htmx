@@ -4,9 +4,10 @@ from fastapi import APIRouter, Depends, Request, Form, Query, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional
 from pydantic import BaseModel, Field
+
 
 from core.database import get_db
 from templates import templates
@@ -72,28 +73,28 @@ async def customer_data(
     user = Depends(get_current_user)
 ):
     
-    username = user.username
+    user_id = user.id
 
     customer = db.query(Customer).filter(Customer.id == int(customer_id)).first()
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
 
 
-    user_data.setdefault(username, {})["name"] = customer.first_name + " " + customer.last_name
-    user_data.setdefault(username, {})["number"] = customer.phone
+    user_data.setdefault(user_id, {})["name"] = customer.first_name + " " + customer.last_name
+    user_data.setdefault(user_id, {})["number"] = customer.phone
     # Broadcast to all connected receivers
 
     to_remove = []
 
-    for ws in active_connections.get(username, []):
+    for ws in active_connections.get(user_id, []):
         try:
-            await ws.send_json(user_data[username])
+            await ws.send_json(user_data[user_id])
         except RuntimeError:
             # WebSocket is closed, mark for removal
             to_remove.append(ws)
 
     for ws in to_remove:
-        active_connections[username].remove(ws)
+        active_connections[user_id].remove(ws)
 
 
     customer = (
@@ -247,29 +248,33 @@ async def save_call(
         if isinstance(event_alarm_date, str):
             try:
                 # hantera både "2025-10-25T14:30" och "2025-10-25T14:30:00"
-                if len(event_alarm_date) == 16:  # YYYY-MM-DDTHH:MM
+#                if len(event_alarm_date) == 16:  # YYYY-MM-DDTHH:MM
                     event_alarm_date = datetime.strptime(event_alarm_date, "%Y-%m-%dT%H:%M")
-                else:
-                    event_alarm_date = datetime.fromisoformat(event_alarm_date)
+#                else:
+#                    event_alarm_date = datetime.fromisoformat(event_alarm_date)
             except ValueError:
-                print(f"Invalid datetime format for event_alarm_date: {event_alarm_date}")
                 event_alarm_date = datetime.now()
+
+            event_alarm_reminder = int(getattr(update_data, "event_alarm_reminder", 30))
+            event_alarm_reminder = event_alarm_date - timedelta(minutes=event_alarm_reminder)
+
 
         # Try to find existing alarm for this user & customer
         alarm = (
             db.query(Alarm)
-            .filter_by(customer_id=customer_id, user_id=user.id, event_id=event_id)
+            .filter_by(customer_id=customer_id, caller_id=user.caller_id, event_id=event_id)
             .first()
         )
 
         if not alarm:
-            alarm = Alarm(customer_id=customer_id, user_id=user.id)
+            alarm = Alarm(customer_id=customer_id, caller_id=user.caller_id)
             db.add(alarm)
         else:
             print(f"Alarm found: {alarm.id}")
 
         # Update shared fields
         alarm.date = event_alarm_date
+        alarm.reminder = event_alarm_reminder
         alarm.note = alarm_note
         alarm.extra = alarm.extra or {}
         alarm.event_id = event_id
@@ -467,17 +472,12 @@ def calls_event_detail(
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
         
-    # Debug: print input values
-    print("Debug: customer_id =", customer_id)
-    print("Debug: event_id =", event_id)
 
     # Get the EventCustomer match
     event_customer = db.query(EventCustomer).filter_by(
         customer_id=customer_id, event_id=event_id
     ).first()
 
-    # Debug: print query result
-    print("Debug: event_customer =", event_customer)
 
     event_status = None
     if event_customer:
@@ -504,7 +504,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 1
 
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    print("login")
     await websocket.accept()
 
     token = websocket.query_params.get("token")
@@ -516,25 +515,25 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
         print("Payload:", payload)
-        user = payload.get("sub")
-        if not user:
+        user_id = payload.get("sub")
+        if not user_id:
             raise JWTError()
     except JWTError as e:
         print("JWTError:", e)
         await websocket.close(code=1008)
         return
 
-    print("User", user)
+    print("User ID", user_id)
 
 
-    if user not in active_connections:
-        active_connections[user] = []
-        user_data[user] = {"customer_id": 0}
+    if user_id not in active_connections:
+        active_connections[user_id] = []
+        user_data[user_id] = {"user_id": user_id}
 
-    active_connections[user].append(websocket)
+    active_connections[user_id].append(websocket)
 
     # Send initial value
-    await websocket.send_json(user_data[user])
+    await websocket.send_json(user_data[user_id])
 
     try:
         while True:
@@ -548,19 +547,19 @@ async def websocket_endpoint(websocket: WebSocket):
             if call:
                 print(f"Call")
 
-                for ws in active_connections.get(user, []):
+                for ws in active_connections.get(user_id, []):
                     try:
                         print("Sending to web sockets")
                         await ws.send_json({ "call": "true" })
-                        print("Current user:", user)
-                        print("Active connections for this user:", active_connections.get(user, []))
+                        print("Current user:", user_id)
+                        print("Active connections for this user:", active_connections.get(user_id, []))
 
                     except RuntimeError:
                         # WebSocket is closed, mark for removal
                         to_remove.append(ws)
                 
     except WebSocketDisconnect:
-        active_connections[user].remove(websocket)
-        if not active_connections[user]:
-            del active_connections[user]
-            del user_data[user]
+        active_connections[user_id].remove(websocket)
+        if not active_connections[user_id]:
+            del active_connections[user_id]
+            del user_data[user_id]

@@ -42,7 +42,7 @@ def alarms_list(
     today = date.today()
     alarms = (
         db.query(Alarm)
-        .filter((Alarm.user_id == user.id) & (Alarm.date >= today))
+        .filter((Alarm.caller_id == user.caller_id) & (Alarm.date >= today))
         .all()
     )
 

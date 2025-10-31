@@ -167,5 +167,14 @@
   "All": "All",
   "Admin": "Admin",
   "Ny": "Ny",
-  "Rod": "Rod"
+  "Rod": "Rod",
+  "?": "?",
+  "Attended": "Attended",
+  "Dont know": "Dont know",
+  "Platinum": "Platinum",
+  "Reminder": "Reminder",
+  "30 minutes before": "30 minutes before",
+  "1 hour before": "1 hour before",
+  "2 hours before": "2 hours before",
+  "1 day before": "1 day before"
 }

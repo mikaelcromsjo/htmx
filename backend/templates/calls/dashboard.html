@@ -89,7 +89,8 @@
                     'bg-white fw-normal text-dark': Alpine.store('event').id !== {{ event.id }}
                   }"
                   @click="Alpine.store('event').id = {{ event.id }}; 
-                  enableEvent();"
+                  enableEvent();
+                  "
                   hx-get="{{ url_for('calls_event_detail', event_id=event.id) }}?list=short"
                   hx-target="#event-details"
                   hx-swap="innerHTML"
@@ -164,25 +165,28 @@
 
     <!-- Event Status Options -->
     <div class="d-flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light"
-         x-data
-         :key="$store.eventCustomer.status"
-         x-effect="
-           $el.querySelectorAll('input[name=event_status]').forEach(radio => {
-             radio.checked = (radio.value == $store.eventCustomer.status)
-           })
-         ">
-
+         x-data>
+<!--
       <label class="form-check form-check-inline">
-        <input name="event_status" disabled value="1" class="auto-save event-disable form-check-input" type="radio">
+        <input name="event_status" x-model="$store.eventCustomer.status" disabled value="" class="auto-save event-disable form-check-input" type="radio">
+        <span>{{ "Dont know" | t }}</span>
+      </label>
+      -->
+      <label class="form-check form-check-inline">
+        <input name="event_status" x-model="$store.eventCustomer.status" disabled value="1" class="auto-save event-disable form-check-input" type="radio">
         <span>{{ "Interested" | t }}</span>
       </label>
       <label class="form-check form-check-inline">
-        <input name="event_status" disabled value="2" class="auto-save event-disable form-check-input" type="radio">
+        <input name="event_status" x-model="$store.eventCustomer.status" disabled value="2" class="auto-save event-disable form-check-input" type="radio">
         <span>{{ "Not interested" | t }}</span>
       </label>
       <label class="form-check form-check-inline">
-        <input name="event_status" disabled value="3" class="auto-save event-disable form-check-input" type="radio">
+        <input name="event_status" x-model="$store.eventCustomer.status" disabled value="3" class="auto-save event-disable form-check-input" type="radio">
         <span>{{ "Paid" | t }}</span>
+      </label>
+      <label class="form-check form-check-inline">
+        <input name="event_status" x-model="$store.eventCustomer.status" disabled value="4" class="auto-save event-disable form-check-input" type="radio">
+        <span>{{ "Attended" | t }}</span>
       </label>
 
     </div>
@@ -218,11 +222,23 @@
     <h2 class="text-lg font-semibold mb-4">{{ "Set Alarm" | t }}</h2>
     {{ "Note" | t }}
     <textarea id="alarm_note" name="alarm_note" class="form-control mb-3 w-100" rows="3"></textarea>
-
+    
+{{ "Date" | t }}
     <input type="datetime-local"
            name="event_alarm_date"
            id="alarm_input"
            class="w-full border rounded-lg p-2 mb-4">
+{{ "Reminder" | t }}
+<select name="event_alarm_reminder"
+        id="alarm_reminder"
+        class="w-full border rounded-lg p-2 mb-4">
+    <option value="30">{{ "30 minutes before" | t }}</option>
+    <option value="60">{{ "1 hour before" | t }}</option>
+    <option value="120">{{ "2 hours before" | t }}</option>
+    <option value="1440">{{ "1 day before" | t }}</option>
+</select>
+
+
     <div class="flex justify-end space-x-2">
       <button type="button"
               class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
