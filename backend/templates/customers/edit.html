@@ -178,15 +178,6 @@
         </label>
     </div>
 
-    <div class="mb-2 tagify-wrapper"
-     x-data
-     x-init="initTagify($el)"
-     data-object-type="location">
-    <label class="block font-semibold">Location</label>
-    <input type="text" name="location" value="{{ customer.location | default('') }}" class="border p-1 w-full"/>
-</div>
-
-
 <div class="mb-2 tagify-wrapper"
      x-data
      x-init="initTagify($el)"
