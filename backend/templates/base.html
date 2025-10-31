@@ -42,7 +42,7 @@
   position: sticky;
   top: 0;
   background: white;       /* prevent text behind showing through */
-  z-index: 2;              /* ensure it stays above table rows */
+  z-index: 20;              /* ensure it stays above table rows */
 }
 
 .full-table th,
@@ -369,21 +369,21 @@
   x-data="{ show: false, message: '' }"
   x-show="show"
   x-transition.duration.300ms
-  @show-alert.window="message = $event.detail; show = true; setTimeout(() => show = false, 4000)"
-  class="fixed inset-0 flex items-center justify-center z-50 pointer-events-none"
+  @show-alert.window="message = $event.detail; show = true; setTimeout(() => show = false, 8000)"
+  class="fixed inset-0 flex items-center justify-center z-[9999]" 
 >
-  <div class="bg-red-600 text-white min-w-[350px] max-w-md w-full px-6 py-4 rounded-xl shadow-2xl pointer-events-auto flex flex-col items-center space-y-2">
+  <!-- Dimmed background (click to close) -->
+  <div 
+    class="absolute inset-0"
+    @click="show = false"
+  ></div>
+
+  <!-- Popup content -->
+  <div style="padding:50px" class="relative bg-red-600 text-white min-w-[400px] max-w-lg w-full m-8 px-8 py-6 rounded-xl shadow-2xl flex flex-col items-center space-y-3 transform transition-all scale-100">
     <h2 class="text-2xl font-bold">Alarm</h2>
     <p class="text-center text-white text-lg" x-text="message"></p>
-    <button 
-      @click="show=false" 
-      class="mt-2 px-4 py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition"
-    >
-      OK
-    </button>
   </div>
 </div>
-
 
 <script>
 
