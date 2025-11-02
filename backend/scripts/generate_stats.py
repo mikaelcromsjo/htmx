@@ -78,7 +78,7 @@ def parse_args():
         "caller_performance",
         "event_participation",
     ], required=True)
-    parser.add_argument("--save", help="Path to save the HTML file", default="/app/backend/stats/output.html")
+#    parser.add_argument("--save", help="Path to save the HTML file", default="/app/backend/core/static/output.html")
     parser.add_argument("--lang", choices=["sv", "en"], default="sv", help="Språk / Language (sv or en)")
     return parser.parse_args()
 
@@ -93,8 +93,7 @@ def get_session() -> Session:
 def save_html(fig: go.Figure, filepath: str):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     plot(fig, filename=filepath, auto_open=False)
-    print(f"✅ Saved interactive chart → {filepath}")
-
+    print(f"✅ Saved interactive chart → static/output.html")
 
 # -----------------------------
 # CHARTS
@@ -352,7 +351,10 @@ def main():
             return
 
         if fig:
-            save_html(fig, args.save)
+#            save_html(fig, args.save)
+            save_html(fig, "/app/backend/core/static/output.html")
+
+
     finally:
         session.close()
 
