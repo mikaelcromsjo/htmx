@@ -9,6 +9,7 @@
 
 <div class="container-fluid border">
 
+
   <!-- Row 1: TopRow -->
   <div id="topRow" class="d-flex border-bottom" style="height:43vh;">
     <!-- Customers Column -->
@@ -27,12 +28,12 @@
                     document.querySelector('#save-form').reset(); 
                     document.getElementById('current_call').value = '';
                     Alpine.store('event').id = '';
-                    Alpine.store('call').id  =  '';   
-                    document.getElementById('status_value').value='';
+                    Alpine.store('call').id  =  '';
                     disableCall();
                     disableEvent();
                     enableCustomer();
                     removeHightlight() 
+                    document.getElementById('status_value').value='';                    
              "
             hx-swap="none">
           <span>{{ customer.first_name }} {{ customer.last_name }}</span>
@@ -188,6 +189,8 @@
         <input name="event_status" x-model="$store.eventCustomer.status" disabled value="4" class="auto-save event-disable form-check-input" type="radio">
         <span>{{ "Attended" | t }}</span>
       </label>
+      <!--hidden-->
+      <input name="event_status" x-model="$store.eventCustomer.status" value="0" type="radio" style="display:none">
 
     </div>
 

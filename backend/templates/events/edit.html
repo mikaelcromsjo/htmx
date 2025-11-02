@@ -64,11 +64,6 @@
         <label><input type="checkbox" name="extra_visilble_all" {% if event.extra_visilble_all %}checked{% endif %}/> {{ "Visible to All" | t }}</label>
     </fieldset>
 
-    <!-- Extra JSON -->
-    <div class="mb-2">
-        <label class="block">{{ "Extra JSON" | t }}</label>
-        <textarea name="extra" data-save="true" class="border p-1 w-full">{{ event.extra|tojson }}</textarea>
-    </div>
 
     <!-- Submit -->
     <div class="flex justify-end mt-4">

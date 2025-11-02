@@ -401,8 +401,8 @@ def build_filters(data: dict, model):
         print(f"  Skipped field (no matching type handler): {field}")
 
 
-    print("=== Finished build_filters ===")
-    print(f"Total filters added: {len(filters)}")
+#    print("=== Finished build_filters ===")
+#    print(f"Total filters added: {len(filters)}")
     return filters
 
 
