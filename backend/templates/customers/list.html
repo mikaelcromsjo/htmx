@@ -72,9 +72,9 @@ clearSelectedIds() {
 
                     <td class="px-2 py-1 border">{{ loop.index  }}</td>
                     <td class="px-2 py-1 border">{{ customer.first_name }} {{ customer.last_name }}</td>
-                    <td class="px-2 py-1 border">{{ customer.email }}</td>
-                    <td class="px-2 py-1 border">{{ customer.phone }}</td>
-                    <td class="px-2 py-1 border">{{ customer.location }}</td>
+                    <td class="px-2 py-1 border">{{ customer.email or ''}}</td>
+                    <td class="px-2 py-1 border">{{ customer.phone or ''}}</td>
+                    <td class="px-2 py-1 border">{{ customer.location or '' }}</td>
                     <td x-show="is_admin" class="px-2 py-1 border">{{ customer.caller.name }}</td>
 
                     <td class="px-2 py-1 border text-center" 
@@ -148,6 +148,17 @@ clearSelectedIds() {
                 {{ "Toggle Select Column" | t }}
             </button>
 -->
+
+        </div>
+
+        <div class="mt-2 flex gap-2">
+
+        <button x-on:click="clearSelectedIds()"
+                class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+                {{ "Clear Customers" | t }}
+        </button>
+
+
         <button
                 :hx-vals="JSON.stringify({ selected_ids: getSelectedIds() })"
                 hx-post="/calls/dashboard"
@@ -157,12 +168,36 @@ clearSelectedIds() {
                 {{ "Load Selected Customers" | t }}
             </button>
 
-        <button x-on:click="clearSelectedIds()"
-                class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
-                {{ "Clear Customers" | t }}
-        </button>
+<div x-data="{ caller_id: '', getSelectedIds }">
 
-        </div>
+  <!-- Assign button -->
+  <button
+    :hx-vals="JSON.stringify({ caller_id: caller_id, selected_ids: { selected_ids: getSelectedIds() } })"
+    hx-post="/customers/assign"
+    hx-ext="json-enc"
+    hx-swap="none"
+    class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
+  >
+    {{ 'Assign' | t }}
+  </button>
+
+  <!-- Caller selection -->
+  <select
+    id="caller-select"
+    name="caller_id"
+    x-model="caller_id"
+    class="border"
+  >
+    <option value="">{{ 'Select...' | t }}</option>
+    {% for caller in callers %}
+      <option value="{{ caller.id }}">{{ caller.name }}</option>
+    {% endfor %}
+  </select>
+
+</div>
+
+</div> 
+
         
     <div class="mt-4" id="customer-info"></div>
         

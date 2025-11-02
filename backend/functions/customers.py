@@ -18,12 +18,16 @@ def get_selected_ids(request: Request, selected_ids: Optional[SelectedIDs]) -> L
     """
     Helper to manage selected IDs in session.
     """
+
     if selected_ids is not None:
         # Save to session if POSTed
         request.session["selected_ids"] = selected_ids.ids
         return selected_ids.ids
+
     # Otherwise, pull from session
+    return
     return request.session.get("selected_ids", [])
+
 
 def get_customers(db: Session, user, ids: List[int]):
     """
@@ -36,6 +40,29 @@ def get_customers(db: Session, user, ids: List[int]):
         return query.filter(Customer.id.in_(ids)).all()
     return query.all()
 
+def assign_customers_caller(db: Session, ids: List[int], caller_id: int):
+    """
+    Assign multiple customers to a given caller.
+    Ensures caller exists (even if in another DB) and updates customers safely.
+    """
+
+    if not ids:
+        return 0  # nothing to do
+
+    # Validate that caller exists
+    caller = db.query(Caller).filter(Caller.id == caller_id).first()
+    if not caller:
+        raise ValueError(f"Caller with id {caller_id} does not exist.")
+
+    # Perform bulk update safely
+    updated_rows = (
+        db.query(Customer)
+        .filter(Customer.id.in_(ids))
+        .update({Customer.caller_id: caller_id}, synchronize_session="fetch")
+    )
+
+    db.commit()
+    return updated_rows
 
 def get_user_customers(db, request, user):
     query = db.query(Customer)

@@ -58,28 +58,42 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from models.models import Alarm
 from core.database import SessionLocal
-
+from sqlalchemy import func, or_, and_
 
 async def alarm_scheduler():
     logger.info("✅ Alarm.")
     """Periodically check for alarms and send them via WebSocket."""
     while True:
-        await asyncio.sleep(10)  # adjust interval as needed
+        await asyncio.sleep(60)  # adjust interval as needed
 
         db: Session = SessionLocal()
         now = datetime.now(timezone.utc)
+        logger.info("Scheduler")
 
 
         try:
             due_alarms = (
                 db.query(Alarm)
-                .filter(Alarm.reminder <= now)
-                .filter(Alarm.date <= now)
+                .filter(Alarm.date >= now)  # event not passed
+                .filter(
+                    or_(
+                        # First reminder: reminder <= now and not sent yet
+                        and_(
+                            Alarm.reminder <= now,
+                            or_(Alarm.reminder_sent.is_(None), Alarm.reminder_sent < Alarm.reminder)
+                        ),
+
+                        # Second reminder: 30min before event and first reminder already sent
+                        and_(
+                            Alarm.date - timedelta(minutes=30) <= now,
+                            or_(Alarm.reminder_sent.is_(None), Alarm.reminder_sent < Alarm.date - timedelta(minutes=30))
+                        )
+                    )
+                )
                 .all()
             )
 
             for alarm in due_alarms:
-                logger.info("Alarm")
 
                 caller_id = alarm.caller_id
                 users = db.query(User).filter(User.caller_id == caller_id).all()
@@ -101,8 +115,7 @@ async def alarm_scheduler():
                     for ws in active_connections.get(str(user.id), []):
                         try:
                             await ws.send_json(payload)
-                            # Optional: mark alarm as "sent"
-                            alarm.extra["reminder_sent"] = True
+                            alarm.reminder_sent = now
                             db.commit()
                         except Exception as e:
                             print(f"WebSocket send failed for {user.id}: {e}")

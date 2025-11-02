@@ -48,8 +48,9 @@
 
 <div class="mb-2">
     <label class="block font-semibold">{{ 'VAT (%)' | t }}</label>
-    <input type="number" step="1" name="extra.vat" value="{{ invoice.extra.vat or '25' }}" class="border p-1 w-full"/>
+    <input type="number" step="1" id="vat" name="extra.vat" value="{{ invoice.extra.vat or '25' }}" class="border p-1 w-full"/>
 </div>
+
 
 
     <div class="mb-2">
@@ -127,31 +128,32 @@
   function updateTotals() {
     const rows = document.querySelectorAll("#invoiceBody tr");
     let subtotal = 0;
+    let currency = document.querySelector('#currency').value;
 
     rows.forEach((row) => {
-      const price = parseFloat(row.querySelector(`[name$=".price"]`).value) || 0;
+      const price = parseFloat(row.querySelector(`[name$=".price"]`).value) + " " + currency; || 0;
       const qty = parseFloat(row.querySelector(`[name$=".qty"]`).value) || 0;
       const lineTotal = price * qty;
-      row.querySelector(".line-total").textContent = lineTotal.toFixed(2);
+      row.querySelector(".line-total").textContent = lineTotal.toFixed(2) + " " + currency;
       subtotal += lineTotal;
     });
 
 // VAT rate (e.g. 25%)
-  const vatInput = document.querySelector('[name="extra.vat"]');
+  const vatInput = document.querySelector('#vat');
   const vatRate = vatInput ? parseFloat(vatInput.value) / 100 : 0;
 
   // Calculate VAT and total
   const vatAmount = subtotal * vatRate;
   const total = subtotal + vatAmount;
 
-    document.getElementById("subtotal").textContent = subtotal.toFixed(2);
-   document.getElementById("vat_amount").textContent = vatAmount.toFixed(2);    
-  document.getElementById("total").textContent = total.toFixed(2);
+    document.getElementById("subtotal").textContent = subtotal.toFixed(2) + " " + currency;;
+   document.getElementById("vat_amount").textContent = vatAmount.toFixed(2) + " " + currency;;    
+  document.getElementById("total").textContent = total.toFixed(2) + " " + currency;;
   }
 
   document.getElementById("invoiceTable").addEventListener("input", updateTotals);
-  const vatField = document.querySelector('input[name="extra.vat"]');
-  if (vatField) vatField.addEventListener("input", updateTotals);
+  document.querySelector('#vat').addEventListener("input", updateTotals);
+  document.querySelector('#currency').addEventListener("input", updateTotals);
 
   document.getElementById("addRow").addEventListener("click", (e) => {
     e.preventDefault(); // avoid form submit
@@ -159,7 +161,7 @@
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
       <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="text" name="extra.row.${rowCount}.description" placeholder="Description"></td>
-      <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.${rowCount}.price" value="0" step="0.01" min="0"></td>
+      <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.${rowCount}.price" value="0" step="1" min="0"></td>
       <td><input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" type="number" name="extra.row.${rowCount}.qty" value="1" step="1" min="0"></td>
       <td class="line-total">0.00</td>
     `;

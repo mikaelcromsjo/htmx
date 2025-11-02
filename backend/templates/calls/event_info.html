@@ -29,7 +29,7 @@
     {{ types | join(', ') if types else 'None' }}
 </div>
 
-<div class="mb-2"><strong>{{ "Extras" | t }}:</strong>
+<div class="mb-2">
     {% set extras = [] %}
     {% if event.extra_external %}{% set _ = extras.append('Extern') %}{% endif %}
     {% if event.extra_non_political %}{% set _ = extras.append('Opolitisk') %}{% endif %}

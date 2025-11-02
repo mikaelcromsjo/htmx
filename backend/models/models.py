@@ -37,6 +37,7 @@ class Alarm(BaseMixin, Base):
     caller = relationship("Caller")
     date = Column(DateTime, nullable=False)
     reminder = Column(DateTime, nullable=False)
+    reminder_sent = Column(DateTime, nullable=True)
     note = Column(String, nullable=True)
     extra = Column(MutableDict.as_mutable(JSON), default=dict)
 

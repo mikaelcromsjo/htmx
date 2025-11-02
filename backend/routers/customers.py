@@ -24,6 +24,7 @@ from core.auth import get_current_user
 from core.models.models import BaseMixin, Update, User
 
 from functions.customers import get_user_customers
+from functions.customers import get_selected_ids, assign_customers_caller, SelectedIDs
 
 
 
@@ -45,16 +46,50 @@ def customers_list(
     db: Session = Depends(get_db),
     user = Depends(get_current_user),
 ):
-    print("Admin:", user.admin)
     customers = get_user_customers(db, request, user)
+    callers = db.query(Caller).all()
+
     return templates.TemplateResponse(
         "customers/list.html",
         {"request": request, 
          "customers": customers,
          "is_admin": user.admin,
+         "callers": callers,
+
         }
     )
 
+class AssignRequest(BaseModel):
+    caller_id: int
+    selected_ids: SelectedIDs
+
+@router.post("/assign", response_class=HTMLResponse)
+def assign_caller(
+    request: Request,
+    data: AssignRequest,
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user),
+):
+    caller_id = data.caller_id
+    selected_ids = data.selected_ids
+
+    # Extract list of IDs from form or session helper
+    ids = get_selected_ids(request, selected_ids)
+    caller_id = int(caller_id)
+
+    if not ids:
+        response = HTMLResponse("No customers selected", status_code=400)
+        response.headers["HX-Popup-Message"] = "No customers selected"
+        return response
+
+    # Perform the safe DB update (validated in your CRUD helper)
+    updated_count = assign_customers_caller(db, ids, caller_id)
+
+    # Return an empty response with HTMX headers
+    response = HTMLResponse("")  # empty body; HTMX will handle via headers
+    response.headers["HX-Popup-Message"] = f"Assigned {updated_count} customers"
+    response.headers["HX-Trigger"] = "customersReload"
+    return response    
 
 
 
@@ -99,11 +134,9 @@ async def upsert_customer(
 
     # Populate DB model dynamically (everything except relationships)
     data_record = populate(data_dict, data_record, CustomerUpdate)
-    print ("caller_id", caller_id)
     # --- Handle relationships AFTER populate ---
     if isinstance(caller_id, int):
         caller_instance = db.get(Caller, int(caller_id))
-        print ("instance", caller_instance)
         if not caller_instance:
             raise HTTPException(status_code=404, detail="Caller not found")
         data_record.caller = caller_instance  # assign the actual SQLAlchemy object
@@ -116,7 +149,6 @@ async def upsert_customer(
 
     db.add(data_record)
     db.commit()
-    print(repr(data_record.tags))  # should output: 'a,c,d' without extra quotes or spaces    
     db.refresh(data_record)
 
     # Render updated list (HTMX swap)
@@ -169,8 +201,6 @@ def customer_detail(
         callers = db.query(Caller).all()
 
     customer.caller_id = int(customer.caller_id) if customer.caller_id is not None else None
-
-    print(customer.to_dict())
 
     if list == "short":
         # Render short template
@@ -253,15 +283,15 @@ async def set_filter(
     user = Depends(get_current_user),
 ):
     data_dict = update_data.model_dump()
-    print (data_dict)
-
 
     # save filters definition (not SQLAlchemy objects) in session
     request.session["customer_filters"] = data_dict 
 
     customers = get_user_customers(db, request, user)
+    callers = db.query(Caller).all()
 
     return templates.TemplateResponse(
         "customers/list.html",
-        {"request": request, "customers": customers}
+        {"request": request, "customers": customers, "callers": callers
+}
     )

@@ -9,3 +9,7 @@
 {% if alarm.customer %}
 <div class="mb-1"><strong>{{ "Customer" | t }}:</strong> {{ alarm.customer.first_name }} {{ alarm.customer.last_name }}</div>
 {% endif %}
+
+{% if alarm.reminder_sent %}
+<div class="mb-1"><strong>{{ "Reminder" | t }}:</strong> {{ alarm.reminder_sent }}</div>
+{% endif %}

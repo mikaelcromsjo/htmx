@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from typing import List, Optional
 from pydantic import BaseModel, Field
+from datetime import datetime, timezone
 
 
 from core.database import get_db
@@ -86,16 +87,18 @@ async def customer_data(
 
     to_remove = []
 
-    for ws in active_connections.get(user_id, []):
+    print("send", user_id)
+
+    for ws in active_connections.get(str(user_id), []):
+        print("send2")
+
         try:
             await ws.send_json(user_data[user_id])
         except RuntimeError:
-            # WebSocket is closed, mark for removal
             to_remove.append(ws)
 
     for ws in to_remove:
         active_connections[user_id].remove(ws)
-
 
     customer = (
         db.query(Customer)
@@ -253,7 +256,7 @@ async def save_call(
 #                else:
 #                    event_alarm_date = datetime.fromisoformat(event_alarm_date)
             except ValueError:
-                event_alarm_date = datetime.now()
+                event_alarm_date = datetime.now(timezone.utc)
 
             event_alarm_reminder = int(getattr(update_data, "event_alarm_reminder", 30))
             event_alarm_reminder = event_alarm_date - timedelta(minutes=event_alarm_reminder)
@@ -275,6 +278,7 @@ async def save_call(
         # Update shared fields
         alarm.date = event_alarm_date
         alarm.reminder = event_alarm_reminder
+        alarm.reminder_sent =  None
         alarm.note = alarm_note
         alarm.extra = alarm.extra or {}
         alarm.event_id = event_id
@@ -337,7 +341,7 @@ async def save_call(
 
         # Set call_date for new calls
         if not existing_call:
-            call.call_date = datetime.now()
+            call.call_date = datetime.now(timezone.utc)
             call.id = None  # let DB auto-generate if using Integer PK
             db.add(call)
 

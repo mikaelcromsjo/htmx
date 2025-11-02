@@ -23,10 +23,8 @@
     {{ types | join(', ') if types else 'None' }}
 </div>
 
-<div class="mb-1"><strong>{{ "Extras" | t }}:</strong>
     {% set extras = [] %}
     {% if event.extra_external %}{% set _ = extras.append('Extern') %}{% endif %}
     {% if event.extra_non_political %}{% set _ = extras.append('Opolitisk') %}{% endif %}
     {% if event.extra_visilble_all %}{% set _ = extras.append('Synlig för alla') %}{% endif %}
-    {{ extras | join(', ') if extras else 'None' }}
-</div>
+    {{ extras | join(', ') if extras else '' }}

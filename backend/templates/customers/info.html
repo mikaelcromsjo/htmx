@@ -81,6 +81,6 @@
 {% endif %}
 
 {% if customer.tags %}
-<div class="mb-1"><strong>{{ "Tags" | t }}:</strong> {{ customer.tags }}</div>
+<div class="mb-1"><strong>{{ "Tags" | t }}:</strong> {{ customer.tags or ''}}</div>
 {% endif %}
 
