@@ -66,6 +66,27 @@ def new_alarm(
         "alarms/edit.html", {"request": request, "alarm": alarm, "editable": True}
     )               
 
+from urllib.parse import urlencode
+from datetime import datetime
+
+def get_google_calendar_link(alarm):
+    event_title = f"Påminnelse: Ring Kund: {alarm.customer.first_name} {alarm.customer.last_name}"
+    start_time = alarm.date.strftime('%Y%m%dT%H%M%S')  # local time
+    end_time = alarm.date.strftime('%Y%m%dT%H%M%S')    # same as start if no duration
+    details = alarm.note or ""
+    reminder_minutes = int((alarm.date - alarm.reminder).total_seconds() // 60) if alarm.reminder else 10
+
+    params = {
+        "action": "TEMPLATE",
+        "text": event_title,
+        "dates": f"{start_time}/{end_time}",  # <-- include start and end
+        "details": details,
+        "trp": "true",
+        "add": f"reminders:minutes:{reminder_minutes}"
+    }
+
+    return "https://www.google.com/calendar/render?" + urlencode(params)
+
 # -----------------------------
 # Alarm Detail Modal (HTMX fragment)
 # -----------------------------
@@ -82,6 +103,8 @@ def alarm_detail(
     if not alarm:
         alarm = Alarm().empty()
     
+    google_calendar_link = get_google_calendar_link(alarm)
+
     if list == "short":
         # Render short template
         return templates.TemplateResponse(
@@ -89,6 +112,7 @@ def alarm_detail(
             {
                 "request": request, 
                 "alarm": alarm, 
+                "google_calendar_link": google_calendar_link, 
             }
         )
     else:

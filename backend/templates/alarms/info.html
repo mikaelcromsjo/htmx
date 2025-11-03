@@ -6,10 +6,20 @@
 <div class="mb-1"><strong>{{ "Date" | t }}:</strong> {{ alarm.date.strftime('%Y-%m-%d %H:%M') }}</div>
 {% endif %}
 
+{% if alarm.deminder %}
+<div class="mb-1"><strong>{{ "Reminder" | t }}:</strong> {{ alarm.reminder.strftime('%Y-%m-%d %H:%M') }}</div>
+{% endif %}
+
 {% if alarm.customer %}
 <div class="mb-1"><strong>{{ "Customer" | t }}:</strong> {{ alarm.customer.first_name }} {{ alarm.customer.last_name }}</div>
 {% endif %}
 
+{% if alarm.date %}
+<a href="{{ google_calendar_link }}" target="_blank" class="btn btn-primary mt-2">
+    Lägg till i Google Calendar
+</a>
+{% endif %}
+
 {% if alarm.reminder_sent %}
-<div class="mb-1"><strong>{{ "Reminder" | t }}:</strong> {{ alarm.reminder_sent }}</div>
+<div class="mb-1"><strong>{{ "Reminder Sent" | t }}:</strong> {{ alarm.reminder_sent }}</div>
 {% endif %}
