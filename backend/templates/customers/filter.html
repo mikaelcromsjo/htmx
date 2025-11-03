@@ -12,7 +12,7 @@
     <!-- First Name -->
     <div>
         <label class="block font-semibold">{{ "First Name" | t }}</label>
-        <input type="text" name="first_name" value="{{ filters.get('first_name','') }}" class="border p-1 w-full"/>
+        <input type="text" name="first_name" value="{{ filter_dict.get('first_name','') }}" class="border p-1 w-full"/>
         <select name="first_name_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
             <option value="exact">{{ "Exact" | t }}</option>
@@ -22,7 +22,7 @@
     <!-- Last Name -->
     <div>
         <label class="block font-semibold">{{ "Last Name" | t }}</label>
-        <input type="text" name="last_name" value="{{ filters.get('last_name','') }}" class="border p-1 w-full"/>
+        <input type="text" name="last_name" value="{{ filter_dict.get('last_name','') }}" class="border p-1 w-full"/>
         <select name="last_name_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
             <option value="exact">{{ "Exact" | t }}</option>
@@ -32,7 +32,7 @@
     <!-- User ID -->
     <div>
         <label class="block font-semibold">{{ "User ID" | t }}</label>
-        <input type="text" name="user_id" value="{{ filters.get('user_id','') }}" class="border p-1 w-full"/>
+        <input type="text" name="user_id" value="{{ filter_dict.get('user_id','') }}" class="border p-1 w-full"/>
         <select name="user_id_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
             <option value="exact">{{ "Exact" | t }}</option>
@@ -44,15 +44,15 @@
         <label class="block font-semibold">{{ "Code Name" | t }}</label>
         <select name="code_name" class="border p-1 mt-1">
             <option value="">{{ "Any" | t }}</option>
-            <option value="true" {% if filters.get('code_name') %}selected{% endif %}>{{ "True" | t }}</option>
-            <option value="false" {% if filters.get('code_name') is not none and not filters.get('code_name') %}selected{% endif %}>{{ "False" | t }}</option>
+            <option value="true" {% if filter_dict.get('code_name') %}selected{% endif %}>{{ "True" | t }}</option>
+            <option value="false" {% if filter_dict.get('code_name') is not none and not filter_dict.get('code_name') %}selected{% endif %}>{{ "False" | t }}</option>
         </select>
     </div>
 
     <!-- Email -->
     <div>
         <label class="block font-semibold">{{ "Email" | t }}</label>
-        <input type="email" name="email" value="{{ filters.get('email','') }}" class="border p-1 w-full"/>
+        <input type="email" name="email" value="{{ filter_dict.get('email','') }}" class="border p-1 w-full"/>
         <select name="email_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
             <option value="exact">{{ "Exact" | t }}</option>
@@ -62,7 +62,7 @@
     <!-- Phone -->
     <div>
         <label class="block font-semibold">{{ "Phone" | t }}</label>
-        <input type="text" name="phone" value="{{ filters.get('phone','') }}" class="border p-1 w-full"/>
+        <input type="text" name="phone" value="{{ filter_dict.get('phone','') }}" class="border p-1 w-full"/>
         <select name="phone_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
             <option value="exact">{{ "Exact" | t }}</option>
@@ -72,7 +72,7 @@
     <!-- Location -->
     <div>
         <label class="block font-semibold">{{ "Location" | t }}</label>
-        <input type="text" name="location" value="{{ filters.get('location','') }}" class="border p-1 w-full"/>
+        <input type="text" name="location" value="{{ filter_dict.get('location','') }}" class="border p-1 w-full"/>
         <select name="location_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
             <option value="exact">{{ "Exact" | t }}</option>
@@ -83,12 +83,12 @@
     <div>
         <label class="block font-semibold">{{ "Contributes" | t }}</label>
         <select name="contributes" multiple class="border p-1 w-full">
-            <option value="1" {% if '1' in filters.get('contributes', []) %}selected{% endif %}>{{ "No contributions" | t }}</option>
-            <option value="2" {% if '2' in filters.get('contributes', []) %}selected{% endif %}>{{ "Gives Donation" | t }}</option>
-            <option value="6" {% if '6' in filters.get('contributes', []) %}selected{% endif %}>{{ "Subscriber" | t }}</option>
-            <option value="3" {% if '3' in filters.get('contributes', []) %}selected{% endif %}>{{ "Silver" | t }}</option>
-            <option value="4" {% if '4' in filters.get('contributes', []) %}selected{% endif %}>{{ "Gold" | t }}</option>
-            <option value="5" {% if '5' in filters.get('contributes', []) %}selected{% endif %}>{{ "Platinum" | t }}</option>
+            <option value="1" {% if '1' in filter_dict.get('contributes', []) %}selected{% endif %}>{{ "No contributions" | t }}</option>
+            <option value="2" {% if '2' in filter_dict.get('contributes', []) %}selected{% endif %}>{{ "Gives Donation" | t }}</option>
+            <option value="6" {% if '6' in filter_dict.get('contributes', []) %}selected{% endif %}>{{ "Subscriber" | t }}</option>
+            <option value="3" {% if '3' in filter_dict.get('contributes', []) %}selected{% endif %}>{{ "Silver" | t }}</option>
+            <option value="4" {% if '4' in filter_dict.get('contributes', []) %}selected{% endif %}>{{ "Gold" | t }}</option>
+            <option value="5" {% if '5' in filter_dict.get('contributes', []) %}selected{% endif %}>{{ "Platinum" | t }}</option>
         </select>
         <select name="contributes_type" class="border p-1 mt-1">
             <option value="has">{{ "Has any" | t }}</option>
@@ -103,7 +103,7 @@
         <label class="block font-semibold">{{ "Caller" | t }}</label>
         <select name="caller_id" multiple class="border p-1 w-full">
             {% for caller in callers %}
-              <option value="{{ caller.id }}" {% if caller.id|string in filters.get('caller', []) %}selected{% endif %}>{{ caller.name }}</option>
+              <option value="{{ caller.id }}" {% if caller.id|string in filter_dict.get('caller', []) %}selected{% endif %}>{{ caller.name }}</option>
             {% endfor %}
         </select>
         <select name="caller_id_type" class="border p-1 mt-1">
@@ -117,7 +117,7 @@
     <!-- Comment -->
     <div>
         <label class="block font-semibold">{{ "Comment" | t }}</label>
-        <input type="text" name="comment" value="{{ filters.get('comment','') }}" class="border p-1 w-full"/>
+        <input type="text" name="comment" value="{{ filter_dict.get('comment','') }}" class="border p-1 w-full"/>
         <select name="comment_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
             <option value="exact">{{ "Exact" | t }}</option>
@@ -127,7 +127,7 @@
     <!-- Sub Caller -->
     <div>
         <label class="block font-semibold">{{ "Sub Caller" | t }}</label>
-        <input type="text" name="sub_caller" value="{{ filters.get('sub_caller','') }}" class="border p-1 w-full"/>
+        <input type="text" name="sub_caller" value="{{ filter_dict.get('sub_caller','') }}" class="border p-1 w-full"/>
         <select name="sub_caller_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
             <option value="exact">{{ "Exact" | t }}</option>
@@ -140,7 +140,7 @@
         <select name="organisations" multiple class="border p-1 w-full">
             {% for org in organisations %}
                 <option value="{{ org.id }}"
-                    {% if org.id|string in filters.get("organisations", []) %}selected{% endif %}>
+                    {% if org.id|string in filter_dict.get("organisations", []) %}selected{% endif %}>
                     {{ org.name }}
                 </option>
             {% endfor %}
@@ -160,7 +160,7 @@
           {% for cid, cat in categories.items() %}
             <optgroup label="{{ cat.name }}">
               {% for iid, item in cat.get('items', {}).items() %}
-                <option value="{{ iid }}" {% if iid|string in filters.get("categories", []) %}selected{% endif %}>
+                <option value="{{ iid }}" {% if iid|string in filter_dict.get("categories", []) %}selected{% endif %}>
                   {{ item }}
                 </option>
               {% endfor %}
@@ -180,7 +180,7 @@
         <label class="block font-semibold">{{ "Personality Type" | t }}</label>
         <select name="personality_type" multiple class="border p-1 w-full">
             {% for p in personalities %}
-                <option value="{{ p.id }}" {% if p.id|string in filters.get('personality_type', []) %}selected{% endif %}>
+                <option value="{{ p.id }}" {% if p.id|string in filter_dict.get('personality_type', []) %}selected{% endif %}>
                     {{ p.name | t }}
                 </option>
             {% endfor %}
@@ -196,18 +196,18 @@
     <!-- Boolean Preferences -->
     {% for field, label in [
         ('controlled', 'Controlled'),
-        ('filter_a', '{{ "filter_a" | t }}'),
-        ('filter_b', '{{ "filter_b" | t }}'),
-        ('filter_c', '{{ "filter_c" | t }}'),
-        ('filter_d', '{{ "filter_d" | t }}'),
-        ('filter_e', '{{ "filter_e" | t }}')
+        ('filter_a', 'Fester'),
+        ('filter_b', 'AW'),
+        ('filter_c', 'Föreläsningar'),
+        ('filter_d', 'Aktivism'),
+        ('filter_e', 'Konferenser')
     ] %}
     <div>
         <label class="block font-semibold">{{ label }}</label>
         <select name="{{ field }}" class="border p-1 mt-1">
             <option value="">{{ "Any" | t }} </option>
-            <option value="true" {% if filters.get(field) %}selected{% endif %}>{{ "True" | t }}</option>
-            <option value="false" {% if filters.get(field) is not none and not filters.get(field) %}selected{% endif %}>{{ "False" | t }}</option>
+            <option value="true" {% if filter_dict.get(field) %}selected{% endif %}>{{ "True" | t }}</option>
+            <option value="false" {% if filter_dict.get(field) is not none and not filter_dict.get(field) %}selected{% endif %}>{{ "False" | t }}</option>
         </select>
     </div>
     {% endfor %}
@@ -215,7 +215,7 @@
     <!-- Tags -->
     <div>
         <label class="block font-semibold">{{ "Tags (comma separated)" | t }}</label>
-        <input type="text" name="tags" value="{{ filters.get('tags','') }}" class="border p-1 w-full"/>
+        <input type="text" name="tags" value="{{ filter_dict.get('tags','') }}" class="border p-1 w-full"/>
         <select name="tags_type" class="border p-1 mt-1">
             <option value="has">{{ "Contains" | t }}</option>
             <option value="exact">{{ "Exact" | t }}</option>

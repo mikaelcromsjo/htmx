@@ -278,16 +278,16 @@ def customer_filter(
         .all()
     )
 
-    filter_dict = {}
+    filter_dict = request.session.get("customer_filters", {})
 
     return templates.TemplateResponse(
         "customers/filter.html",
         {
             "request": request, 
-            "filters": filter_dict, 
+            "filter_dict": filter_dict, 
             "categories": constants.categories, 
             "organisations": constants.organisations, 
-            "filters": constants.filters, 
+            "c_filters": constants.filters, 
             "personalities": constants.personalities, 
             "callers": callers,
         }
