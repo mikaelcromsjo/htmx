@@ -20,6 +20,7 @@
 </a>
 {% endif %}
 
+<br/>
 {% if alarm.reminder_sent %}
-<div class="mb-1"><strong>{{ "Reminder Sent" | t }}:</strong> {{ alarm.reminder_sent }}</div>
+<div class="mb-1"><strong>{{ "Reminder Sent" | t }}:</strong> {{ alarm.reminder_sent.strftime('%Y-%m-%d %H:%M') }}</div>
 {% endif %}
