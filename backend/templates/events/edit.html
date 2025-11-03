@@ -47,23 +47,55 @@
         <textarea name="description" data-save="true" class="border p-1 w-full">{{ event.description }}</textarea>
     </div>
 
-    <!-- Event Types -->
-    <fieldset class="mb-2 border p-2">
-        <legend class="font-bold">{{ "Event Types" | t }}</legend>
-        <label><input type="checkbox" name="type_a" {% if event.type_a %}checked{% endif %}/> {{ "Parties" | t }}</label><br/>
-        <label><input type="checkbox" name="type_b" {% if event.type_b %}checked{% endif %}/> {{ "Politics" | t }}</label><br/>
-        <label><input type="checkbox" name="type_c" {% if event.type_c %}checked{% endif %}/> {{ "Lectures" | t }}</label><br/>
-        <label><input type="checkbox" name="type_d" {% if event.type_d %}checked{% endif %}/> {{ "Activism" | t }}</label>
-    </fieldset>
+<!-- Event Types -->
+<fieldset class="mb-2 border p-2">
+  <legend class="font-bold">{{ "Event Types" | t }}</legend>
 
-    <!-- Extra Options -->
-    <fieldset class="mb-2 border p-2">
-        <legend class="font-bold">{{ "Extra Options" | t }}</legend>
-        <label><input type="checkbox" name="extra_external" {% if event.extra_external %}checked{% endif %}/> {{ "External" | t }}</label><br/>
-        <label><input type="checkbox" name="extra_non_political" {% if event.extra_non_political %}checked{% endif %}/> {{ "Non-Political" | t }}</label><br/>
-        <label><input type="checkbox" name="extra_visilble_all" {% if event.extra_visilble_all %}checked{% endif %}/> {{ "Visible to All" | t }}</label>
-    </fieldset>
+  <label>
+    <input type="hidden" name="type_a" value="false">
+    <input type="checkbox" name="type_a" value="true" {% if event.type_a %}checked{% endif %}/> {{ "Parties" | t }}
+  </label><br/>
 
+  <label>
+    <input type="hidden" name="type_b" value="false">
+    <input type="checkbox" name="type_b" value="true" {% if event.type_b %}checked{% endif %}/> {{ "AW" | t }}
+  </label><br/>
+
+  <label>
+    <input type="hidden" name="type_c" value="false">
+    <input type="checkbox" name="type_c" value="true" {% if event.type_c %}checked{% endif %}/> {{ "Lectures" | t }}
+  </label><br/>
+
+  <label>
+    <input type="hidden" name="type_d" value="false">
+    <input type="checkbox" name="type_d" value="true" {% if event.type_d %}checked{% endif %}/> {{ "Activism" | t }}
+  </label><br/>
+
+  <label>
+    <input type="hidden" name="type_e" value="false">
+    <input type="checkbox" name="type_e" value="true" {% if event.type_e %}checked{% endif %}/> {{ "Conferences" | t }}
+  </label>
+</fieldset>
+
+<!-- Extra Options -->
+<fieldset class="mb-2 border p-2">
+  <legend class="font-bold">{{ "Extra Options" | t }}</legend>
+
+  <label>
+    <input type="hidden" name="extra_external" value="false">
+    <input type="checkbox" name="extra_external" value="true" {% if event.extra_external %}checked{% endif %}/> {{ "External" | t }}
+  </label><br/>
+
+  <label>
+    <input type="hidden" name="extra_non_political" value="false">
+    <input type="checkbox" name="extra_non_political" value="true" {% if event.extra_non_political %}checked{% endif %}/> {{ "Non-Political" | t }}
+  </label><br/>
+
+  <label>
+    <input type="hidden" name="extra_visilble_all" value="false">
+    <input type="checkbox" name="extra_visilble_all" value="true" {% if event.extra_visilble_all %}checked{% endif %}/> {{ "Visible to All" | t }}
+  </label>
+</fieldset>
 
     <!-- Submit -->
     <div class="flex justify-end mt-4">

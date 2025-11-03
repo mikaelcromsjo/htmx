@@ -79,10 +79,11 @@
             <div id="event-list" x-data>
               {% for event in events %}
               <div   x-show="{{ 'true' if event.extra_visilble_all else 'false' }} || isVisible({
-    activism: {{ 'true' if event.type_d else 'false' }},
-    lectures: {{ 'true' if event.type_c else 'false' }},
-    parties: {{ 'true' if event.type_a else 'false' }},
-    politics: {{ 'true' if event.type_b else 'false' }}
+    filter_a: {{ 'true' if event.type_a else 'false' }},
+    filter_b: {{ 'true' if event.type_b else 'false' }},
+    filter_c: {{ 'true' if event.type_c else 'false' }},
+    filter_d: {{ 'true' if event.type_d else 'false' }},
+    filter_e: {{ 'true' if event.type_e else 'false' }}
   })"
                   class="p-2 border-bottom cursor-pointer"
                   :class="{
@@ -138,10 +139,11 @@
         <input class="form-check-input" type="checkbox" x-model="Alpine.store('eventFilters')[type]">
         <span
           x-text="{
-            activism: '{{ 'Activism' | t }}',
-            lectures: '{{ 'Lectures' | t }}',
-            parties: '{{ 'Parties' | t }}',
-            politics: '{{ 'Politics' | t }}'
+            filter_a: '{{ 'Parties' | t }}',
+            filter_b: '{{ 'AW' | t }}',
+            filter_c: '{{ 'Lectures' | t }}',
+            filter_d: '{{ 'Activism' | t }}',
+            filter_e: '{{ 'Conferenses' | t }}'
           }[type] || (type.charAt(0).toUpperCase() + type.slice(1))">
         </span>
       </label>

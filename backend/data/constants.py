@@ -12,6 +12,7 @@ def load_json(filename):
 categories = load_json("categories.json")
 organisations = load_json("organisations.json")
 personalities = load_json("personalities.json")
+filters = load_json("filters.json")
 
 # --- Transform data ---
 categories_map = {}
@@ -30,4 +31,5 @@ for cid, cat in categories.items():
         }
 
 organisations_map = {org["id"]: org["name"] for org in organisations}
+filters_map = {flt["id"]: flt["name"] for flt in filters}
 personalities_map = {p["id"]: p for p in personalities}

@@ -3,10 +3,11 @@
 
 <div x-data x-init='
         if (!document.getElementById("fix").checked) {
-          Alpine.store("eventFilters").activism = {{ customer.filter_d | tojson }};
-          Alpine.store("eventFilters").lectures  = {{ customer.filter_c | tojson }};
-          Alpine.store("eventFilters").parties  = {{ customer.filter_a | tojson }};
-          Alpine.store("eventFilters").politics = {{ customer.filter_b | tojson }};
+          Alpine.store("eventFilters").filter_a = {{ customer.filter_a | tojson }};
+          Alpine.store("eventFilters").filter_b  = {{ customer.filter_b | tojson }};
+          Alpine.store("eventFilters").filter_c  = {{ customer.filter_c | tojson }};
+          Alpine.store("eventFilters").filter_d = {{ customer.filter_d | tojson }};
+          Alpine.store("eventFilters").filter_e = {{ customer.filter_e | tojson }};
         }
         Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
         '>
@@ -68,6 +69,7 @@
 {{ org_names | join(', ') }}
   </div>
 {% endif %}
+
 
 {% if customer.comment %}
 <div class="mb-1"><strong>{{ "Comment" | t }}:</strong> {{ customer.comment }}</div>

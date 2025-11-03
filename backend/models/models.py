@@ -74,6 +74,10 @@ class Customer(BaseMixin, Base):
     filter_b = Column(Boolean, default=False) # lectures
     filter_c = Column(Boolean, default=False) # parties
     filter_d = Column(Boolean, default=False) # politics
+    filter_e = Column(Boolean, default=False) # politics
+    filter_f = Column(Boolean, default=False) # politics
+    filter_g = Column(Boolean, default=False) # politics
+    filter_h = Column(Boolean, default=False) # politics
     tags = Column(JSON, default=[]) # comma separated list
     extra = Column(MutableDict.as_mutable(JSON), default=dict) # internal only
 
@@ -96,6 +100,10 @@ class CustomerUpdate(BaseModel):
     filter_b: Optional[bool] = False
     filter_c: Optional[bool] = False
     filter_d: Optional[bool] = False
+    filter_e: Optional[bool] = False
+    filter_f: Optional[bool] = False
+    filter_g: Optional[bool] = False
+    filter_h: Optional[bool] = False
     categories: Optional[List[str]] = []         # Multi-select → list
     tags: Optional[str] = ""                     # Comma-separated → list in populate()
     extra: Optional[Dict[str, Any]] = None
@@ -151,6 +159,10 @@ class Event(BaseMixin, Base):
     type_b = Column(Boolean, default=False)
     type_c = Column(Boolean, default=False)
     type_d = Column(Boolean, default=False)
+    type_e = Column(Boolean, default=False)
+    type_f = Column(Boolean, default=False)
+    type_g = Column(Boolean, default=False)
+    type_h = Column(Boolean, default=False)
     extra_external = Column(Boolean, default=False)
     extra_non_political = Column(Boolean, default=False)
     extra_visilble_all = Column(Boolean, default=False)
@@ -168,6 +180,10 @@ class EventUpdate(BaseModel):
     type_b: bool = False
     type_c: bool = False
     type_d: bool = False
+    type_e: bool = False
+    type_f: bool = False
+    type_g: bool = False
+    type_h: bool = False
     extra_external: bool = False
     extra_non_political: bool = False
     extra_visilble_all: bool = False
@@ -245,6 +261,11 @@ class EventUpdate(BaseModel):
     type_b: bool = False
     type_c: bool = False
     type_d: bool = False
+    type_e: bool = False
+    type_f: bool = False
+    type_g: bool = False
+    type_h: bool = False
+
     extra_external: bool = False
     extra_non_political: bool = False
     extra_visilble_all: bool = False

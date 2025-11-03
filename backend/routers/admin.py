@@ -269,6 +269,10 @@ def create_customer_from_row(row: dict, db):
         filter_b=_parse_bool(row.get("filter_b")),
         filter_c=_parse_bool(row.get("filter_c")),
         filter_d=_parse_bool(row.get("filter_d")),
+        filter_e=_parse_bool(row.get("filter_e")),
+        filter_f=_parse_bool(row.get("filter_f")),
+        filter_g=_parse_bool(row.get("filter_g")),
+        filter_h=_parse_bool(row.get("filter_h")),
         tags=_parse_tags(row.get("tags")),
         extra=row.get("extra") if isinstance(row.get("extra"), dict) else {},
          # --- Caller link ---
@@ -363,6 +367,7 @@ def admin_data(request: Request):
             "request": request,
             "categories_json": json.dumps(constants.categories, indent=2, ensure_ascii=False),
             "organisations_json": json.dumps(constants.organisations, indent=2, ensure_ascii=False),
+            "filters_json": json.dumps(constants.filters, indent=2, ensure_ascii=False),
             "personalities_json": json.dumps(constants.personalities, indent=2, ensure_ascii=False),
         },
     )
@@ -373,12 +378,14 @@ def save_data(
     request: Request,
     categories_text: str = Form(...),
     organisations_text: str = Form(...),
+    filters_text: str = Form(...),
     personalities_text: str = Form(...),
 ):
     """Save edited JSON, then reload data.constants."""
     try:
         new_categories = json.loads(categories_text)
         new_organisations = json.loads(organisations_text)
+        new_filters = json.loads(filters_text)
         new_personalities = json.loads(personalities_text)
     except json.JSONDecodeError as e:
         return HTMLResponse(
@@ -388,6 +395,7 @@ def save_data(
     # Save to disk
     save_json("categories.json", new_categories)
     save_json("organisations.json", new_organisations)
+    save_json("filters.json", new_filters)
     save_json("personalities.json", new_personalities)
 
     # Reload constants (this will rebuild the *_map variables)
@@ -399,6 +407,7 @@ def save_data(
             "request": request,
             "categories_json": json.dumps(constants.categories, indent=2, ensure_ascii=False),
             "organisations_json": json.dumps(constants.organisations, indent=2, ensure_ascii=False),
+            "filters_json": json.dumps(constants.filters, indent=2, ensure_ascii=False),
             "personalities_json": json.dumps(constants.personalities, indent=2, ensure_ascii=False),
             "message": "✅ Data saved and reloaded successfully!",
         },

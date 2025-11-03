@@ -115,6 +115,7 @@ async def upsert_customer(
         data_record = Customer()
 
     data_dict = update_data.model_dump()
+    print (data_dict)
 
     # Ensure 'extra' exists and is a dict
     if 'extra' not in data_dict or not isinstance(data_dict['extra'], dict):
@@ -212,6 +213,7 @@ def customer_detail(
                 "customer_id": customer_id, 
                 "categories_map": constants.categories_map,
                 "organisations_map": constants.organisations_map, 
+                "filters_map": constants.filters_map, 
                 "personalities_map": constants.personalities_map, 
                 "callers": callers,
             }
@@ -225,6 +227,7 @@ def customer_detail(
                 "customer": customer, 
                 "categories": constants.categories, 
                 "organisations": constants.organisations, 
+                "filters": constants.filters, 
                 "personalities": constants.personalities, 
                 "callers": callers,
             }
@@ -268,6 +271,7 @@ def customer_filter(
             "filters": filter_dict, 
             "categories": constants.categories, 
             "organisations": constants.organisations, 
+            "filters": constants.filters, 
             "personalities": constants.personalities, 
             "callers": callers,
         }

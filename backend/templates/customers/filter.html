@@ -84,9 +84,11 @@
         <label class="block font-semibold">{{ "Contributes" | t }}</label>
         <select name="contributes" multiple class="border p-1 w-full">
             <option value="1" {% if '1' in filters.get('contributes', []) %}selected{% endif %}>{{ "No contributions" | t }}</option>
-            <option value="2" {% if '2' in filters.get('contributes', []) %}selected{% endif %}>{{ "Contributes" | t }}</option>
+            <option value="2" {% if '2' in filters.get('contributes', []) %}selected{% endif %}>{{ "Gives Donation" | t }}</option>
+            <option value="6" {% if '6' in filters.get('contributes', []) %}selected{% endif %}>{{ "Subscriber" | t }}</option>
             <option value="3" {% if '3' in filters.get('contributes', []) %}selected{% endif %}>{{ "Silver" | t }}</option>
             <option value="4" {% if '4' in filters.get('contributes', []) %}selected{% endif %}>{{ "Gold" | t }}</option>
+            <option value="5" {% if '5' in filters.get('contributes', []) %}selected{% endif %}>{{ "Platinum" | t }}</option>
         </select>
         <select name="contributes_type" class="border p-1 mt-1">
             <option value="has">{{ "Has any" | t }}</option>
@@ -193,11 +195,12 @@
 
     <!-- Boolean Preferences -->
     {% for field, label in [
-        ('controlled', 'Kontrollerad'),
-        ('filter_a', 'Intresserad av Fester'),
-        ('filter_b', 'Intresserad av Politik'),
-        ('filter_c', 'Intresserad av Föreläsningar'),
-        ('filter_d', 'Intresserad av Aktivism')
+        ('controlled', 'Controlled'),
+        ('filter_a', '{{ "filter_a" | t }}'),
+        ('filter_b', '{{ "filter_b" | t }}'),
+        ('filter_c', '{{ "filter_c" | t }}'),
+        ('filter_d', '{{ "filter_d" | t }}'),
+        ('filter_e', '{{ "filter_e" | t }}')
     ] %}
     <div>
         <label class="block font-semibold">{{ label }}</label>

@@ -6,12 +6,14 @@
   "ID": "ID",
   "First Name": "Förnamn",
   "Last Name": "Efternamn",
-  "User ID": "Användar-ID",
+  "User ID": "Gammalt Användar-ID",
   "Code Name": "Kodnamn",
   "Email": "E-post",
   "Phone": "Telefon",
-  "Location": "Plats",
+  "Location": "Kommun",
   "Contributes": "Bidrar",
+  "Gives Donations": "Ger gåvor",
+  "Subscriber": "Medlem",
   "Select...": "Välj...",
   "No contributions": "Inga bidrag",
   "Silver": "Silver",
@@ -27,7 +29,7 @@
   "Likes Lecture-AW": "Bjuds till föreläsnings-AW",
   "Likes Lectures": "Bjuds till föreläsningar",
   "Likes Activism": "Bjuds till aktivism",
-  "Likes Conferences": "Bjuds till konferans/mässa",
+  "Likes Conferences": "Bjuds till Konferens/mässa",
   "Tags (comma separated)": "Taggar (kommaseparerade)",
   "Extra (JSON)": "Extra (JSON)",
   "Save": "Spara",
@@ -181,5 +183,10 @@
   "Assign to": "Tilldela",
   "Apply filters": "Använd Filter",
   "to": "till",
-  "Assign": "Tilldela"
+  "Assign": "Tilldela",
+  "AW": "AW",
+  "Conferences": "Konferenser",
+  "Gives Donation": "Ger gåvor",
+  "Likes AW": "Bjuds till föreläsning-AW"
+
 }

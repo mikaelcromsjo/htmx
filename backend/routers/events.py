@@ -103,7 +103,7 @@ def event_detail(
 # Update Existing Event
 # -----------------------------
 
-@router.post("/event", name="upsert_event", response_class=HTMLResponse)
+@router.post("/event/upsert", name="upsert_event", response_class=HTMLResponse)
 async def upsert_event(
     request: Request,
     update_data: Update,
@@ -111,6 +111,7 @@ async def upsert_event(
     user = Depends(get_current_user)
 ):
     
+    print (update_data.model_dump())
     if not user.admin:
         raise HTTPException(status_code=401, detail="Error. Only Admin can edit events")
     

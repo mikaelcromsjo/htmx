@@ -34,15 +34,11 @@
         <input type="text" name="last_name" value="{{ customer.last_name or '' }}" class="border p-1 w-full"/>
     </div>
 
-    <!-- User ID -->
-    <div class="mb-2">
-        <label class="block font-semibold">{{ "User ID" | t }}</label>
-        <input type="text" name="user_id" value="{{ customer.user_id or '' }}" class="border p-1 w-full"/>
-    </div>
 
     <!-- Code Name -->
     <div class="mb-2">
         <label class="inline-flex items-center">
+            <input type="hidden" name="code_name" value="false">
             <input type="checkbox" name="code_name" value="1" {% if customer.code_name %}checked{% endif %} class="mr-2"/>
             {{ "Code Name" | t }}
         </label>
@@ -75,7 +71,8 @@
         <select name="contributes" class="border p-1 w-full">
             <option value="" {% if customer.contributes is none %}selected{% endif %}>{{ "Select..." | t }}</option>
             <option value="1" {% if customer.contributes == 1 %}selected{% endif %}>{{ "No contributions" | t }}</option>
-            <option value="2" {% if customer.contributes == 2 %}selected{% endif %}>{{ "Contributes" | t }}</option>
+            <option value="2" {% if customer.contributes == 2 %}selected{% endif %}>{{ "Gives Donation" | t }}</option>
+            <option value="6" {% if customer.contributes == 6 %}selected{% endif %}>{{ "Subscriber" | t }}</option>
             <option value="3" {% if customer.contributes == 3 %}selected{% endif %}>{{ "Silver" | t }}</option>
             <option value="4" {% if customer.contributes == 4 %}selected{% endif %}>{{ "Gold" | t }}</option>
             <option value="5" {% if customer.contributes == 5 %}selected{% endif %}>{{ "Platinum" | t }}</option>
@@ -121,7 +118,7 @@
     <!-- Categories -->
     <div class="mb-2">
         <label class="block font-semibold">{{ "Categories" | t }}</label>
-        <select name="categories" multiple class="border p-1 w-full">
+        <select name="categories" multiple class="border p-1 w-full" style="height:300px">
           {% for cid, cat in categories.items() %}
             <optgroup label="{{ cat.name }}">
               {% for iid, item in cat.get('items', {}).items() %}
@@ -147,37 +144,54 @@
     </select>
 </div>
 
-    <!-- Boolean Preferences -->
-    <div class="mb-2">
-        <label class="inline-flex items-center">
-            <input type="checkbox" name="controlled" {% if customer.controlled %}checked{% endif %} class="mr-2"/>
-            {{ "Controlled" | t }}
-        </label>
-    </div>
-    <div class="mb-2">
-        <label class="inline-flex items-center">
-            <input type="checkbox" name="filter_a" {% if customer.filter_a %}checked{% endif %} class="mr-2"/>
-            {{ "Likes Parties" | t }}
-        </label>
-    </div>
-    <div class="mb-2">
-        <label class="inline-flex items-center">
-            <input type="checkbox" name="filter_b" {% if customer.filter_b %}checked{% endif %} class="mr-2"/>
-            {{ "Likes Politics" | t }}
-        </label>
-    </div>
-    <div class="mb-2">
-        <label class="inline-flex items-center">
-            <input type="checkbox" name="filter_c" {% if customer.filter_c %}checked{% endif %} class="mr-2"/>
-            {{ "Likes Lectures" | t }}
-        </label>
-    </div>
-    <div class="mb-2">
-        <label class="inline-flex items-center">
-            <input type="checkbox" name="filter_d" {% if customer.filter_d %}checked{% endif %} class="mr-2"/>
-            {{ "Likes Activism" | t }}
-        </label>
-    </div>
+ <!-- Boolean Preferences -->
+<div class="mb-2">
+    <label class="inline-flex items-center">
+        <input type="hidden" name="controlled" value="false">
+        <input type="checkbox" name="controlled" value="true" {% if customer.controlled %}checked{% endif %} class="mr-2"/>
+        {{ "Controlled" | t }}
+    </label>
+</div>
+
+<div class="mb-2">
+    <label class="inline-flex items-center">
+        <input type="hidden" name="filter_a" value="false">
+        <input type="checkbox" name="filter_a" value="true" {% if customer.filter_a %}checked{% endif %} class="mr-2"/>
+        {{ "Likes Parties" | t }}
+    </label>
+</div>
+
+<div class="mb-2">
+    <label class="inline-flex items-center">
+        <input type="hidden" name="filter_b" value="false">
+        <input type="checkbox" name="filter_b" value="true" {% if customer.filter_b %}checked{% endif %} class="mr-2"/>
+        {{ "Likes AW" | t }}
+    </label>
+</div>
+
+<div class="mb-2">
+    <label class="inline-flex items-center">
+        <input type="hidden" name="filter_c" value="false">
+        <input type="checkbox" name="filter_c" value="true" {% if customer.filter_c %}checked{% endif %} class="mr-2"/>
+        {{ "Likes Lectures" | t }}
+    </label>
+</div>
+
+<div class="mb-2">
+    <label class="inline-flex items-center">
+        <input type="hidden" name="filter_d" value="false">
+        <input type="checkbox" name="filter_d" value="true" {% if customer.filter_d %}checked{% endif %} class="mr-2"/>
+        {{ "Likes Activism" | t }}
+    </label>
+</div>
+
+<div class="mb-2">
+    <label class="inline-flex items-center">
+        <input type="hidden" name="filter_e" value="false">
+        <input type="checkbox" name="filter_e" value="true" {% if customer.filter_e %}checked{% endif %} class="mr-2"/>
+        {{ "Likes Conferences" | t }}
+    </label>
+</div>
 
 <div class="mb-2 tagify-wrapper"
      x-data
@@ -186,6 +200,12 @@
     <label class="block font-semibold">{{ "Tags (comma separated)" | t }}</label>
     <input type="text" name="tags" value="{{ customer.tags | default('') }}" class="border p-1 w-full"/>
 </div>
+
+    <!-- User ID -->
+    <div class="mb-2">
+        <label class="block font-semibold">{{ "User ID" | t }}</label>
+        <input type="text" name="user_id" value="{{ customer.user_id or '' }}" class="border p-1 w-full"/>
+    </div>
 
 
 <!-- Extra 

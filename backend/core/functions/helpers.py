@@ -58,6 +58,13 @@ def populate(update_dict: dict, db_obj: Any, pyd_model: Type[BaseModel]) -> Any:
             preprocessed[field_name] = json.dumps(value, ensure_ascii=False)
             continue
 
+         # --- Handle checkbox-style list for booleans ---
+        if base_type == bool and isinstance(value, list):
+            # Keep the last value if multiple provided
+            last_val = str(value[-1]).lower().strip()
+            preprocessed[field_name] = last_val in ("true", "1", "on", "yes")
+            continue        
+
         # Default: pass through
         preprocessed[field_name] = value
 

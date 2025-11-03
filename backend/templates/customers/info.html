@@ -2,11 +2,6 @@
 <div class="mb-1"><strong>{{ "Name" | t }}:</strong> {{ customer.first_name }} {{ customer.last_name }}</div>
 {% endif %}
 
-
-{% if customer.user_id %}
-<div class="mb-1"><strong>{{ "User ID" | t }}:</strong> {{ customer.user_id }}</div>
-{% endif %}
-
 {% if customer.email %}
 <div class="mb-1"><strong>{{ "Email" | t }}:</strong> {{ customer.email }}</div>
 {% endif %}
@@ -26,7 +21,8 @@
 {% if customer.contributes %}
 <div class="mb-1"><strong>{{ "Contributes" | t }}:</strong> 
 {% if customer.contributes == 1 %}{{ "No contributions" | t }} {% endif %}
-{% if customer.contributes == 2 %}{{ "Contributes" | t }} {% endif %}
+{% if customer.contributes == 2 %}{{ "Gives Donations" | t }} {% endif %}
+{% if customer.contributes == 6 %}{{ "Subscriber" | t }} {% endif %}
 {% if customer.contributes == 3 %}{{ "Silver" | t }}{% endif %}
 {% if customer.contributes == 4 %}{{ "Gold" | t }}{% endif %}
 {% if customer.contributes == 5 %}{{ "Platinum" | t }}{% endif %}
@@ -83,4 +79,9 @@
 {% if customer.tags %}
 <div class="mb-1"><strong>{{ "Tags" | t }}:</strong> {{ customer.tags or ''}}</div>
 {% endif %}
+
+{% if customer.user_id %}
+<div class="mb-1"><strong>{{ "User ID" | t }}:</strong> {{ customer.user_id }}</div>
+{% endif %}
+
 

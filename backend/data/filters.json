@@ -1,0 +1,22 @@
+[
+  {
+    "id": "filter_a",
+    "name": "Intresserad av Fester"
+  },
+  {
+    "id": "filter_b",
+    "name": "Intresserad av After Work"
+  },
+  {
+    "id": "filter_c",
+    "name": "Intresserad av Föreläsningar"
+  },
+  {
+    "id": "filter_d",
+    "name": "Intresserad av Aktivism"
+  },
+  {
+    "id": "filter_e",
+    "name": "Intresserad av Konferenser"
+  }
+]
