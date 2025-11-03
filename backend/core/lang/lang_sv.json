@@ -13,7 +13,7 @@
   "Location": "Kommun",
   "Contributes": "Bidrar",
   "Gives Donations": "Ger gåvor",
-  "Subscriber": "Medlem",
+  "Subscriber": "Prenumerant",
   "Select...": "Välj...",
   "No contributions": "Inga bidrag",
   "Silver": "Silver",
@@ -187,6 +187,6 @@
   "AW": "AW",
   "Conferences": "Konferenser",
   "Gives Donation": "Ger gåvor",
-  "Likes AW": "Bjuds till föreläsning-AW"
-
+  "Likes AW": "Bjuds till föreläsning-AW",
+  "Conferenses": "Conferenses"
 }

@@ -58,10 +58,9 @@
 
 <div class="mb-2 tagify-wrapper"
      x-data
-     x-init="initTagify($el)"
      data-object-type="location">
     <label class="block font-semibold">{{ "Location" | t }}</label>
-    <input type="text" name="location" value="{{ customer.location or ' ' }}" class="border p-1 w-full"/>
+    <input id="no-tag-input" name="location" value="{{ customer.location or ' ' }}" class="border p-1 w-full"/>
 </div>
 
 
@@ -221,3 +220,157 @@
     </div>
 
 </form>
+
+<script>
+
+    var input = document.querySelector('#no-tag-input'),
+    tagify = new Tagify(input, {
+
+whitelist: [
+  "Stockholm - Akalla",
+  "Stockholm - Bromma",
+  "Stockholm - Solna",
+  "Stockholm - Södertälje",
+  "Stockholm - Nacka",
+  "Stockholm - Täby",
+  "Stockholm - Haninge",
+  "Stockholm - Huddinge",
+  "Stockholm - Upplands Väsby",
+  "Stockholm - Sundbyberg",
+
+  "Uppsala - Uppsala",
+  "Uppsala - Enköping",
+  "Uppsala - Knivsta",
+  "Uppsala - Tierp",
+  "Uppsala - Östhammar",
+
+  "Södermanland - Nyköping",
+  "Södermanland - Eskilstuna",
+  "Södermanland - Katrineholm",
+  "Södermanland - Strängnäs",
+  "Södermanland - Trosa",
+
+  "Östergötland - Linköping",
+  "Östergötland - Norrköping",
+  "Östergötland - Motala",
+  "Östergötland - Mjölby",
+  "Östergötland - Finspång",
+
+  "Jönköping - Jönköping",
+  "Jönköping - Nässjö",
+  "Jönköping - Värnamo",
+  "Jönköping - Vetlanda",
+  "Jönköping - Huskvarna",
+
+  "Kronoberg - Växjö",
+  "Kronoberg - Ljungby",
+  "Kronoberg - Alvesta",
+  "Kronoberg - Älmhult",
+  "Kronoberg - Lessebo",
+
+  "Kalmar - Kalmar",
+  "Kalmar - Västervik",
+  "Kalmar - Oskarshamn",
+  "Kalmar - Mönsterås",
+  "Kalmar - Hultsfred",
+
+  "Skåne - Malmö",
+  "Skåne - Helsingborg",
+  "Skåne - Lund",
+  "Skåne - Kristianstad",
+  "Skåne - Landskrona",
+  "Skåne - Trelleborg",
+  "Skåne - Ystad",
+  "Skåne - Hässleholm",
+  "Skåne - Eslöv",
+  "Skåne - Ängelholm",
+
+  "Halland - Halmstad",
+  "Halland - Kungsbacka",
+  "Halland - Varberg",
+  "Halland - Falkenberg",
+  "Halland - Laholm",
+
+  "Västra Götaland - Göteborg",
+  "Västra Götaland - Borås",
+  "Västra Götaland - Trollhättan",
+  "Västra Götaland - Skövde",
+  "Västra Götaland - Uddevalla",
+  "Västra Götaland - Vänersborg",
+  "Västra Götaland - Lidköping",
+  "Västra Götaland - Mölndal",
+  "Västra Götaland - Partille",
+  "Västra Götaland - Alingsås",
+
+  "Värmland - Karlstad",
+  "Värmland - Kristinehamn",
+  "Värmland - Arvika",
+  "Värmland - Säffle",
+  "Värmland - Torsby",
+
+  "Örebro - Örebro",
+  "Örebro - Kumla",
+  "Örebro - Karlskoga",
+  "Örebro - Lindesberg",
+  "Örebro - Hallsberg",
+
+  "Västmanland - Västerås",
+  "Västmanland - Köping",
+  "Västmanland - Fagersta",
+  "Västmanland - Hallstahammar",
+  "Västmanland - Surahammar",
+
+  "Dalarna - Falun",
+  "Dalarna - Borlänge",
+  "Dalarna - Mora",
+  "Dalarna - Avesta",
+  "Dalarna - Ludvika",
+
+  "Gävleborg - Gävle",
+  "Gävleborg - Sandviken",
+  "Gävleborg - Bollnäs",
+  "Gävleborg - Hudiksvall",
+  "Gävleborg - Söderhamn",
+
+  "Västernorrland - Härnösand",
+  "Västernorrland - Sundsvall",
+  "Västernorrland - Örnsköldsvik",
+  "Västernorrland - Kramfors",
+  "Västernorrland - Sollefteå",
+
+  "Jämtland - Östersund",
+  "Jämtland - Åre",
+  "Jämtland - Bräcke",
+  "Jämtland - Krokom",
+  "Jämtland - Strömsund",
+
+  "Västerbotten - Umeå",
+  "Västerbotten - Skellefteå",
+  "Västerbotten - Lycksele",
+  "Västerbotten - Vindeln",
+  "Västerbotten - Robertsfors",
+
+  "Norrbotten - Luleå",
+  "Norrbotten - Boden",
+  "Norrbotten - Piteå",
+  "Norrbotten - Kiruna",
+  "Norrbotten - Gällivare",
+
+  "Gotland - Visby",
+  "Gotland - Hemse",
+  "Gotland - Slite",
+  "Gotland - Klintehamn",
+  "Gotland - Fårösund",
+
+  "Blekinge - Karlskrona",
+  "Blekinge - Karlshamn",
+  "Blekinge - Ronneby",
+  "Blekinge - Sölvesborg",
+  "Blekinge - Olofström"
+],
+
+
+        enforceWhitelist: true,
+        mode : "select",
+            })
+</script>

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Form, Request, HTTPException, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
+import json
 
 from sqlalchemy import Column, Integer, String, JSON
 from sqlalchemy.orm import Session
@@ -39,6 +40,20 @@ router = APIRouter(prefix="/customers", tags=["customers"])
 # -------------------------------------------------
 
 
+def to_comma_string(value):
+    """Convert a list or JSON string of dicts to a comma-separated string."""
+    if not value:
+        return ''
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)  # Try to parse JSON string if needed
+        except json.JSONDecodeError:
+            return value  # Already a plain string
+    if isinstance(value, list):
+        return ', '.join(
+            item.get('value', '') for item in value if isinstance(item, dict) and item.get('value')
+        )
+    return str(value)
 
 @router.get("/", response_class=HTMLResponse, name="customers_list")
 def customers_list(
@@ -145,8 +160,9 @@ async def upsert_customer(
 
     # Normalize CSV: remove extra spaces and surrounding quotes
     if data_record.tags:
-        tags_clean = ",".join(v.strip().strip("'\"") for v in data_record.tags.split(",") if v.strip())
-        data_record.tags = tags_clean
+        data_record.tags = to_comma_string(data_record.tags)
+    if data_record.location:
+        data_record.location = to_comma_string(data_record.location)
 
     db.add(data_record)
     db.commit()
@@ -297,5 +313,5 @@ async def set_filter(
     return templates.TemplateResponse(
         "customers/list.html",
         {"request": request, "customers": customers, "callers": callers
-}
+        }
     )

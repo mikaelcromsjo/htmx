@@ -675,8 +675,6 @@ function initTagify(el) {
     if (!object_type) return;
     if (input._tagify) return;
 
-
-
     
     const tagify = new Tagify(input, {
         whitelist: [], // fetched from /tags/all
@@ -703,32 +701,6 @@ dropdown: {
         const filtered = tagify.settings.whitelist.filter(tag => tag.toLowerCase().includes(q.toLowerCase()));
         tagify.dropdown.show.call(tagify, q, filtered);
     }, 200));
-
-
-// Convert input to comma-separated string just before submit
-    const form = input.closest('form');
-    if (form) {
-        form.addEventListener('submit', async e => {
-            // Get plain array of tag values
-            const tags = tagify.value.map(t => t.value);
-            
-            // Update the input for normal form submit
-            input.value = tags.join(',');
-
-            // Send new tags to global pool
-            try {
-                await fetch('/tags/save', {
-                    method: 'POST',
-                    body: new URLSearchParams({
-                        object_type: object_type,
-                        tags: JSON.stringify(tags)
-                    })
-                });
-            } catch(err) {
-                console.error(`Failed to save global tags for ${object_type}`, err);
-            }
-        });
-    }
 
     input._tagify = tagify;
 }
