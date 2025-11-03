@@ -49,7 +49,6 @@ clearSelectedIds() {
                     <th x-show="is_admin" class="px-2 py-1 border">{{ "Caller" | t }}</th>
                     <th class="px-2 py-1 border">{{ "Command" | t }}</th>
                     <th class="px-2 py-1 border text-center" 
-                        x-show="showSelect" 
                         @click.stop>
                         <input type="checkbox" @change="const checkAll = $event.target.checked;
                             document.querySelectorAll('.customer-checkbox').forEach(cb => {
@@ -103,7 +102,6 @@ clearSelectedIds() {
                     </td>
 
                     <td class="px-2 py-1 border text-center" 
-                        x-show="showSelect" 
                         @click.stop>
                         <input type="checkbox" class="customer-checkbox"
                             :checked="selected[{{ customer.id }}] || false"

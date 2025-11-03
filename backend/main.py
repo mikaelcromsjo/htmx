@@ -66,10 +66,8 @@ async def alarm_scheduler():
     while True:
         await asyncio.sleep(60)  # adjust interval as needed
 
-        db: Session = SessionLocal()
         now = datetime.now(timezone.utc)
-        logger.info("Scheduler")
-
+        logger.info(f"Scheduler running at {now.isoformat()}")
 
         try:
             due_alarms = (
@@ -77,16 +75,17 @@ async def alarm_scheduler():
                 .filter(Alarm.date >= now)  # event not passed
                 .filter(
                     or_(
-                        # First reminder: reminder <= now and not sent yet
+                        # First reminder: send only if reminder time reached and not yet sent
                         and_(
-                            Alarm.reminder <= now,
-                            or_(Alarm.reminder_sent.is_(None), Alarm.reminder_sent < Alarm.reminder)
+                            Alarm.reminder <= now,           # current time reached reminder
+                            Alarm.reminder_sent.is_(None)    # first reminder not sent
                         ),
 
-                        # Second reminder: 30min before event and first reminder already sent
+                        # Second reminder: 30 minutes before event, only if first reminder sent
                         and_(
-                            Alarm.date - timedelta(minutes=30) <= now,
-                            or_(Alarm.reminder_sent.is_(None), Alarm.reminder_sent < Alarm.date - timedelta(minutes=30))
+                            Alarm.date - timedelta(minutes=30) <= now,     # 30 min before event
+                            Alarm.reminder_sent.isnot(None),               # first reminder already sent
+                            Alarm.reminder_sent < (Alarm.date - timedelta(minutes=30))  # second reminder not sent yet
                         )
                     )
                 )
