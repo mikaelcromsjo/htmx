@@ -548,7 +548,7 @@ async function connectWS() {
                 console.log("Recieved", data)
                 if (data.call) {
                     console.log("Call");
-                    enableCallButtons();
+                    enableCall();
                 }
                 if (data.type === 'alarm') {
                     const message = `${data.customer}: ${data.note || "Alarm"}`;
