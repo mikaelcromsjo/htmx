@@ -159,7 +159,6 @@ def translator_clear_cache():
     with _cache_lock:
         _translators_cache.clear()
 
-
 # --- FastAPI app setup ---
 app = FastAPI(title="HTMX + Alpine.js Prototype", debug=True)
 
@@ -316,6 +315,8 @@ def get_ws_token(request: Request):
 async def logout(request: Request):
 
     request.session.clear()
+    _translators_cache.clear()
+
     return templates.TemplateResponse(
         "login.html",
         {
