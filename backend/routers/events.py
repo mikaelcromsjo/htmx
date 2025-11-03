@@ -25,7 +25,7 @@ from core.database import engine
 from core.models.base import Base
 from models.models import Event, EventUpdate
 from models.models import Update
-from core.functions.helpers import populate
+from core.functions.helpers import populate, local_to_utc
 
 router = APIRouter(prefix="/events", tags=["events"])
 
@@ -126,7 +126,7 @@ async def upsert_event(
         if not event:
             raise HTTPException(status_code=404, detail="Event not found")
     else:
-        event = Event()
+        event = Event().empty()
 
 
     data_dict = update_data.model_dump(exclude_unset=True)
@@ -189,9 +189,9 @@ async def set_filter(
     start_str = data.get("event_date_filter-start")
     end_str = data.get("event_date_filter-end")
 
-    event_date_filter_start = date.fromisoformat(start_str) if start_str else None
-    event_date_filter_end = date.fromisoformat(end_str) + timedelta(days=1) if end_str else None
-
+    # Convert to UTC-aware datetimes if provided
+    event_date_filter_start = local_to_utc(start_str) if start_str else None
+    event_date_filter_end = (local_to_utc(end_str) + timedelta(days=1)) if end_str else None
     query = select(Event)
 
     if event_date_filter_start and event_date_filter_end:

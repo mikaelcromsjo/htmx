@@ -101,7 +101,7 @@
         hx-trigger="click"
         hx-target="#call-info">
 
-        {{ call.call_date.strftime('%y-%m-%d %H:%M') }}
+        {{ call.call_date | date }}
     </div>
     {% endfor %}
 </div>
@@ -111,7 +111,7 @@
 
     {% for call in calls %}
     <div class="mb-2 p-2 border-bottom">
-        {{ call.call_date.strftime('%y-%m-%d %H:%M') }} | {{ call.note }}
+        {{ call.call_date | date() }} | {{ call.note }}
     </div>
     {% endfor %}
 

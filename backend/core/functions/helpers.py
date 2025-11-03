@@ -441,3 +441,48 @@ def formatPhoneNr(number: str, country_code: str = '+46') -> str:
     # Do NOT remove any 0 if the number already had a + prefix.
     return number
 
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo  # Python 3.9+
+
+DEFAULT_TZ = "Europe/Stockholm"
+
+def local_to_utc(datetime_local_str: str, tz_name: str = DEFAULT_TZ) -> datetime:
+    """
+    Convert a datetime-local string (YYYY-MM-DDTHH:MM) from user's timezone to UTC-aware datetime.
+    """
+    try:
+        # Parse naive datetime-local
+        naive_dt = datetime.strptime(datetime_local_str, "%Y-%m-%dT%H:%M")
+        # Assign user timezone
+        local_dt = naive_dt.replace(tzinfo=ZoneInfo(tz_name))
+        # Convert to UTC
+        utc_dt = local_dt.astimezone(ZoneInfo("UTC"))
+        return utc_dt
+    except Exception as e:
+        raise ValueError(f"Invalid datetime-local format: {datetime_local_str}") from e
+
+
+def utc_to_local(dt, tz_name: str = DEFAULT_TZ, fmt: str = "%Y-%m-%d %H:%M") -> str:
+    """
+    Convert a UTC datetime or UTC string to user's local timezone string.
+
+    Parameters:
+        dt: datetime or ISO8601 string in UTC
+        tz_name: target timezone (default: Stockholm)
+        fmt: output string format
+    """
+    # If input is a string, parse it as ISO format
+    if isinstance(dt, str):
+        try:
+            dt = datetime.fromisoformat(dt)
+        except ValueError:
+            # fallback: use current UTC time
+            dt = datetime.now(tz=ZoneInfo("UTC"))
+
+    # Ensure timezone-aware in UTC
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=ZoneInfo("UTC"))
+
+    # Convert to target timezone
+    local_dt = dt.astimezone(ZoneInfo(tz_name))
+    return local_dt.strftime(fmt)

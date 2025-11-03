@@ -49,6 +49,8 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
+from core.functions.helpers import local_to_utc, utc_to_local
+
 
 from core.models.models import BaseMixin, Update, User
 from threading import Lock
@@ -68,8 +70,7 @@ async def alarm_scheduler():
 
         db: Session = SessionLocal()
         now = datetime.now(timezone.utc)
-        logger.info(f"Scheduler running at {now.isoformat()}")
-
+        logger.info(f"Scheduler running at {now.isoformat()} utc")
         try:
             due_alarms = (
                 db.query(Alarm)
@@ -287,6 +288,7 @@ async def login_post(request: Request, username: str = Form(...), password: str 
         lang_code = get_best_language_match(accept_language, SUPPORTED_LANGUAGES)
 
     templates.env.filters["t"] = get_translator(lang_code)
+    templates.env.filters["date"] = utc_to_local
 
 
     user = db.query(User).filter(User.username == username).first()
@@ -305,7 +307,7 @@ def get_ws_token(request: Request):
     if not user:
         raise HTTPException(status_code=401, detail="Not logged in")
     
-    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     token = jwt.encode({"sub": user, "exp": expire}, JWT_SECRET_KEY, algorithm=ALGORITHM)
     return {"ws_token": token}
 

@@ -248,20 +248,14 @@ async def save_call(
     alarm_note = getattr(update_data, "alarm_note", "")
 
     if event_alarm_date:
-        # Konvertera datetime-local format (t.ex. "2025-10-25T14:30") till datetime-objekt
-        if isinstance(event_alarm_date, str):
-            try:
-                # hantera både "2025-10-25T14:30" och "2025-10-25T14:30:00"
-#                if len(event_alarm_date) == 16:  # YYYY-MM-DDTHH:MM
-                    event_alarm_date = datetime.strptime(event_alarm_date, "%Y-%m-%dT%H:%M")
-#                else:
-#                    event_alarm_date = datetime.fromisoformat(event_alarm_date)
-            except ValueError:
-                event_alarm_date = datetime.now(timezone.utc)
+        try:
+            naive_dt = datetime.strptime(event_alarm_date, "%Y-%m-%dT%H:%M")
+            event_alarm_date = naive_dt.astimezone(timezone.utc)            
+        except ValueError:
+            event_alarm_date = datetime.now(timezone.utc)
 
-            event_alarm_reminder = int(getattr(update_data, "event_alarm_reminder", 30))
-            event_alarm_reminder = event_alarm_date - timedelta(minutes=event_alarm_reminder)
-
+        event_alarm_reminder_minutes = int(getattr(update_data, "event_alarm_reminder", 30))
+        event_alarm_reminder = event_alarm_date - timedelta(minutes=event_alarm_reminder_minutes)
 
         # Try to find existing alarm for this user & customer
         alarm = (

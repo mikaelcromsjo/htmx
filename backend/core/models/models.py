@@ -80,7 +80,7 @@ class BaseMixin:
 
             # --- temporal ---
             elif isinstance(t, satypes.DateTime):
-                values[col.name] = datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%dT%H:%M")
+                values[col.name] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M")
             elif isinstance(t, satypes.Date):
                 values[col.name] = date.today()
             elif isinstance(t, satypes.Time):

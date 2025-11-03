@@ -120,7 +120,7 @@
       <div class="overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
         <div id="calls">
           {% for call_date in customer_calls %}
-          <div class="p-1">{{ call_date }}</div>
+          <div class="p-1">{{ call_date | date() }}</div>
           {% endfor %}
         </div>
       </div>

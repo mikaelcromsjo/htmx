@@ -17,7 +17,7 @@ from core.models.base import Base
 from pydantic import BaseModel
 from pydantic import BaseModel, Field
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from core.database import get_db   
 from templates import templates
@@ -39,7 +39,7 @@ def alarms_list(
     db: Session = Depends(get_db),
     user = Depends(get_current_user),
 ):
-    today = date.today()
+    today = datetime.now(timezone.utc)
     alarms = (
         db.query(Alarm)
         .filter((Alarm.caller_id == user.caller_id) & (Alarm.date >= today))
@@ -167,7 +167,7 @@ async def set_filter(
     elif alarm_date_filter_start:
         query = query.where(Alarm.date >= alarm_date_filter_start)
     elif alarm_date_filter_end:
-        query = query.where(Alarm.date < alarm_date_filter_end)
+        query = query.where(Alarm.date <= alarm_date_filter_end)
 
     alarms = db.execute(query).scalars().all()
     return templates.TemplateResponse(
