@@ -123,11 +123,14 @@ async function connectWS() {
 }
 
 function call() {
+    console.log("call clicked")
     if (!ws || ws.readyState !== WebSocket.OPEN) {
         console.log("WebSocket not connected yet");
         return;
     }
-    ws.send(JSON.stringify({ call: true }));
+    const number = document.querySelector("#number").textContent;
+    console.log(number);
+    ws.send(JSON.stringify({ call: true, number: number }));
 }
 
 // Start automatically

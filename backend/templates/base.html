@@ -547,7 +547,6 @@ async function connectWS() {
                 const data = JSON.parse(event.data);
                 console.log("Recieved", data)
                 if (data.call) {
-                    console.log("Call");
                     enableCall();
                 }
                 if (data.type === 'alarm') {

@@ -549,15 +549,14 @@ async def websocket_endpoint(websocket: WebSocket):
             # Respond with "pong"
 #            await websocket.send_json("pong")
             call = payload.get("call")
+            number = payload.get("number")
             if call:
                 print(f"Call")
 
                 for ws in active_connections.get(user_id, []):
                     try:
                         print("Sending to web sockets")
-                        await ws.send_json({ "call": "true" })
-                        print("Current user:", user_id)
-                        print("Active connections for this user:", active_connections.get(user_id, []))
+                        await ws.send_json({ "call": "true", "number": number })
 
                     except RuntimeError:
                         # WebSocket is closed, mark for removal
