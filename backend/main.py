@@ -66,6 +66,7 @@ async def alarm_scheduler():
     while True:
         await asyncio.sleep(60)  # adjust interval as needed
 
+        db: Session = SessionLocal()
         now = datetime.now(timezone.utc)
         logger.info(f"Scheduler running at {now.isoformat()}")
 
@@ -161,6 +162,18 @@ def translator_clear_cache():
 
 # --- FastAPI app setup ---
 app = FastAPI(title="HTMX + Alpine.js Prototype", debug=True)
+
+
+from fastapi.responses import RedirectResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+@app.exception_handler(StarletteHTTPException)
+async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+    if exc.status_code == 401:
+        # Don't redirect if already on login/logout
+        if request.url.path not in ["/login", "/logout"]:
+            return RedirectResponse(url="/login", status_code=303)
+    raise exc
 
 
 class LanguageMiddleware:
@@ -263,9 +276,6 @@ from starlette.middleware.sessions import SessionMiddleware
 @app.get("/login")
 async def login_get(request: Request):
         
-    # If already logged in, redirect to home
-    if request.session.get("authenticated"):
-        return RedirectResponse(url="/")
     return templates.TemplateResponse("login.html", {"request": request})
 
 # --- Routes ---
@@ -342,7 +352,7 @@ async def create_user(
 
 # Root route: check if logged in
 @app.get("/", response_class=HTMLResponse)
-async def root(request: Request):
+async def root(request: Request, user = Depends(get_current_user)):
 
     lang_code = request.cookies.get("lang_code")
     if not lang_code:

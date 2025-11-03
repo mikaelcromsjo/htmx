@@ -15,6 +15,7 @@ def get_current_user(
     db: Session = Depends(get_db)
 ):
     user_id = request.session.get("user")
+
     if not user_id:
         raise HTTPException(status_code=401, detail="Not authenticated")
     user = db.query(User).filter(User.id == user_id).first()
