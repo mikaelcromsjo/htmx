@@ -1,22 +1,30 @@
 [
   {
     "id": 1,
-    "name": "Ny"
+    "name": "NMR"
   },
   {
     "id": 2,
-    "name": "ny2"
+    "name": "Knapptryckare"
   },
   {
     "id": 3,
-    "name": "ny3"
+    "name": "SD"
   },
   {
     "id": 4,
-    "name": "ny4"
+    "name": "AFS"
   },
   {
     "id": 5,
-    "name": "ny5"
+    "name": "MED"
+  },
+  {
+    "id": 6,
+    "name": "DFS"
+  },
+  {
+    "id": 7,
+    "name": "MOD"
   }
 ]
