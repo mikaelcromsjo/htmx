@@ -9,3 +9,22 @@
 </form>
 
 <div id="import-result" class="mt-4 text-sm"></div>
+
+<div class="p-3 mb-4 bg-blue-50 border-l-4 border-blue-400 text-sm">
+  <strong class="text-xl">Instruktioner för CSV-import:</strong>
+  <br/>
+  <ul class="">
+    <li><strong>Obligatoriska fält:</strong> <code>first_name</code>, <code>last_name</code>, <code>phone</code> (används för att upptäcka dubbletter).</li>
+    <li><strong>Valfria fält:</strong> <code>email</code>, <code>location</code>, <code>comment</code>, <code>sub_caller</code>, <code>tags</code>, <code>extra</code>, m.fl.</li>
+    <li><strong>ID-fält:</strong> <code>caller</code>, <code>categories</code>, <code>organisations</code> måste finnas i systemet.</li>
+    <li><strong>Taggar/Orter:</strong> måste matcha exakt de som finns i systemet.</li>
+    <li><strong>Booleska fält:</strong> Accepterar <code>True/False</code>, <code>Yes/No</code> eller <code>1/0</code>.</li>
+    <li><strong>Listfält:</strong> Använd kommaseparerade värden eller JSON-array, t.ex. <code>[1,2,3]</code> eller <code>1,2,3</code>.</li>
+  </ul>
+  <strong class="text-xl">Exempel på CSV-rad:</strong>
+  <pre class="bg-gray-100 p-2 rounded text-xs">
+first_name,last_name,phone,email,location,comment,caller,sub_caller,contributes,personality_type,controlled,filter_a,filter_b,filter_c,filter_d,categories,organisations,tags,code_name
+Alice,Smith,111222333,alice@example.com,Stockholm,VIP kund,1,Huvudkontor,4,2,True,False,True,False,True,"[1,2]","1,3","tag1,tag2",True
+Bob,Andersson,555666777,bob@example.com,Göteborg,Ny lead,2,Filial,2,1,False,False,False,False,False,"2","2,4","lead,important",False
+  </pre>
+</div>
