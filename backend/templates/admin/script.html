@@ -30,65 +30,22 @@
     </div>
 
     <!-- Submit -->
-<button 
-  class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
->
-  Kör
-</button>  </form>
+    <button class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+      Kör
+    </button>
+  </form>
 
-  <!-- Right: Examples and output -->
-  <div class="space-y-4">
-    <!-- Examples -->
-    <div class="bg-white p-4 rounded-xl shadow-md">
-      <label class="block font-semibold mb-2">Exampel:</label>
-      <textarea 
-        id="examples-textarea" 
-        class="border rounded p-2 w-full font-mono text-sm" 
-        rows="8" 
-        readonly
-      ></textarea>
-    </div>
-  </div>
-
-
-
-<!-- Preload all examples in JSON -->
-<script type="application/json" id="script-examples-data">
-{{ script_examples | tojson }}
-</script>
-
-<script>
-  const scriptData = JSON.parse(document.getElementById('script-examples-data').textContent);
-  const examplesTextarea = document.getElementById('examples-textarea');
-  const scriptSelect = document.getElementById('script-select');
-
-  function updateExamples(scriptKey) {
-    const examples = scriptData[scriptKey] || [];
-    // If your examples are objects with "args", use: examples.map(e => e.args).join("\n")
-    examplesTextarea.value = examples.join("\n");
-  }
-
-  // Initialize textarea on page load
-  updateExamples(scriptSelect.value);
-
-  // Update textarea automatically when selection changes
-  scriptSelect.addEventListener('change', () => {
-    updateExamples(scriptSelect.value);
-  });
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const scriptData = JSON.parse(document.getElementById('script-examples-data').textContent);
-  const examplesTextarea = document.getElementById('examples-textarea');
-  const scriptSelect = document.getElementById('script-select');
-
-  function updateExamples(scriptKey) {
-    const examples = scriptData[scriptKey] || [];
-    examplesTextarea.value = examples.join("\n");
-  }
-
-  updateExamples(scriptSelect.value);
-  scriptSelect.addEventListener('change', () => updateExamples(scriptSelect.value));
-});
-</script>
+  <!-- Right: Examples panel -->
+  <div class="bg-white p-4 rounded-xl shadow-md space-y-2">
+    <label class="block font-semibold mb-2">Exempel:</label>
+    <div id="examples-container" class="bg-gray-50 border rounded p-2 max-h-56 overflow-y-auto font-mono text-sm">
+      {% for script_name, examples in script_examples.items() %}
+        <div class="mb-2">
+          <strong>{{ script_name }}</strong>
+          <ul class="ml-4 list-disc">
+            {% for arg in examples %}
+              <li>{{ arg | safe }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}

@@ -48,20 +48,20 @@ ALLOWED_SCRIPTS = {
 
 SCRIPT_EXAMPLES = {
     "manage_users": [
-        "Skapa en vanlig användare med lösenord och anropare Kalle\nkalle --password hemlighet --caller \"Kalle\"",
-        "Skapa en administratörsanvändare med lösenord och anropare Admin\nadmin --password hemlighet --caller \"Admin\" --admin 1",
-        "Visa hjälp för kommandot\n--help"
+        "Skapa en vanlig användare med lösenord och anropare Kalle<br>kalle --password hemlighet --caller \"Kalle\"",
+        "Skapa en administratörsanvändare med lösenord och anropare Admin<br>admin --password hemlighet --caller \"Admin\" --admin 1",
+        "Visa hjälp för kommandot<br>--help"
     ],
     "stats": [
-        "Rita grafen 'calls_over_time' för daglig statistik (standardrange)\n--chart calls_over_time",
-        "Rita grafen 'caller_performance' för månadens statistik\n--chart caller_performance",
-        "Rita grafen 'event_participation' för vecka 2025-10-01 till 2025-10-07\n--from 2025-10-01 --to 2025-10-07 --chart event_participation",
-        "Visa daglig statistik för anropare Kalle\n--caller Kalle --chart calls_over_time",
-        "Visa statistik för eventtyp type_a under oktober\n--from 2025-10-01 --to 2025-10-31 --event-type type_a --chart calls_over_time",
-        "Generera rapport på engelska\n--lang en --chart caller_performance"
+        "Rita grafen 'calls_over_time' för daglig statistik (standardrange)<br>--chart calls_over_time",
+        "Rita grafen 'caller_performance' för månadens statistik<br>--chart caller_performance",
+        "Rita grafen 'event_participation' för vecka 2025-10-01 till 2025-10-07<br>--from 2025-10-01 --to 2025-10-07 --chart event_participation",
+        "Visa daglig statistik för anropare Kalle<br>--caller Kalle --chart calls_over_time",
+        "Visa statistik för eventtyp type_a under oktober<br>--from 2025-10-01 --to 2025-10-31 --event-type type_a --chart calls_over_time",
+        "Generera rapport på engelska<br>--lang en --chart caller_performance"
     ],
     "test_data": [
-        "Skapa testdata: användare, ringhistorik mm\n"  # args empty
+        "Skapa testdata: användare, ringhistorik mm<br>"  # args empty
     ]
 }
 
