@@ -248,7 +248,6 @@ app.mount("/static", StaticFiles(directory="core/static"), name="static")
 
 # Jinja2 templates (HTML pages/fragments)
 from templates import templates
-
 from state import user_data, active_connections
 
 # --- Routers ---
@@ -273,6 +272,8 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 
+templates.env.filters["date"] = utc_to_local
+
 @app.get("/login")
 async def login_get(request: Request):
         
@@ -288,8 +289,6 @@ async def login_post(request: Request, username: str = Form(...), password: str 
         lang_code = get_best_language_match(accept_language, SUPPORTED_LANGUAGES)
 
     templates.env.filters["t"] = get_translator(lang_code)
-    templates.env.filters["date"] = utc_to_local
-
 
     user = db.query(User).filter(User.username == username).first()
     if user and user.verify_password(password):
