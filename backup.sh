@@ -5,7 +5,7 @@
 set -e
 
 # --- Config ---
-BACKUP_DIR="./demo/htmx/backup"
+BACKUP_DIR="./backup"
 VOLUME_NAME="app_db"
 BACKEND_DATA_DIR="./backend/data"
 DATE=$(date +%F)

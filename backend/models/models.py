@@ -284,7 +284,8 @@ class EventCustomer(BaseMixin, Base):
     id = Column(Integer, primary_key=True, index=True)
     event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
-    status = Column(Integer, nullable=False)  # 0 = not going, 1 = going, 2 = interested
+    customer = relationship("Customer", lazy="joined")
+    status = Column(Integer, nullable=False)  # 0 = no input, 1 not going, 2 = maybe, 3 = going, 4 = paid, 5 = attended
 
 
 #

@@ -23,7 +23,7 @@ from core.database import get_db
 from templates import templates
 from core.database import engine
 from core.models.base import Base
-from models.models import Event, EventUpdate
+from models.models import Event, EventUpdate, EventCustomer, Customer
 from models.models import Update
 from core.functions.helpers import populate, local_to_utc
 
@@ -72,6 +72,7 @@ def event_detail(
     request: Request,
     event_id: int,
     list: str | None = Query(default=None),
+    status_filter: int | None = Query(default=None),
     db: Session = Depends(get_db),
 ):
     
@@ -81,12 +82,42 @@ def event_detail(
         event = Event().empty()
     
     if list == "short":
+
+    # Query event customers
+        query = db.query(EventCustomer).join(Customer).filter(EventCustomer.event_id == event_id)
+        event_customers = query.all()
+
+        # Calculate totals per status
+        totals = {"not_going":0, "maybe":0, "going":0, "paid":0, "attended":0}
+        for ec in event_customers:
+            if ec.status == 1:
+                totals["not_going"] += 1
+            elif ec.status == 2:
+                totals["maybe"] += 1
+            elif ec.status == 3:
+                totals["going"] += 1
+            elif ec.status == 4:
+                totals["paid"] += 1
+            elif ec.status == 5:
+                totals["attended"] += 1
+
+        
+        if status_filter is not None:
+            query = query.filter(EventCustomer.status == status_filter)        
+        else:
+            status_filter = 0
+        event_customers = query.all()
+
+
         # Render short template
         return templates.TemplateResponse(
             "events/info.html",
             {
                 "request": request, 
                 "event": event, 
+                "event_customers": event_customers,
+                "totals": totals,
+                "status_filter": status_filter
             }
         )
     else:
