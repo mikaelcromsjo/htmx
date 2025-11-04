@@ -3,6 +3,7 @@ import plotly.graph_objects as go
 from plotly.offline import plot
 from sqlalchemy import func, case, cast, Integer
 from sqlalchemy.orm import Session
+import json
 
 # --- Path setup (same as your manage_users.py) ---
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -350,9 +351,13 @@ def main():
             print(f"Chart '{args.chart}' not implemented.")
             return
 
+
         if fig:
-#            save_html(fig, args.save)
-            save_html(fig, "/app/backend/core/static/output.html")
+            output_path = "/app/backend/core/static/output.html"
+            save_html(fig, output_path)
+            print(json.dumps({"html_created": True, "output_path": "/static/output.html"}))
+        else:
+            print(json.dumps({"html_created": False}))            
 
 
     finally:

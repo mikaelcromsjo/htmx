@@ -46,6 +46,26 @@ ALLOWED_SCRIPTS = {
     "test_data": "/app/backend/scripts/generate_test_data.py",
 }
 
+SCRIPT_EXAMPLES = {
+    "manage_users": [
+        "Skapa en vanlig användare med lösenord och anropare Kalle\nkalle --password hemlighet --caller \"Kalle\"",
+        "Skapa en administratörsanvändare med lösenord och anropare Admin\nadmin --password hemlighet --caller \"Admin\" --admin 1",
+        "Visa hjälp för kommandot\n--help"
+    ],
+    "stats": [
+        "Rita grafen 'calls_over_time' för daglig statistik (standardrange)\n--chart calls_over_time",
+        "Rita grafen 'caller_performance' för månadens statistik\n--chart caller_performance",
+        "Rita grafen 'event_participation' för vecka 2025-10-01 till 2025-10-07\n--from 2025-10-01 --to 2025-10-07 --chart event_participation",
+        "Visa daglig statistik för anropare Kalle\n--caller Kalle --chart calls_over_time",
+        "Visa statistik för eventtyp type_a under oktober\n--from 2025-10-01 --to 2025-10-31 --event-type type_a --chart calls_over_time",
+        "Generera rapport på engelska\n--lang en --chart caller_performance"
+    ],
+    "test_data": [
+        "Skapa testdata: användare, ringhistorik mm\n"  # args empty
+    ]
+}
+
+
 
 @router.get("/script", response_class=HTMLResponse)
 async def admin_script(
@@ -58,7 +78,7 @@ async def admin_script(
 
     return templates.TemplateResponse(
         "admin/script.html",
-        {"request": request, "output": None, "scripts": ALLOWED_SCRIPTS},
+        {"request": request, "output": None, "html_output": None, "scripts": ALLOWED_SCRIPTS, "script_examples": SCRIPT_EXAMPLES},
     )
 
 
@@ -77,21 +97,6 @@ def clean_output(raw_output: str) -> str:
             continue
         cleaned.append(line)
     return "\n".join(cleaned).strip()
-
-
-@router.get("/script", response_class=HTMLResponse)
-async def admin_script(
-    request: Request,
-    db: Session = Depends(get_db),
-    user=Depends(get_current_user),
-):
-    if user.admin <= 0:
-        return HTMLResponse("Access denied", status_code=403)
-
-    return templates.TemplateResponse(
-        "admin/script.html",
-        {"request": request, "output": None, "scripts": ALLOWED_SCRIPTS},
-    )
 
 
 @router.post("/script", response_class=HTMLResponse)
@@ -130,9 +135,22 @@ async def run_admin_script(
         output = f"Running {script_name} {args}\n\n"
         output += f"⚠️ Error running script: {e}"
 
+
+    html_output = None
+
+    # --- Detect JSON message from script ---
+    try:
+        last_line = raw_output.strip().splitlines()[-1]
+        info = json.loads(last_line)
+        if info.get("html_created"):
+            output_path = info.get("output_path", "/static/output.html")
+            html_output = f'<iframe src="{output_path}" class="w-full h-[600px] border rounded-xl mt-4" style="height:100vh"></iframe>'
+    except json.JSONDecodeError:
+        print("Error")
+
     return templates.TemplateResponse(
-        "admin/script.html",
-        {"request": request, "output": output, "scripts": ALLOWED_SCRIPTS},
+        "admin/script_output.html",
+        {"request": request, "output": output, "html_output": html_output, "scripts": ALLOWED_SCRIPTS, "script_examples": SCRIPT_EXAMPLES},
     )
 
 
@@ -152,19 +170,6 @@ def admin_dashboard(
         "admin/dashboard.html", {"request": request }
     )
 
-
-@router.get("/script", response_class=HTMLResponse, name="admin_script")
-def admin_script(
-    request: Request,
-    filter: Optional[str] = None,
-    db: Session = Depends(get_db),
-    user = Depends(get_current_user),
-):
-    
-
-    return templates.TemplateResponse(
-        "admin/script.html", {"request": request, "user": user, "scripts": ALLOWED_SCRIPTS}
-    )
 
 import json
 

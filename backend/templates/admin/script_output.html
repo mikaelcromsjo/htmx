@@ -1,0 +1,20 @@
+ <h1 class="text-2xl font-bold mb-6">Adminscript</h1>
+ 
+ <!-- Script Output -->
+    <div>
+      <label class="block font-semibold mb-2 text-white">Output:</label>
+      {% if output %}
+        <pre class="whitespace-pre-wrap">{{ output }}</pre>
+      {% else %}
+        <pre class="whitespace-pre-wrap text-gray-400">No output yet...</pre>
+      {% endif %}
+    </div>
+    <br/>
+    <!-- HTML Output (unformatted / escaped) -->
+</div>
+
+<div class="mt-6 h-screen">
+  <div id="html-output" class="w-full border rounded shadow-inner mt-2 p-2" >
+    {{ html_output | safe }}
+  </div>
+</div>
