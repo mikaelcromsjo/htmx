@@ -322,15 +322,37 @@
     <div class="modal-content">
 
 
-        <!-- Header -->
-        <div class="modal-header">
-      <h5 class="modal-title" x-text="$store.modal.title"></h5>
-                <button type="button" class="btn-close" @click="$store.modal.open = false"></button>
-        </div>
+<div class="modal-header">
+  <h5 class="modal-title" x-text="$store.modal.title"></h5>
 
-      <!-- HTMX swaps modal contents here -->
-      <div class="modal-body" id="modal-container" style="max-height: 80vh; overflow-y: auto;">
-        </div>
+  <div class="d-flex align-items-center gap-2">
+    <!-- Save icon button -->
+ <button 
+  type="button"
+  class="btn btn-outline-success btn-sm p-1"
+  title="Save"
+  @click="(() => { 
+    const f = document.querySelector('#modal-container form');
+    if (f) f.requestSubmit();
+  })(); $store.modal.open = false"
+>
+  <i class="bi bi-save fs-3"></i>
+</button>
+
+    <!-- Close button -->
+    <button 
+      type="button" 
+      class="btn-close" 
+      @click="$store.modal.open = false"
+    ></button>
+  </div>
+</div>
+
+<!-- Modal body -->
+<div class="modal-body" id="modal-container" style="max-height: 80vh; overflow-y: auto;" 
+ x-effect="if ($store.modal.open) $el.scrollTop = 0">
+  <!-- HTMX will load form content here -->
+</div>
 
     </div>
   </div>
