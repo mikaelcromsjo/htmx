@@ -28,9 +28,14 @@
     {% if event.extra_external %}{% set _ = extras.append('Extern') %}{% endif %}
     {% if event.extra_non_political %}{% set _ = extras.append('Opolitisk') %}{% endif %}
     {% if event.extra_visilble_all %}{% set _ = extras.append('Synlig för alla') %}{% endif %}
+
+{% if extras %}
+<div class="mb-1"><strong>{{ "Extra" | t }}:</strong>
     {{ extras | join(', ') if extras else '' }}
+{% endif %}
 
 
+<br/>    
 <br/>    
 
 
