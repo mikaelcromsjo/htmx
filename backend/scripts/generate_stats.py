@@ -217,8 +217,9 @@ def event_participation(session: Session, date_from, date_to, event_type, caller
             Caller.name.label("caller_name"),
             func.sum(case((EventCustomer.status == 1, 1), else_=0)).label("not_interested"),
             func.sum(case((EventCustomer.status == 2, 1), else_=0)).label("interested"),
-            func.sum(case((EventCustomer.status == 3, 1), else_=0)).label("paid"),
-            func.sum(case((EventCustomer.status == 4, 1), else_=0)).label("attended"),
+            func.sum(case((EventCustomer.status == 3, 1), else_=0)).label("comming"),
+            func.sum(case((EventCustomer.status == 4, 1), else_=0)).label("paid"),
+            func.sum(case((EventCustomer.status == 5, 1), else_=0)).label("attended"),
         )
         .join(Event, Event.id == EventCustomer.event_id)
         .join(Customer, Customer.id == EventCustomer.customer_id)
@@ -241,10 +242,11 @@ def event_participation(session: Session, date_from, date_to, event_type, caller
 
     callers = sorted({row.caller_name for row in data})
     events = sorted({row.event_name for row in data})
-    categories = ["not_interested", "interested", "paid", "attended"]
+    categories = ["not_interested", "interested", "comming", "paid", "attended"]
     colors = {
         "not_interested": "#d9534f",
         "interested": "#f0ad4e",
+        "comming": "#de7e5b",
         "paid": "#5bc0de",
         "attended": "#5cb85c",
     }
