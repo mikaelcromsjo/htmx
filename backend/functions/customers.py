@@ -70,30 +70,6 @@ def get_user_customers(db, request, user):
     if user.admin != 1:
         query = query.filter(Customer.caller_id == user.caller_id)
 
-
-    session = db
-    try:
-        callers = session.query(Caller).order_by(Caller.id).limit(10).all()
-        print("Caller IDs and names:")
-        for c in callers:
-            print(f"ID: {c.id}, Name: {c.name}")
-    finally:
-        session.close()
-
-    try:
-        count = session.query(Customer).filter(Customer.caller_id == 7).count()
-        print(f"Customers for caller_id 7: {count}")
-    finally:
-        session.close()
-
-    try:
-        customers = session.query(Customer).order_by(Customer.id).limit(20).all()
-        print("Customer IDs, names, and caller_id:")
-        for c in customers:
-            print(f"ID: {c.id}, Name: {c.first_name} {c.last_name}, Caller ID: {c.caller_id}, User ID: {c.user_id}")
-    finally:
-        session.close()
-
     filter_dict = request.session.get("customer_filters", {})
     filters = build_filters(filter_dict, Customer)
 
