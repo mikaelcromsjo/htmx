@@ -130,7 +130,7 @@ async def customer_data(
     calls = db.query(Call).filter(Call.customer_id == int(customer_id)).order_by(desc(Call.id)).limit(50).all()
 
     return templates.TemplateResponse(
-        "calls/details_calls.html",
+        "calls/customer_calls.html",
         {
             "request": request, 
             "customer": customer,
@@ -252,11 +252,18 @@ async def save_call(
     user: User = Depends(get_current_user),
 ):
     
-    # update event status
     event_id = update_data.event_id
     event_status = getattr(update_data, "event_status", None)
     customer_id = update_data.customer_id
 
+    # update customer comment
+    customer_comment = getattr(update_data, "customer_comment", None)
+    customer = db.query(Customer).filter_by(
+        id=customer_id
+    ).first()
+    customer.comment = customer_comment
+    db.commit()
+    db.refresh(customer)
 
     # save Alarm if event_alarm_date
     event_alarm_date = getattr(update_data, "event_alarm_date", None)

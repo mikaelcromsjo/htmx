@@ -7,7 +7,7 @@
      hx-swap="none">
 </div>
 
-<div class="container-fluid border" style="height: 95vh">
+<div class="container-fluid border" style="height: 85vh">
 
   <!-- Row 1: TopRow -->
   <div id="topRow" class="d-flex border-bottom" style="height:43vh;">
@@ -26,17 +26,9 @@
       <div class="fw-semibold">{{ "Customer Info" | t }}</div>
       <div class="overflow-auto mt-2 p-2 border" style="background:#f8f9fa;">
         <div id="customer-details">
-          {% for info in customer_details %}
-          <div class="p-1">{{ info }}</div>
-          {% endfor %}
+          <!--Swap in later-->
         </div>
       </div>
-      <!--
-      <div class="mt-2">
-        {{ "Comment" | t }}
-        <textarea class="form-control mt-1" x-model="Alpine.store('customer').comment" rows="3"></textarea>
-      </div>
-      -->
     </div>
 
     <!-- Events Column -->
@@ -192,7 +184,7 @@
 
 <!-- Call Comment + Status Buttons -->
   <label class="fw-semibold mb-1 d-block w-100">{{ "Call Comment" | t }}</label>
-  <textarea name="note" class="auto-save customer-disable form-control mb-3 w-100" disabled rows="3"></textarea>
+  <textarea name="note" class="auto-save call-disable form-control mb-3 w-100" disabled rows="3"></textarea>
 
   <input type="hidden" name="status" id="status_value">
 
@@ -200,18 +192,18 @@
 <div class="d-inline-flex flex-wrap gap-2 align-items-center">
   <button type="button"
           class="auto-save btn btn-success btn-select customer-disable"  disabled
-          onclick="document.getElementById('status_value').value='1'; highlightButton(this);">
+          onclick="document.getElementById('status_value').value='1'; highlightButton(this);enableCall();">
     {{ "Answer" | t }}
   </button>
   <button type="button"
           class="auto-save btn btn-danger btn-select customer-disable"  disabled
-          onclick="document.getElementById('status_value').value='2'; highlightButton(this);">
+          onclick="document.getElementById('status_value').value='2'; highlightButton(this);enableCall();">
     {{ "No answer" | t }}
   </button>
 
   <button type="button"
           class="customer-disable auto-save btn btn-warning btn-select" disabled
-          onclick="document.getElementById('status_value').value='3'; highlightButton(this);">
+          onclick="document.getElementById('status_value').value='3'; highlightButton(this);enableCall();">
     {{ "Outside Call" | t }}
   </button>
 
@@ -254,6 +246,7 @@
   </div>
 </div>
 
+<input type="hidden" name="customer_comment" :value="$store.customer.comment">
 <input type="hidden" name="event_id" :value="$store.event.id">
 <input type="hidden" name="customer_id" :value="$store.customer.id">
 <input type="hidden" name="id" id="current_call">
@@ -266,11 +259,11 @@
   </button>
 </div>
 
-<!--
-  <button type="submit" class="customer-disable  btn btn-success" disabled>
+
+  <button type="submit" class="customer-disable btn btn-success" disabled>
     {{ "Save" | t }}
   </button>
-  -->
+  
 </div>
   </form>
 </div>
