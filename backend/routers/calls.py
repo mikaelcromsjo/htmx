@@ -31,8 +31,6 @@ router = APIRouter(prefix="/calls", tags=["calls"])
 # Dashboard View
 # ---------------------------
 
-
-
 @router.api_route("/dashboard", methods=["GET", "POST"], response_class=HTMLResponse, name="calls_dashboard")
 def call_center_dashboard(
     request: Request,
@@ -46,14 +44,31 @@ def call_center_dashboard(
     ids = get_selected_ids(request, selected_ids)
 
     customers = get_customers(db, user, ids)
-    query = db.query(Call)
-    calls = query.all()
+#    query = db.query(Call)
+#    calls = query.all()
     query = db.query(Event)
     events = query.all()
 
     return render(
         "calls/dashboard.html",
-        {"request": request, "customers": customers, "calls": calls, "events": events }, 
+        {"request": request, "customers": customers, "events": events }, 
+    )
+
+
+@router.get("/customers", response_class=HTMLResponse, name="calls_customers_list")
+def call_customers_list(
+    request: Request,
+    selected_ids: Optional[SelectedIDs] = None,
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
+):
+    
+    ids = get_selected_ids(request, selected_ids)
+    customers = get_customers(db, user, ids)
+
+    return render(
+        "calls/customers_list.html",
+        {"request": request, "customers": customers}, 
     )
 
 

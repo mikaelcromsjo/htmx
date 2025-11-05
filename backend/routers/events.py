@@ -189,7 +189,7 @@ async def upsert_event(
     )
     # Set the popup message in a custom header
     response.headers["HX-Popup-Message"] = "Saved"
-    response.headers["HX-Trigger"] = "dashboardReload"
+    response.headers["HX-Trigger"] = "dashboardEventsReload"
     return response
 
 

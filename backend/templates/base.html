@@ -102,19 +102,20 @@
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Header -->
- <div x-data="{ is_admin: {{ 1 if is_admin else 0 }}, active: localStorage.getItem('activeTab') || 'customers', loaded: { customers: false, events: false, calls: false } }"
+ <div x-data="{ is_admin: {{ 1 if is_admin else 0 }}, active: localStorage.getItem('activeTab') || 'customers', loaded: {} }"
      x-init="
         // Watch active tab and save/load content
-        $watch('active', value => {
+        $watch('active', value => {            
             localStorage.setItem('activeTab', value);
-            if ($refs[value]){
-                $refs[value].click();
-            }
-                
+            if (!loaded[value]) {
+                loaded[value] = true;
+                if ($refs[value]){
+                    $refs[value].click();
+                }
+            }                
         });
-
-        // Load initial tab
-        $nextTick(() => { if ($refs[active]) $refs[active].click(); });
+//        $nextTick(() => { if ($refs[active]) $refs[active].click(); });
+        $nextTick(() => { $refs.all.forEach(el => el.click()); });     
     "
   >
 
@@ -272,14 +273,14 @@
     <!-- Hidden HTMX triggers -->
     <div style="display:none">
         <div x-ref="tabContent">
-        <button x-ref="users" hx-get="{{ url_for('user') }}" hx-target="#user_content" hx-push-url="false"></button>
-        <button x-ref="customers" hx-get="{{ url_for('customers_list') }}" hx-target="#customer_content" hx-push-url="false"></button>
-        <button x-ref="events" hx-get="{{ url_for('events_list') }}" hx-target="#event_content" hx-push-url="false"></button>
-        <button x-ref="calls" hx-get="{{ url_for('calls_dashboard') }}" hx-target="#calls_content" hx-push-url="false"></button>
-        <button x-ref="invoices" hx-get="{{ url_for('invoices_list') }}" hx-target="#invoice_content" hx-push-url="false"></button>
-        <button x-ref="companies" hx-get="{{ url_for('companies_list') }}" hx-target="#companies_content" hx-push-url="false"></button>
-        <button x-ref="alarms" hx-get="{{ url_for('alarms_list') }}" hx-target="#alarm_content" hx-push-url="false"></button>
-        <button x-ref="admin" hx-get="{{ url_for('admin_dashboard') }}" hx-target="#admin_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="users" hx-get="{{ url_for('user') }}" hx-target="#user_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="customers" hx-get="{{ url_for('customers_list') }}" hx-target="#customer_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="events" hx-get="{{ url_for('events_list') }}" hx-target="#event_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="calls" hx-get="{{ url_for('calls_dashboard') }}" hx-target="#calls_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="invoices" hx-get="{{ url_for('invoices_list') }}" hx-target="#invoice_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="companies" hx-get="{{ url_for('companies_list') }}" hx-target="#companies_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="alarms" hx-get="{{ url_for('alarms_list') }}" hx-target="#alarm_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="admin" hx-get="{{ url_for('admin_dashboard') }}" hx-target="#admin_content" hx-push-url="false"></button>
         </div>
     </div>
     <!-- Main content -->
@@ -665,8 +666,17 @@ connectWS();
 <meta name="htmx-history-cache-size" content="0">
 
 <script>
-function reloadDashboard() {
+
+function reloadCallsDashboard() {
   htmx.ajax('GET', '/calls/dashboard', { target: '#calls_content' });
+}
+
+function reloadCallsCustomers() {
+  htmx.ajax('GET', '/calls/customers/', { target: '#calls-customer-list' });
+}
+
+function reloadCallsEvents() {
+  htmx.ajax('GET', '/calls/events/', { target: '#calls-events-list' });
 }
 
 function reloadAlarms() {
@@ -675,15 +685,18 @@ function reloadAlarms() {
 
 function reloadCustomers() {
   htmx.ajax('GET', '/customers/', { target: '#customer_content' });
+  htmx.ajax('GET', '/calls/customers/', { target: '#calls-customer-list' });
 }
-
 
 function reloadEvents() {
   htmx.ajax('GET', '/events/', { target: '#event_content' });
+  htmx.ajax('GET', '/calls/events/', { target: '#calls-event-list' });
 }
 
 // Attach event listeners once, so custom events still work
-document.body.addEventListener('dashboardReload', reloadDashboard);
+document.body.addEventListener('callsCustomersReload', reloadCallsCustomers);
+document.body.addEventListener('callsEventsReload', reloadCallsEvents);
+document.body.addEventListener('callsDashboardReload', reloadCallsDashboard);
 document.body.addEventListener('alarmsReload', reloadAlarms);
 document.body.addEventListener('customersReload', reloadCustomers);
 document.body.addEventListener('eventsReload', reloadEvents);

@@ -16,39 +16,9 @@
     <div id="col1" class="border-end p-3 overflow-auto bg-light" style="flex:0 0 auto;">
       <div class="fw-semibold">{{ "Customers" | t }}</div>
       <div id="calls-customer-list" class="overflow-auto mt-2" x-data>
-        {% for customer in customers %}
-        <div class="p-2 border-bottom cursor-pointer d-flex justify-content-between align-items-center"
-             :class="{
-                'bg-success bg-opacity-25 fw-bold text-success': Alpine.store('customer').id=== {{ customer.id }},
-                'bg-white fw-normal text-dark': Alpine.store('customer').id !== {{ customer.id }}
-             }"
-             @click="
-                    Alpine.store('customer').id = {{ customer.id }};
-                    $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
-                    document.querySelector('#save-form').reset(); 
-                    document.getElementById('current_call').value = '';
-                    // Alpine.store('event').id = '';
-                    Alpine.store('call').id  =  '';
-                    disableCall();
-                    disableEvent();
-                    enableCustomer();
-                    removeHightlight() 
-                    document.getElementById('status_value').value='';                    
-             "
-            hx-swap="none">
-          <span>{{ customer.first_name }} {{ customer.last_name }}</span>
-          <span class="ms-2 cursor-pointer d-flex align-items-center justify-content-center"
-                style="width: 20px; height: 20px;"
-                hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}"
-                hx-target="#modal-container"
-                hx-swap="innerHTML"
-                @click.stop="$store.modal.open = true">
-            <svg xmlns="http://www.w3.org/2000/svg" color="gray" width="15" height="15" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-              <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708L4.207 14.793l-3 1a.5.5 0 0 1-.637-.637l1-3L12.146.854zM11.207 2L2 11.207V13h1.793L14 3.793 11.207 2z"/>
-            </svg>
-          </span>
-        </div>
-        {% endfor %}
+
+        <!-- swap in customer_list.html -->
+         {% include '/calls/customers_list.html' %}
       </div>
     </div>
 
@@ -87,7 +57,7 @@
             // Find the active event row
             const activeRow = $el.querySelector('.bg-primary.bg-opacity-25');
             if (activeRow) {
-                activeRow.click();
+                $nextTick(() => { activeRow.click(); });
                 console.log('Triggered click on active event row');
             } else {
                 console.log('No active event row to click');
@@ -171,7 +141,7 @@
     </template>
 
     <label class="form-check form-check-inline">
-      <input id="fix" class="form-check-input" type="checkbox">
+      <input id="fix" x-model="checked" @change="localStorage.setItem('fix', this.checked);" x-data="{ checked: JSON.parse(localStorage.getItem('fix')) || false }" class="form-check-input" type="checkbox">
       <span>{{ "Fix" | t }}</span>
     </label>
   </div>
