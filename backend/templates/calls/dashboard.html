@@ -80,6 +80,7 @@
     id="event-list"
     x-data="{ prevCustomer: null }"
     x-effect="
+        console.log('Click Event');
         const currentCustomer = Alpine.store('customer').id;
         if (currentCustomer && currentCustomer !== prevCustomer) {
             prevCustomer = currentCustomer;
