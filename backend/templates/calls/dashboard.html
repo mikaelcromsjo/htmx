@@ -27,7 +27,7 @@
                     $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
                     document.querySelector('#save-form').reset(); 
                     document.getElementById('current_call').value = '';
-                    Alpine.store('event').id = '';
+                    // Alpine.store('event').id = '';
                     Alpine.store('call').id  =  '';
                     disableCall();
                     disableEvent();
@@ -76,31 +76,51 @@
       <div id="call-events" class="overflow-auto mt-2">
         <div id="calls-event-list">
           <div x-data="{ isVisible(event) { let filters = Alpine.store('eventFilters'); if(!filters) return true; return Object.keys(filters).some(type => filters[type] && event[type]); }}">
-            <div id="event-list" x-data>
-              {% for event in events %}
-              <div   x-show="{{ 'true' if event.extra_visilble_all else 'false' }} || isVisible({
-    filter_a: {{ 'true' if event.type_a else 'false' }},
-    filter_b: {{ 'true' if event.type_b else 'false' }},
-    filter_c: {{ 'true' if event.type_c else 'false' }},
-    filter_d: {{ 'true' if event.type_d else 'false' }},
-    filter_e: {{ 'true' if event.type_e else 'false' }}
-  })"
-                  class="p-2 border-bottom cursor-pointer"
-                  :class="{
-                    'bg-primary bg-opacity-25 fw-bold text-primary': Alpine.store('event').id === {{ event.id }},
-                    'bg-white fw-normal text-dark': Alpine.store('event').id !== {{ event.id }}
-                  }"
-                  @click="Alpine.store('event').id = {{ event.id }}; 
-                  enableEvent();
-                  "
-                  hx-get="{{ url_for('calls_event_detail', event_id=event.id) }}?list=short"
-                  hx-target="#event-details"
-                  hx-swap="innerHTML"
-                  :hx-vals="JSON.stringify(Alpine.store('customer')?.id ? { customer_id: Alpine.store('customer').id } : {})">
-                {{ event.name }}
-              </div>
-              {% endfor %}
-            </div>
+<div
+    id="event-list"
+    x-data="{ prevCustomer: null }"
+    x-effect="
+        const currentCustomer = Alpine.store('customer').id;
+        if (currentCustomer && currentCustomer !== prevCustomer) {
+            prevCustomer = currentCustomer;
+            // Find the active event row
+            const activeRow = $el.querySelector('.bg-primary.bg-opacity-25');
+            if (activeRow) {
+                activeRow.click();
+                console.log('Triggered click on active event row');
+            } else {
+                console.log('No active event row to click');
+            }
+        }
+    "
+>
+    {% for event in events %}
+    <div
+        x-show="{{ 'true' if event.extra_visilble_all else 'false' }} || isVisible({
+            filter_a: {{ 'true' if event.type_a else 'false' }},
+            filter_b: {{ 'true' if event.type_b else 'false' }},
+            filter_c: {{ 'true' if event.type_c else 'false' }},
+            filter_d: {{ 'true' if event.type_d else 'false' }},
+            filter_e: {{ 'true' if event.type_e else 'false' }}
+        })"
+        class="p-2 border-bottom cursor-pointer"
+        :class="{
+            'bg-primary bg-opacity-25 fw-bold text-primary': Alpine.store('event').id === {{ event.id }},
+            'bg-white fw-normal text-dark': Alpine.store('event').id !== {{ event.id }}
+        }"
+        @click="
+            Alpine.store('event').id = {{ event.id }};
+            enableEvent();
+        "
+        hx-get="{{ url_for('calls_event_detail', event_id=event.id) }}?list=short"
+        hx-target="#event-details"
+        hx-swap="innerHTML"
+        :hx-vals="JSON.stringify(Alpine.store('customer')?.id ? { customer_id: Alpine.store('customer').id } : {})"
+    >
+        {{ event.name }}
+    </div>
+    {% endfor %}
+</div>
           </div>
         </div>
       </div>
@@ -209,12 +229,12 @@
   
 <div class="d-inline-flex flex-wrap gap-2 align-items-center">
   <button type="button"
-          class="auto-save btn btn-success btn-select call-disable"  disabled
+          class="auto-save btn btn-success btn-select customer-disable"  disabled
           onclick="document.getElementById('status_value').value='1'; highlightButton(this);">
     {{ "Answer" | t }}
   </button>
   <button type="button"
-          class="auto-save btn btn-danger btn-select call-disable"  disabled
+          class="auto-save btn btn-danger btn-select customer-disable"  disabled
           onclick="document.getElementById('status_value').value='2'; highlightButton(this);">
     {{ "No answer" | t }}
   </button>
@@ -331,7 +351,6 @@ autoSaveForm();
                     button.disabled = false;
                 });
             }
-
 
             function disableCall() {
                 const buttons = document.querySelectorAll('.call-disable');
