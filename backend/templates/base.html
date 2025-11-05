@@ -106,10 +106,8 @@
      x-init="
         // Watch active tab and save/load content
         $watch('active', value => {
-            console.log('1', value);
             localStorage.setItem('activeTab', value);
             if ($refs[value]){
-                console.log('2', value);
                 $refs[value].click();
             }
                 
@@ -310,7 +308,7 @@
 <!-- Global Modal Container -->
 <div 
     x-data="{ modalTitle: '' }"
-    x-show="$store.modal.open" 
+    x-show="$store.modal.open"
     x-transition.opacity 
     :class="$store.modal.open ? 'modal fade show d-block' : 'modal fade'" 
     tabindex="-1" 
@@ -334,7 +332,7 @@
   @click="(() => { 
     const f = document.querySelector('#modal-container form');
     if (f) f.requestSubmit();
-  })(); $store.modal.open = false"
+  })();"
 >
   <i class="bi bi-save fs-3"></i>
 </button>
@@ -396,61 +394,56 @@
 <script>
 
 function showPopup(evt) {
-    let xhr = evt.detail.xhr;
-    let contentType = xhr.getResponseHeader('Content-Type') || '';
-    let status = xhr.status;
-    let messages = [];
-    let isError = false;
-
+    const xhr = evt.detail.xhr;
+    const status = xhr.status;
     const popup = document.getElementById('popup');
     if (!popup) return;
 
-    const hx_message = evt.detail.xhr.getResponseHeader("HX-Popup-Message");
+    // Success → close modal
+    if (status === 200) {
+        // Only trigger for form submissions
+        if (evt.target.tagName !== 'FORM') return;
+        Alpine.store('modal').open = false
+        return;
+    }
 
-    // First, check if popup has a data-detail attribute
+    // Handle errors
+    let messages = [];
+    let isError = true;
+
+    const hx_message = xhr.getResponseHeader("HX-Popup-Message");
+    const contentType = xhr.getResponseHeader('Content-Type') || '';
+
     if (hx_message) {
         messages.push(hx_message);
-    } 
-    // Otherwise, handle JSON response
-    else if (contentType.includes('application/json')) {
+    } else if (contentType.includes('application/json')) {
         try {
-            let data = JSON.parse(xhr.responseText);
-
-            if (status >= 400 && status < 600) isError = true;
-
+            const data = JSON.parse(xhr.responseText);
             if (data.detail) {
-                if (Array.isArray(data.detail) && data.detail.length > 0) {
+                if (Array.isArray(data.detail)) {
                     data.detail.forEach(err => {
-                        if (err.type === "missing") isError = true;
                         let field = err.loc && err.loc.length ? err.loc[0] : 'Field';
                         field = field.charAt(0).toUpperCase() + field.slice(1);
                         messages.push(`${field} is not correct`);
                     });
-                } else if (!Array.isArray(data.detail)) {
+                } else {
                     messages.push(data.detail);
-                    if (data.detail.type === "missing") isError = true;
                 }
             }
-
-            if (messages.length === 0 && !isError) messages.push("Done!");
         } catch (err) {
-            console.error("Invalid JSON from server:", xhr.responseText);
             messages.push("Error parsing JSON response");
-            isError = true;
         }
     } else {
-        return; // unsupported content type
+        messages.push("Unexpected server response");
     }
 
-    // Show popup
-    if (messages.length > 0) {
+    // Show popup only for errors
+    if (messages.length) {
         popup.innerText = messages.join('\n');
         popup.classList.remove('alert-success', 'alert-danger');
-        popup.classList.add(isError ? 'alert-danger' : 'alert-success');
+        popup.classList.add('alert-danger');
         popup.style.display = 'block';
         popup.style.opacity = '1';
-
-        // Fade out
         setTimeout(() => {
             popup.style.opacity = '0';
             setTimeout(() => popup.style.display = 'none', 300);
@@ -459,7 +452,8 @@ function showPopup(evt) {
 }
 
         // Attach to all HTMX requests globally
-        document.body.addEventListener('htmx:afterSwap', showPopup);
+//        document.body.addEventListener('htmx:afterSwap', showPopup);
+        document.body.addEventListener('htmx:afterRequest', showPopup);
     </script>
 
     <script src="/static/js/json-enc.js"></script>

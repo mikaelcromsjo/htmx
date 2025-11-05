@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Form, Request, HTTPException, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 import json
 
+from fastapi import FastAPI, Request, Form, status
 from sqlalchemy import Column, Integer, String, JSON
 from sqlalchemy.orm import Session
 
@@ -171,6 +172,11 @@ async def upsert_customer(
     # Render updated list (HTMX swap)
     customers = get_user_customers(db, request, user)
 
+    # Backend validation
+    if False:
+        # return just an error status code
+        return HTMLResponse("Error", status_code=400)
+    
     response =  templates.TemplateResponse(
         "customers/list.html",
         {
@@ -178,6 +184,8 @@ async def upsert_customer(
             "customers": customers,
             "detail": "Updated"},
     )
+
+
     # Set the popup message in a custom header
     response.headers["HX-Popup-Message"] = "Saved"
     response.headers["HX-Trigger"] = "dashboardReload"
