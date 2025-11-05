@@ -90,9 +90,9 @@ def event_detail(
         # Calculate totals per status
         totals = {"not_going":0, "maybe":0, "going":0, "paid":0, "attended":0}
         for ec in event_customers:
-            if ec.status == 1:
+            if ec.status == 2:
                 totals["not_going"] += 1
-            elif ec.status == 2:
+            elif ec.status == 1:
                 totals["maybe"] += 1
             elif ec.status == 3:
                 totals["going"] += 1
@@ -191,8 +191,6 @@ async def upsert_event(
     response.headers["HX-Popup-Message"] = "Saved"
     response.headers["HX-Trigger"] = "dashboardEventsReload"
     return response
-
-
 
 # DELETE event
 @router.post("/delete/{event_id}", name="delete_event")
