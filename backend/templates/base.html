@@ -332,7 +332,8 @@
   @click="(() => { 
     const f = document.querySelector('#modal-container form');
     if (f) f.requestSubmit();
-  })();"
+  })();
+  $store.modal.open = false"
 >
   <i class="bi bi-save fs-3"></i>
 </button>
