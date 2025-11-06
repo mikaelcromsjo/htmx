@@ -32,22 +32,17 @@ router = APIRouter(prefix="/companies", tags=["companies"])
 @router.get("/", response_class=HTMLResponse, name="companies_list")
 def companies_list(
     request: Request,
-    filter: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    
 
-    
     query = db.query(Company)
-    if filter:
-        query = query.filter(Company.name.ilike(f"%{filter}%"))
     companies = query.all()
 
     return render(
         "companies/list.html",
         {"request": request, 
-         "companies": companies, 
-         "filter": filter},
+         "companies": companies,
+         },
     )
 
 

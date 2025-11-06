@@ -819,5 +819,21 @@ function debounce(fn, delay) {
     };
 }
 
-
+function searchTable() {
+    return {
+        query: '',
+        filterRows() {
+            const rows = document.querySelectorAll('tbody tr');
+            const q = this.query.toLowerCase();
+            rows.forEach(row => {
+                const text = [
+                    row.cells[1].textContent,
+                    row.cells[2].textContent,
+                    row.cells[3].textContent
+                ].join(' ').toLowerCase();
+                row.style.display = text.includes(q) ? '' : 'none';
+            });
+        }
+    }
+}
 </script>

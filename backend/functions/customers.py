@@ -78,7 +78,7 @@ def get_user_customers(db, request, user):
     if sql_filters:
         query = query.filter(*sql_filters)
 
-    rows = query.all()
+    rows = query.order_by(Customer.first_name.asc()).all()
 
     # Apply Python-side "exact" matching
     if exact_filters:

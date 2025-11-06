@@ -36,8 +36,21 @@ clearSelectedIds() {
             }
         }"
     >
-            <div class="full-table">
 
+        <div class="full-table" x-data="searchTable()">
+<div class="relative w-full max-w-sm my-2">
+🔎︎
+    <!-- Input -->
+    <input
+        type="text"
+        placeholder="Sök namn, e-post eller telefon..."
+        class="border border-gray-300 rounded pl-14 pr-3 py-2 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        x-model="query"
+        @input.debounce.300ms="filterRows()"
+    >
+
+
+</div>
         <table class="table-auto w-full border overflow-x-auto">
             <thead>
                 <tr>
