@@ -443,16 +443,31 @@
   let open = false;
 
   // Toggle toolbox
-  toolboxToggle.addEventListener('click', () => {
-    open = !open;
-    if (open) {
-      toolboxButtons.classList.remove('opacity-0', 'scale-0');
+toolboxToggle.addEventListener('click', () => {
+  open = !open;
+
+  if (open) {
+    // show toolbox
+    toolboxButtons.style.display = 'flex';
+    requestAnimationFrame(() => {
+      toolboxButtons.classList.remove('opacity-0', 'scale-0', 'pointer-events-none');
       toolboxButtons.classList.add('opacity-100', 'scale-100');
-    } else {
-      toolboxButtons.classList.remove('opacity-100', 'scale-100');
-      toolboxButtons.classList.add('opacity-0', 'scale-0');
-    }
-  });
+    });
+  } else {
+    // start fade/scale out
+    toolboxButtons.classList.remove('opacity-100', 'scale-100');
+    toolboxButtons.classList.add('opacity-0', 'scale-0', 'pointer-events-none');
+
+    // wait for transition to finish, then hide
+    toolboxButtons.addEventListener(
+      'transitionend',
+      () => {
+        if (!open) toolboxButtons.style.display = 'none';
+      },
+      { once: true }
+    );
+  }
+});
 
   // Fullscreen toggle
   btnFullscreen.addEventListener('click', () => {
