@@ -109,12 +109,17 @@
     display: block;
 }
 
+.inverted {
+  filter: invert(1) hue-rotate(180deg);
+}
+
     </style>
 
 </head>
 
-<body class="bg-gray-100 min-h-screen flex flex-col">
-    <!-- Header -->
+<body class="min-h-screen flex flex-col">
+
+    
  <div x-data="{ is_admin: {{ 1 if is_admin else 0 }}, active: localStorage.getItem('activeTab') || 'customers', loaded: {} }"
      x-init="
         // Watch active tab and save/load content
@@ -137,6 +142,7 @@
 
 <header class="bg-white shadow sticky top-0 z-10" x-data="{ open: false }">
   <div class="max-w-7xl mx-auto px-4 py-1 flex items-center justify-between">
+
     <!-- App name -->
     <div class="text-xl font-semibold">
       {{ "APPNAME" | t }}
@@ -258,6 +264,11 @@
 
       <!-- Render them -->
       <div x-html="$refs.navButtons.innerHTML"></div>
+
+  <button id="toolboxToggle">
+    ⚙️
+  </button>
+
     </nav>
   </div>
 
@@ -297,7 +308,7 @@
         </div>
     </div>
     <!-- Main content -->
-    <main class="mx-auto p-1 w-full">
+    <main class="bg-white mx-auto p-1 w-full">
         <div id="user_content" x-show="active === 'user'" class="bg-white rounded shadow p-4">
         </div>
         <div id="customer_content" x-show="active === 'customers'" class="bg-white rounded shadow p-4">
@@ -405,6 +416,83 @@
     <p class="text-center text-white text-lg" x-text="message"></p>
   </div>
 </div>
+
+
+<div class="fixed top-4 right-4 z-50 flex flex-col items-end">
+
+  <!-- Toolbox buttons (hidden by default) -->
+  <div id="toolboxButtons" class="flex flex-col gap-2 mt-2 items-end opacity-0 scale-0 transform transition-all origin-top-right">
+    <button id="btnFullscreen" class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🔲</button>
+    <button id="btnFontIncrease" class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🔠</button>
+    <button id="btnFontDecrease" class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🔡</button>
+    <button id="btnBgToggle" class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🌙</button>
+  </div>
+</div>
+
+<script>
+  const toolboxToggle = document.getElementById('toolboxToggle');
+  const toolboxButtons = document.getElementById('toolboxButtons');
+  const btnFullscreen = document.getElementById('btnFullscreen');
+  const btnFontIncrease = document.getElementById('btnFontIncrease');
+  const btnFontDecrease = document.getElementById('btnFontDecrease');
+  const btnBgToggle = document.getElementById('btnBgToggle');
+  const body = document.body;
+
+  let fontSize = 16;
+  let isDark = false;
+  let open = false;
+
+  // Toggle toolbox
+  toolboxToggle.addEventListener('click', () => {
+    open = !open;
+    if (open) {
+      toolboxButtons.classList.remove('opacity-0', 'scale-0');
+      toolboxButtons.classList.add('opacity-100', 'scale-100');
+    } else {
+      toolboxButtons.classList.remove('opacity-100', 'scale-100');
+      toolboxButtons.classList.add('opacity-0', 'scale-0');
+    }
+  });
+
+  // Fullscreen toggle
+  btnFullscreen.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  // Font size increase
+  btnFontIncrease.addEventListener('click', () => {
+    fontSize += 2;
+    body.style.fontSize = fontSize + 'px';
+  });
+
+  // Font size decrease
+  btnFontDecrease.addEventListener('click', () => {
+    fontSize = Math.max(10, fontSize - 2);
+    body.style.fontSize = fontSize + 'px';
+  });
+
+  // Background toggle
+btnBgToggle.addEventListener('click', () => {
+  isDark = !isDark;
+
+  if (isDark) {
+    document.documentElement.style.filter = 'invert(1) hue-rotate(180deg)';
+    document.querySelectorAll('img, video, iframe').forEach(el => {
+      el.style.filter = 'invert(1) hue-rotate(180deg)'; // cancel inversion for media
+    });
+  } else {
+    document.documentElement.style.filter = '';
+    document.querySelectorAll('img, video, iframe').forEach(el => {
+      el.style.filter = '';
+    });
+  }
+});
+</script>
+
 
 <script>
 

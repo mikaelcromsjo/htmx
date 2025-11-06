@@ -37,20 +37,19 @@ clearSelectedIds() {
         }"
     >
 
-        <div class="full-table" x-data="searchTable()">
-<div class="relative w-full max-w-sm my-2">
-🔎︎
+        <div x-data="searchTable()">
+<div class="relative my-2">🔎︎
     <!-- Input -->
     <input
         type="text"
-        placeholder="Sök namn, e-post eller telefon..."
-        class="border border-gray-300 rounded pl-14 pr-3 py-2 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        placeholder="Search name, number or phone."
+        class="w-[400px] border border-gray-300 rounded pl-14 pr-3 py-2 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+
         x-model="query"
         @input.debounce.300ms="filterRows()"
     >
-
-
 </div>
+<div class="full-table">
         <table class="table-auto w-full border overflow-x-auto">
             <thead>
                 <tr>
@@ -124,6 +123,7 @@ clearSelectedIds() {
                 {% endfor %}
             </tbody>
         </table>
+        </div>
     </div>
         <div class="mt-2 flex gap-2">
             <button hx-get="{{ url_for('customer_detail', customer_id=0) }}"
@@ -197,9 +197,10 @@ clearSelectedIds() {
     id="caller-select"
     name="caller_id"
     x-model="caller_id"
-    class="border"
+    class="border p-1"
   >
-    <option value="">{{ 'Select...' | t }}</option>
+
+    <option value="">{{ 'Select Caller...' | t }}</option>
     {% for caller in callers %}
       <option value="{{ caller.id }}">{{ caller.name }}</option>
     {% endfor %}

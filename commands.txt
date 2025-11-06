@@ -8,9 +8,9 @@ ssh -i C:\Users\mikae\Documents\Project\Server\key2 root@65.21.244.96
 
 
 Rebuild tailwind
-npx tailwindcss -i ./backend/core/static/css/input.css -o ./backend/core/static/tailwind.css --minify --verbose
+npx tailwindcss -i ./backend/core/static/css/input.css -o ./backend/core/static/css/tailwind.css --minify --verbose
 
-npx tailwindcss -i ./backend/core/static/css/input.css -o ./backend/core/static/tailwind.css --watch
+npx tailwindcss -i ./backend/core/static/css/input.css -o ./backend/core/static/css/tailwind.css --watch
 
 
 docker exec -it fastapi_htmx_dev python /app/backend/scripts/manage_users.py admin --password 1234 --admin --caller "Main"

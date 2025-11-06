@@ -29,7 +29,7 @@ def get_selected_ids(request: Request, selected_ids: Optional[SelectedIDs]) -> L
     return request.session.get("selected_ids", [])
 
 
-def get_customers(db: Session, user, ids: List[int]):
+def get_customers(db: Session, user, ids: List[int]) -> List[Customer]:
     """
     Helper to query customers from DB based on IDs.
     """
@@ -37,7 +37,8 @@ def get_customers(db: Session, user, ids: List[int]):
     if user.admin != 1:
         query = query.filter(Customer.caller_id == user.caller.id)
     if ids:
-        return query.filter(Customer.id.in_(ids)).all()
+        query = query.filter(Customer.id.in_(ids))
+    query = query.order_by(Customer.first_name.asc(), Customer.last_name.asc())
     return query.all()
 
 def assign_customers_caller(db: Session, ids: List[int], caller_id: int):
@@ -78,7 +79,8 @@ def get_user_customers(db, request, user):
     if sql_filters:
         query = query.filter(*sql_filters)
 
-    rows = query.order_by(Customer.first_name.asc()).all()
+    query = query.order_by(Customer.first_name.asc(), Customer.last_name.asc())
+    rows = query.all()
 
     # Apply Python-side "exact" matching
     if exact_filters:
