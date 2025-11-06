@@ -40,11 +40,10 @@ def get_translator(lang_code):
     translations = load_translation(lang_code)
 
     def translator(text: str) -> str:
-#        if lang_code == "en":
-#            return text
         if text in translations:
             return translations[text]
         else:
+            print("fallback")
             # Add fallback and save
             translations[text] = text
             save_translation(lang_code)

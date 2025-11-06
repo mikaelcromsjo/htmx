@@ -288,7 +288,8 @@ async def login_post(request: Request, username: str = Form(...), password: str 
         accept_language = request.headers.get("accept-language", "")
         lang_code = get_best_language_match(accept_language, SUPPORTED_LANGUAGES)
 
-    templates.env.filters["t"] = get_translator(lang_code)
+    _translators_cache.clear()
+    templates.env.filters["t"] = get_translator_cached(lang_code)
 
     user = db.query(User).filter(User.username == username).first()
     if user and user.verify_password(password):
