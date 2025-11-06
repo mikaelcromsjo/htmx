@@ -12,6 +12,16 @@
             if (data[key] === '') data[key] = null;
         }
     }"
+    x-init="
+        $el.addEventListener('htmx:afterRequest', (event) => {
+            if (event.detail.xhr.status === 200) {
+                $store.modal.open = false;
+            } else if (event.detail.xhr.status >= 400) {
+                showPopup(event);
+            }
+        })
+    "
+
 >
 
     {% if company.id %}
@@ -117,7 +127,7 @@
 
 
     <div class="flex justify-end mt-4">
-        <button @click="$store.modal.open = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>
+        <button type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>
     </div>
 
 

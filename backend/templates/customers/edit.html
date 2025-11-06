@@ -1,4 +1,4 @@
- <div x-init="$store.modal.title = '{{ "Customer" | t }}: {{ customer.first_name }} {{ customer.last_name }}'"></div> 
+<div x-init="$store.modal.title = '{{ "Customer" | t }}: {{ customer.first_name }} {{ customer.last_name }}'"></div> 
 
 <form
     hx-post="{{ url_for('upsert_customer') }}"
@@ -8,21 +8,15 @@
     hx-swap="innerHTML"
     hx-ext="json-enc"
     hx-headers='{"Content-Type": "application/json"}'
-    hx-on:htmx:configRequest="(evt) => {
-        const data = evt.detail.parameters;
-        for (const key in data) {
-            if (data[key] === '') data[key] = null;
-        }
-    }"
-    hx-on:htmx:afterRequest="
-    console.log('after');
-        if(event.detail.xhr.status === 200){
-            $store.modal.open = false; // close modal manually
-        } else if(event.detail.xhr.status >= 400){
-            showPopup(event); // show backend validation errors
-        }
+    x-init="
+        $el.addEventListener('htmx:afterRequest', (event) => {
+            if (event.detail.xhr.status === 200) {
+                $store.modal.open = false;
+            } else if (event.detail.xhr.status >= 400) {
+                showPopup(event);
+            }
+        })
     "
-    
 >
 
     {% if customer.id %}
@@ -227,7 +221,7 @@
 
 
     <div class="flex justify-end mt-4">
-        <button @click="$store.modal.open = false" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>
+        <button type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>
     </div>
 
 </form>

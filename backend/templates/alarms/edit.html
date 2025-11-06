@@ -5,7 +5,15 @@
     hx-target="#alarm-container" 
     hx-ext="json-enc"
     hx-swap="innerHTML"
-    hx-on="htmx:afterRequest: $store.modal.open = false"
+    x-init="
+        $el.addEventListener('htmx:afterRequest', (event) => {
+            if (event.detail.xhr.status === 200) {
+                $store.modal.open = false;
+            } else if (event.detail.xhr.status >= 400) {
+                showPopup(event);
+            }
+        })
+    "
     >
 
 
@@ -68,6 +76,6 @@
 
     <!-- Submit -->
     <div class="flex justify-end mt-4">
-        <button data-modal-submit="true" type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>
+        <button type="submit" class="px-3 py-1 bg-blue-500 text-white rounded">{{ "Save" | t }}</button>
     </div>
 </form>

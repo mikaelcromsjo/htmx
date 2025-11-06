@@ -5,12 +5,6 @@
     hx-swap="innerHTML"
     hx-ext="json-enc"
     hx-headers='{"Content-Type": "application/json"}'
-    hx-on:htmx:configRequest="(evt) => {
-        const data = evt.detail.parameters;
-        for (const key in data) {
-            if (data[key] === '') data[key] = null;
-        }
-    }"
 >
 
     <h2 class="text-xl font-semibold">{{ "User Information" | t }}</h2>

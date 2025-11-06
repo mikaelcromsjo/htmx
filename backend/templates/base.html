@@ -96,6 +96,19 @@
     border: 0;
 }
 
+.input-error {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.error-msg {
+    color: red;
+    font-size: 0.9em;
+    margin-left: 5px;
+    display: block;
+}
+
     </style>
 
 </head>
@@ -330,11 +343,10 @@
   type="button"
   class="btn btn-outline-success btn-sm p-1"
   title="Save"
-  @click="(() => { 
-    const f = document.querySelector('#modal-container form');
-    if (f) f.requestSubmit();
-  })();
-  $store.modal.open = false"
+  @click="
+        console.log('save');
+        const f = document.querySelector('#modal-container form');
+        if (f) f.requestSubmit();"
 >
   <i class="bi bi-save fs-3"></i>
 </button>
@@ -402,8 +414,9 @@ function showPopup(evt) {
     const status = xhr.status;
     const popup = document.getElementById('popup');
     if (!popup) return;
-    
+
     let messages = [];
+    let error_fields= [];
     let isError = false;
 
     // 1️⃣ Check HX-Popup-Message header first (always shown)
@@ -419,21 +432,35 @@ function showPopup(evt) {
 
             if (status >= 400) isError = true;
 
-            if (data.detail) {
-                if (Array.isArray(data.detail)) {
-                    data.detail.forEach(err => {
-                        let field = err.loc && err.loc.length ? err.loc[0] : 'Field';
-                        field = field.charAt(0).toUpperCase() + field.slice(1);
-                        messages.push(`${field} is not correct`);
-                    });
-                } else if (typeof data.detail === 'string') {
-                    messages.push(data.detail);
-                }
+if (data.detail) {
+
+    if (Array.isArray(data.detail)) {
+        data.detail.forEach(err => {
+            // Debug log to confirm structure
+            console.log('Error detail:', err);
+
+            let field = '';
+
+            if (Array.isArray(err.loc) && err.loc.length > 0) {
+                // Always take the last element (e.g. "email")
+                field = err.loc[err.loc.length - 1];
             }
 
+            // Capitalize first letter
+//            field = field.charAt(0).toUpperCase() + field.slice(1);
+
+            const msg = err.msg || '${field}: Felaktigt fält';
+            messages.push(`${msg}`);
+            error_fields.push(`${field}`);
+             
+        });
+    } else if (typeof data.detail === 'string') {
+        messages.push(data.detail);
+    }
+}
             // If 200 and no messages, show default success
             if (status === 200 && messages.length === 0) {
-                messages.push("Done!");
+                messages.push("Ok!");
                 isError = false;
             }
         } catch (err) {
@@ -454,16 +481,18 @@ function showPopup(evt) {
         popup.classList.add(isError ? 'alert-danger' : 'alert-success');
         popup.style.display = 'block';
         popup.style.opacity = '1';
+        popup.style.zIndex = 9999;
 
         setTimeout(() => {
             popup.style.opacity = '0';
-            setTimeout(() => popup.style.display = 'none', 300);
+            setTimeout(() => popup.style.display = 'none', 99300);
         }, 2000);
+
+        if (error_fields.length > 0) {
+            showValidationErrors(error_fields, messages);
+        } 
     }
 
-//    if (status === 200) {
-//        Alpine.store('modal').open = false;
-//    }
 }
 
         // Attach to all HTMX requests globally
@@ -693,6 +722,7 @@ function reloadEvents() {
   htmx.ajax('GET', '/calls/events/', { target: '#calls-event-list' });
 }
 
+
 // Attach event listeners once, so custom events still work
 document.body.addEventListener('callsCustomersReload', reloadCallsCustomers);
 document.body.addEventListener('callsEventsReload', reloadCallsEvents);
@@ -700,6 +730,39 @@ document.body.addEventListener('callsDashboardReload', reloadCallsDashboard);
 document.body.addEventListener('alarmsReload', reloadAlarms);
 document.body.addEventListener('customersReload', reloadCustomers);
 document.body.addEventListener('eventsReload', reloadEvents);
+
+
+function showValidationErrors(error_fields, messages) {
+    // First, clear previous error highlights and messages
+    document.querySelectorAll(".input-error").forEach(field => {
+        field.classList.remove("input-error");
+    });
+    document.querySelectorAll(".error-msg").forEach(msg => {
+        msg.remove();
+    });
+
+    // Apply new error highlights and messages
+    error_fields.forEach((fieldName, index) => {
+        console.log(`[name="${fieldName}"]`);
+        const field = document.querySelector(`[name="${fieldName}"]`);
+        if (field) {
+            field.classList.add("input-error");
+
+            // Add error message
+            let errorSpan = document.createElement("span");
+            errorSpan.className = "error-msg";
+            errorSpan.textContent = messages[index];
+            field.parentNode.insertBefore(errorSpan, field.nextSibling);
+
+            // Remove error when user types
+            field.addEventListener("input", () => {
+                field.classList.remove("input-error");
+                if (errorSpan) errorSpan.remove();
+            }, { once: true });
+        }
+    });
+}
+
 </script>
 
 <script>

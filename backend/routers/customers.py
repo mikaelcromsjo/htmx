@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Form, Request, HTTPException, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 import json
+from fastapi.responses import JSONResponse
 
 from fastapi import FastAPI, Request, Form, status
 from sqlalchemy import Column, Integer, String, JSON
@@ -108,6 +109,11 @@ def assign_caller(
     return response    
 
 
+def validation_error(errors: list):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": errors}
+    )
 
 @router.post("/customer/upsert", name="upsert_customer", response_class=HTMLResponse)
 async def upsert_customer(
@@ -131,7 +137,6 @@ async def upsert_customer(
         data_record = Customer()
 
     data_dict = update_data.model_dump()
-    print (data_dict)
 
     # Ensure 'extra' exists and is a dict
     if 'extra' not in data_dict or not isinstance(data_dict['extra'], dict):
@@ -165,17 +170,53 @@ async def upsert_customer(
     if data_record.location:
         data_record.location = to_comma_string(data_record.location)
 
+    # Backend validation
+    # Check for duplicates
+    errors = []
+
+    # Duplicate email
+    if (data_record.email):
+        duplicate_email = db.query(Customer).filter(Customer.id != id, Customer.email == data_record.email).first()
+        if duplicate_email:
+            errors.append({
+                "loc": ["body", "email"],
+                "msg": "Epost finns redan i systemet",
+                "type": "value_error.conflict"
+            })
+    
+    # Duplicate phone
+    if (data_record.phone):
+        duplicate_phone = db.query(Customer).filter(Customer.id != id, Customer.phone == data_record.phone).first()
+        if duplicate_phone:
+            errors.append({
+                "loc": ["body", "phone"],
+                "msg": "Telefonnummret finns redan i systemet",
+                "type": "value_error.conflict"
+            })
+    
+    # Duplicate first + last name
+    duplicate_name = db.query(Customer).filter(
+        Customer.id != id,
+        Customer.first_name == data_record.first_name,
+        Customer.last_name == data_record.last_name
+    ).first()
+    if duplicate_name:
+        errors.append({
+            "loc": ["body", "first_name", "last_name"],
+            "msg": "Kund med samma för och efternamn finns redann i systemet",
+            "type": "value_error.conflict"
+        })
+
+    # Return all validation errors if any
+    if errors:
+        return JSONResponse(status_code=422, content={"detail": errors})
+
     db.add(data_record)
     db.commit()
     db.refresh(data_record)
 
     # Render updated list (HTMX swap)
     customers = get_user_customers(db, request, user)
-
-    # Backend validation
-    if False:
-        # return just an error status code
-        return HTMLResponse("Error", status_code=400)
     
     response =  templates.TemplateResponse(
         "customers/list.html",
