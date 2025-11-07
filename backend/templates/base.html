@@ -144,7 +144,7 @@
   <div class="max-w-7xl mx-auto px-4 py-1 flex items-center justify-between">
 
     <!-- App name -->
-    <div class="text-xl font-semibold">
+    <div class="font-semibold">
       {{ "APPNAME" | t }}
     </div>
 
@@ -438,8 +438,10 @@
   const btnBgToggle = document.getElementById('btnBgToggle');
   const body = document.body;
 
-  let fontSize = 16;
-  let isDark = false;
+  let fontSize = localStorage.getItem('fontSize') || 16;
+  body.style.fontSize = fontSize + 'px';
+  let isDark = localStorage.getItem('isDark') == "true";
+  setDark();
   let open = false;
 
   // Toggle toolbox
@@ -482,30 +484,38 @@ toolboxToggle.addEventListener('click', () => {
   btnFontIncrease.addEventListener('click', () => {
     fontSize += 2;
     body.style.fontSize = fontSize + 'px';
+    localStorage.setItem('fontSize', fontSize);
   });
 
   // Font size decrease
   btnFontDecrease.addEventListener('click', () => {
     fontSize = Math.max(10, fontSize - 2);
     body.style.fontSize = fontSize + 'px';
+    localStorage.setItem('fontSize', fontSize);
   });
 
   // Background toggle
 btnBgToggle.addEventListener('click', () => {
   isDark = !isDark;
-
-  if (isDark) {
-    document.documentElement.style.filter = 'invert(1) hue-rotate(180deg)';
-    document.querySelectorAll('img, video, iframe').forEach(el => {
-      el.style.filter = 'invert(1) hue-rotate(180deg)'; // cancel inversion for media
-    });
-  } else {
-    document.documentElement.style.filter = '';
-    document.querySelectorAll('img, video, iframe').forEach(el => {
-      el.style.filter = '';
-    });
-  }
+  setDark();
 });
+
+  function setDark() {
+    localStorage.setItem('isDark', isDark);
+    console.log("asd");
+    if (isDark) {
+        document.documentElement.style.filter = 'invert(1) hue-rotate(180deg)';
+        document.querySelectorAll('img, video, iframe').forEach(el => {
+        el.style.filter = 'invert(1) hue-rotate(180deg)'; // cancel inversion for media
+        });
+    } else {
+        document.documentElement.style.filter = '';
+        document.querySelectorAll('img, video, iframe').forEach(el => {
+        el.style.filter = '';
+        });
+    }
+}
+
 </script>
 
 
