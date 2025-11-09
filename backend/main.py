@@ -151,7 +151,7 @@ def get_translator_cached(lang_code: str):
     """Return a translator for lang_code, caching it globally."""
     # Use lock for thread safety
     with _cache_lock:
-        if lang_code not in _translators_cache:
+        if lang_code not in _translators_cache: #TODO CLEAR True DEVMODE
             _translators_cache[lang_code] = get_translator(lang_code)
         return _translators_cache[lang_code]
 

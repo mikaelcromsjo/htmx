@@ -45,14 +45,14 @@
         <select name="code_name" class="border p-1 mt-1">
             <option value="">{{ "Any" | t }}</option>
             <option value="true" {% if filter_dict.get('code_name') %}selected{% endif %}>{{ "True" | t }}</option>
-            <option value="false" {% if filter_dict.get('code_name') is not none and not filter_dict.get('code_name') %}selected{% endif %}>{{ "False" | t }}</option>
+            <option value="false" {% if filter_dict.get('code_name') == 'false' %}selected{% endif %}>{{ "False" | t }}</option>
         </select>
     </div>
 
     <!-- Email -->
     <div>
         <label class="block font-semibold">{{ "Email" | t }}</label>
-        <input type="email" name="email" value="{{ filter_dict.get('email','') }}" class="border p-1 w-full"/>
+        <input type="text" name="email" value="{{ filter_dict.get('email','') }}" class="border p-1 w-full"/>
         <select name="email_type" class="border p-1 mt-1">
             <option value="like">{{ "Contains" | t }}</option>
             <option value="exact">{{ "Exact" | t }}</option>
@@ -206,8 +206,8 @@
         <label class="block font-semibold">{{ label }}</label>
         <select name="{{ field }}" class="border p-1 mt-1">
             <option value="">{{ "Any" | t }} </option>
-            <option value="true" {% if filter_dict.get(field) %}selected{% endif %}>{{ "True" | t }}</option>
-            <option value="false" {% if filter_dict.get(field) is not none and not filter_dict.get(field) %}selected{% endif %}>{{ "False" | t }}</option>
+            <option value="true" {% if filter_dict.get(field) == 'true' %}selected{% endif %}>{{ "True" | t }}</option>
+            <option value="false" {% if filter_dict.get(field) == 'false' %}selected{% endif %}>{{ "False" | t }}</option>
         </select>
     </div>
     {% endfor %}

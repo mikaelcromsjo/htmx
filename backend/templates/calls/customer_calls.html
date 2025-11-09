@@ -1,7 +1,7 @@
 <!-- Customer Info fragment -->
 <div id="customer-details" hx-swap-oob="true">
 
-<div x-data x-init='
+  <div x-data x-init='
         if (!document.getElementById("fix").checked) {
           Alpine.store("eventFilters").filter_a = {{ customer.filter_a | tojson }};
           Alpine.store("eventFilters").filter_b  = {{ customer.filter_b | tojson }};
@@ -11,42 +11,41 @@
         }
         Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
         '>
-</div>
-   
-<textarea name="customer_comment" x-model="$store.customer.comment" class="auto-save customer-disable form-control mb-3 w-100" rows="3">{{customer.comment}}</textarea>
-
-{% if customer.email %}
-<div class="mb-1"><strong>{{ "Email" | t }}:</strong> {{ customer.email }}</div>
-{% endif %}
-
-{% if customer.phone %}
-<div class="mb-1"><strong>{{ "Phone" | t }}:</strong> {{ customer.phone }}</div>
-{% endif %}
-
-{% if customer.location %}
-<div class="mb-1"><strong>{{ "Location" | t }}:</strong> {{ customer.location }}</div>
-{% endif %}
-
-{% if customer.caller is not none %}
-<div class="mb-1"><strong>{{ "Caller" | t }}:</strong> {{ customer.caller.name }}</div>
-{% endif %}
-
-{% if customer.sub_caller %}
-<div class="mb-1"><strong>{{ "Sub Caller" | t }}:</strong> {{ customer.sub_caller }}</div>
-{% endif %}
-
-{% if customer.personality_type is not none %}
-  <div class="mb-1">
-    <strong>{{ "Personality Type" | t }}:</strong>
-    {{ personalities_map[customer.personality_type].name }}
   </div>
-{% endif %}
+  
+  <textarea 
+    name="customer_comment" 
+    x-model="$store.customer.comment" 
+    class="auto-save customer-disable mb-3 w-full rounded border-gray-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-200 focus:ring-opacity-50"
+    rows="3"
+  >{{ customer.comment }}</textarea>
 
+  {% if customer.email %}
+  <div class="mb-1"><strong>{{ "Email" | t }}:</strong> {{ customer.email }}</div>
+  {% endif %}
 
-{% if customer.categories %}
-  <div class="mb-1">
-    <strong>{{ "Categories" | t }}:</strong>
-    {# Build a list of item names using the lookup #}
+  {% if customer.phone %}
+  <div class="mb-1"><strong>{{ "Phone" | t }}:</strong> {{ customer.phone }}</div>
+  {% endif %}
+
+  {% if customer.location %}
+  <div class="mb-1"><strong>{{ "Location" | t }}:</strong> {{ customer.location }}</div>
+  {% endif %}
+
+  {% if customer.caller is not none %}
+  <div class="mb-1"><strong>{{ "Caller" | t }}:</strong> {{ customer.caller.name }}</div>
+  {% endif %}
+
+  {% if customer.sub_caller %}
+  <div class="mb-1"><strong>{{ "Sub Caller" | t }}:</strong> {{ customer.sub_caller }}</div>
+  {% endif %}
+
+  {% if customer.personality_type is not none %}
+  <div class="mb-1"><strong>{{ "Personality Type" | t }}:</strong> {{ personalities_map[customer.personality_type].name }}</div>
+  {% endif %}
+
+  {% if customer.categories %}
+  <div class="mb-1"><strong>{{ "Categories" | t }}:</strong>
     {% set item_names = [] %}
     {% for iid in customer.categories %}
       {% if iid in categories_map %}
@@ -55,65 +54,58 @@
     {% endfor %}
     {{ item_names | join(', ') }}
   </div>
-{% endif %}
-
-{% if customer.organisations %}
-
-  <div class="mb-1">
-    <strong>{{ "Organisations" | t }}:</strong>
-{% set org_names = [] %}
-{% for oid in customer.organisations %}
-  {% set int_oid = oid | int %}
-  {% if int_oid in organisations_map %}
-    {% set _ = org_names.append(organisations_map[int_oid]) %}
   {% endif %}
-{% endfor %}
-{{ org_names | join(', ') }}
+
+  {% if customer.organisations %}
+  <div class="mb-1"><strong>{{ "Organisations" | t }}:</strong>
+    {% set org_names = [] %}
+    {% for oid in customer.organisations %}
+      {% set int_oid = oid | int %}
+      {% if int_oid in organisations_map %}
+        {% set _ = org_names.append(organisations_map[int_oid]) %}
+      {% endif %}
+    {% endfor %}
+    {{ org_names | join(', ') }}
   </div>
-{% endif %}
-
-
-
-
-
- 
-
+  {% endif %}
 
 </div>
 
 <!-- Customer Calls fragment -->
 <div id="calls" hx-swap-oob="true">
-
-    {% for call in calls %}
-
-    
-    <div class="p-2 border-bottom cursor-pointer" 
-:class="{
-  'bg-success bg-opacity-25 text-dark fw-bold': {{ call.status }} === 1 && $store.call.id !== {{ call.id }},
-  'bg-success text-dark fw-bold': {{ call.status }} === 1 && $store.call.id === {{ call.id }},
-  'bg-danger bg-opacity-25 text-dark fw-bold': {{ call.status }} === 2 && $store.call.id !== {{ call.id }},
-  'bg-danger text-dark fw-bold': {{ call.status }} === 2 && $store.call.id === {{ call.id }},
-  'bg-warning bg-opacity-25 text-dark fw-bold': {{ call.status }} === 3 && $store.call.id !== {{ call.id }},
-  'bg-warning text-dark fw-bold': {{ call.status }} === 3 && $store.call.id === {{ call.id }},
-  'bg-light text-dark fw-bold': ![1,2,3].includes({{ call.status }}) && $store.call.id !== {{ call.id }},
-  'bg-secondary text-dark fw-bold': ![1,2,3].includes({{ call.status }}) && $store.call.id === {{ call.id }}
-}"
-            @click="Alpine.store('call').id  =  {{ call.id | tojson }}" hx-get="{{ url_for('call_details', call_id=call.id) }}"
-        hx-trigger="click"
-        hx-target="#call-info">
-
-        {{ call.call_date | date }}
-    </div>
-    {% endfor %}
+  {% for call in calls %}
+  <div 
+    class="p-2 cursor-pointer border-b"
+    :class="{
+      'bg-green-100 text-gray-900 font-bold': {{ call.status }} === 1 && $store.call.id !== {{ call.id }},
+      'bg-green-500 text-white font-bold': {{ call.status }} === 1 && $store.call.id === {{ call.id }},
+      'bg-red-100 text-gray-900 font-bold': {{ call.status }} === 2 && $store.call.id !== {{ call.id }},
+      'bg-red-500 text-white font-bold': {{ call.status }} === 2 && $store.call.id === {{ call.id }},
+      'bg-yellow-100 text-gray-900 font-bold': {{ call.status }} === 3 && $store.call.id !== {{ call.id }},
+      'bg-yellow-500 text-white font-bold': {{ call.status }} === 3 && $store.call.id === {{ call.id }},
+      'bg-gray-100 text-gray-900 font-bold': ![1,2,3].includes({{ call.status }}) && $store.call.id !== {{ call.id }},
+      'bg-gray-500 text-white font-bold': ![1,2,3].includes({{ call.status }}) && $store.call.id === {{ call.id }}
+    }"
+    @click="Alpine.store('call').id = {{ call.id | tojson }}" 
+    hx-get="{{ url_for('call_details', call_id=call.id) }}"
+    hx-trigger="click"
+    hx-target="#call-info"
+  >
+    {{ call.call_date | date }}
+  </div>
+  {% endfor %}
 </div>
 
 <!-- Customer Call Info fragment -->
-<div id="call-info" hx-swap-oob="true" class="d-flex flex-column flex-grow-1 overflow-auto mt-2 border p-2" style="background:#f8f9fa;">
-
-    {% for call in calls %}
-    <div class="mb-2 p-2 border-bottom">
-        {{ call.call_date | date() }} | {{ call.note }}
-    </div>
-    {% endfor %}
-
+<div 
+  id="call-info" 
+  hx-swap-oob="true" 
+  class="flex flex-col flex-grow overflow-auto mt-2 border p-2"
+>
+  {% for call in calls %}
+  <div class="mb-2 p-2 border-b">
+    {{ call.call_date | date() }} | {{ call.note }}
+  </div>
+  {% endfor %}
 </div>
+

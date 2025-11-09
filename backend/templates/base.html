@@ -6,7 +6,7 @@
     <title>{% block title %}{{ "Dashboard" | t }}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+<!---    <link rel="stylesheet" href="/static/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="/static/css/tailwind.css">
 
     <!-- Include Tagify -->
@@ -18,11 +18,14 @@
     <script src="/static/alpine.min.js" defer></script>
 
     <!-- Local Bootstrap JS -->
-    <script src="/static/js/bootstrap.bundle.min.js"></script>
+<!--    <script src="/static/js/bootstrap.bundle.min.js"></script> -->
     <script src="https://unpkg.com/split.js/dist/split.min.js"></script>
 
 
     <style>
+
+
+
         .highlight {
             outline: 2px solid black !important;
             /* just a visible black outline */
@@ -35,6 +38,11 @@
   overflow-y: auto;        /* enable vertical scrolling */
   overflow-x: auto;        /* enable horizontal scrolling */
   display: block;          /* required for overflow to work */
+}
+ 
+
+input:disabled {
+ opacity:50%;       
 }
 
 .full-table thead {
@@ -56,8 +64,8 @@
   text-align: left;
 }
 
+
 .full-table tr:nth-child(even) {
-  background-color: #f9f9f9;
 }
 
 .full-table tr:hover {
@@ -117,7 +125,7 @@
 
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="bg-white min-h-screen flex flex-col">
 
     
  <div x-data="{ is_admin: {{ 1 if is_admin else 0 }}, active: localStorage.getItem('activeTab') || 'customers', loaded: {} }"
@@ -141,10 +149,10 @@
 
 
 <header class="bg-white shadow sticky top-0 z-10" x-data="{ open: false }">
-  <div class="max-w-7xl mx-auto px-4 py-1 flex items-center justify-between">
+  <div class="w-full mx-auto px-4 py-1 flex items-center justify-between">
 
     <!-- App name -->
-    <div class="font-semibold">
+    <div class="text-xl font-semibold">
       {{ "APPNAME" | t }}
     </div>
 
@@ -168,7 +176,7 @@
       <div class="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded">
         <span>{{ caller }}</span>
         <form method="get" action="/logout" class="inline">
-          <button type="submit" class="text-sm text-gray-600 hover:text-red-600">
+          <button type="submit" class="text-gray-600 hover:text-red-600">
             {{ "Logout" | t }}
           </button>
         </form>
@@ -329,54 +337,84 @@
     </main>
 </div>
 
-
 <!-- Global Modal Container -->
 <div 
-    x-data="{ modalTitle: '' }"
+    x-data
     x-show="$store.modal.open"
-    x-transition.opacity 
-    :class="$store.modal.open ? 'modal fade show d-block' : 'modal fade'" 
-    tabindex="-1" 
-    role="dialog"
+    x-transition.opacity
     @keydown.escape.window="$store.modal.open = false"
-    style=" display: none; background-color: rgba(0,0,0,0.5);"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+    style="display: none;"
 >
-  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-    <div class="modal-content">
+  <!-- Modal box -->
+  <div 
+    class="bg-white rounded-xl shadow-lg w-full max-w-7xl mx-4 max-h-[90vh] flex flex-col overflow-hidden"
+    x-transition.scale
+    @click.away="$store.modal.open = false"
+  >
+    <!-- Modal header -->
+    <div class="flex justify-between items-center p-4 border-b flex-shrink-0">
+      <h5 class="text-lg font-semibold" x-text="$store.modal.title"></h5>
+      <div class="flex items-center gap-2">
+        <!-- Save button -->
+        <button 
+          type="button"
+          class="text-green-600 p-1 rounded hover:bg-green-100"
+          title="Save"
+          @click="
+            console.log('save');
+            const f = document.querySelector('#modal-container form');
+            if (f) f.requestSubmit();
+          "
+        >
+          <i class="bi bi-save fs-3"></i>
+        </button>
 
+        <!-- Close button -->
+        <button 
+          type="button"
+          class="text-gray-500 hover:text-gray-700 p-1 rounded"
+          @click="$store.modal.open = false"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
 
-<div class="modal-header">
-  <h5 class="modal-title" x-text="$store.modal.title"></h5>
+    <!-- Modal body -->
+    <div 
+        id="modal-container" 
+        class="p-4 overflow-y-auto flex-1"
+        x-effect="if ($store.modal.open) $nextTick(() => { $el.scrollTop = 0; });"
+    >
+      <!-- HTMX content goes here -->
+    </div>
 
-  <div class="d-flex align-items-center gap-2">
-    <!-- Save icon button -->
- <button 
-  type="button"
-  class="btn btn-outline-success btn-sm p-1"
-  title="Save"
-  @click="
-        console.log('save');
-        const f = document.querySelector('#modal-container form');
-        if (f) f.requestSubmit();"
->
-  <i class="bi bi-save fs-3"></i>
-</button>
-
-    <!-- Close button -->
-    <button 
-      type="button" 
-      class="btn-close" 
-      @click="$store.modal.open = false"
-    ></button>
-  </div>
-</div>
-
-<!-- Modal body -->
-<div class="modal-body" id="modal-container" style="max-height: 80vh; overflow-y: auto;" 
- x-effect="if ($store.modal.open) $el.scrollTop = 0"
- >
-  <!-- HTMX will load form content here -->
-</div>
+    <!-- Optional footer -->
+    <div class="p-4 border-t flex-shrink-0">
+      <button 
+          type="button" 
+          class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          @click="$store.modal.open = false"
+      >
+        Close
+      </button>
+        <!-- Save button -->
+        <button 
+          type="button"
+          class="px-4 py-2 rounded
+                 bg-green-600 text-white hover:bg-green-500 disabled:bg-green-800 disabled:opacity-100"
+            @click="
+            console.log('as');
+            const form = document.querySelector('#modal-container form');
+            if (form) {
+            form.requestSubmit();
+            $store.modal.open = false;
+            }
+            "
+        >
+         OK
+        </button>
 
     </div>
   </div>
@@ -391,10 +429,9 @@
     </script>
 {%- endif -%}
 
-<!-- Popup div -->
-    <div id="popup" class="alert position-fixed top-0 start-50 translate-middle-x"
-        style="display:none; padding:10px 20px; border-radius:5px; z-index:1000; transition: opacity 0.3s;">
-    </div>
+<div id="popup"
+     class="hidden fixed top-0 left-1/2 -translate-x-1/2 z-50 px-5 py-2 rounded border border-red-300 bg-red-100 text-red-800 transition-opacity duration-300">
+</div>
 
 <!-- Centered modern alarm popup -->
 <div
@@ -418,7 +455,7 @@
 </div>
 
 
-<div class="fixed top-4 right-4 z-50 flex flex-col items-end">
+<div class="fixed top-10 right-4 z-50 flex flex-col items-end">
 
   <!-- Toolbox buttons (hidden by default) -->
   <div id="toolboxButtons" class="flex flex-col gap-2 mt-2 items-end opacity-0 scale-0 transform transition-all origin-top-right">
@@ -438,8 +475,10 @@
   const btnBgToggle = document.getElementById('btnBgToggle');
   const body = document.body;
 
-  let fontSize = localStorage.getItem('fontSize') || 16;
-  body.style.fontSize = fontSize + 'px';
+  let fontSize = Number(localStorage.getItem('fontSize')) || 16;
+  console.log(localStorage.getItem('fontSize'));
+  document.documentElement.style.fontSize = fontSize + 'px';
+  console.log(document.documentElement.style.fontSize);
   let isDark = localStorage.getItem('isDark') == "true";
   setDark();
   let open = false;
@@ -482,15 +521,15 @@ toolboxToggle.addEventListener('click', () => {
 
   // Font size increase
   btnFontIncrease.addEventListener('click', () => {
-    fontSize += 2;
-    body.style.fontSize = fontSize + 'px';
+    fontSize = Math.min(25, fontSize + 2);
+    document.documentElement.style.fontSize = fontSize + 'px';
     localStorage.setItem('fontSize', fontSize);
   });
 
   // Font size decrease
   btnFontDecrease.addEventListener('click', () => {
     fontSize = Math.max(10, fontSize - 2);
-    body.style.fontSize = fontSize + 'px';
+    document.documentElement.style.fontSize = fontSize + 'px';
     localStorage.setItem('fontSize', fontSize);
   });
 
@@ -590,15 +629,29 @@ if (data.detail) {
     // 4️⃣ Show popup if there’s anything to show
     if (messages.length) {
         popup.innerText = messages.join('\n');
-        popup.classList.remove('alert-success', 'alert-danger');
-        popup.classList.add(isError ? 'alert-danger' : 'alert-success');
+
+        popup.classList.remove(
+            'bg-green-100', 'text-green-800', 'border-green-300', 
+            'bg-red-100', 'text-red-800', 'border-red-300'
+        );
+
+        // Add new styles based on isError
+        if (isError) {
+            popup.classList.add('bg-red-100', 'text-red-800', 'border-red-300');
+        } else {
+            popup.classList.add('bg-green-100', 'text-green-800', 'border-green-300');
+        }        
+
+
+//        popup.classList.remove('alert-success', 'alert-danger');
+//        popup.classList.add(isError ? 'alert-danger' : 'alert-success');
         popup.style.display = 'block';
         popup.style.opacity = '1';
         popup.style.zIndex = 9999;
 
         setTimeout(() => {
             popup.style.opacity = '0';
-            setTimeout(() => popup.style.display = 'none', 99300);
+            setTimeout(() => popup.style.display = 'none', 300);
         }, 2000);
 
         if (error_fields.length > 0) {
@@ -950,3 +1003,4 @@ function searchTable() {
     }
 }
 </script>
+

@@ -1,8 +1,6 @@
-
 <div x-data x-init='
-  Alpine.store("eventCustomer").status = {{ event_status | tojson }} || "";
+  Alpine.store("eventCustomer").status = String({{ event_status | tojson }} || "-");
 '>
-</div>
 
 <div class="mb-2"><strong>{{ "Name" | t }}:</strong> {{ event.name }}</div>
 

@@ -1,0 +1,54 @@
+<div
+  x-data="{ 
+    isVisible(event) { 
+      let filters = Alpine.store('eventFilters'); 
+      if (!filters) return true; 
+      return Object.keys(filters).some(type => filters[type] && event[type]); 
+    } 
+  }"
+>
+  <div 
+    id="event-list" 
+    x-data="{ prevCustomer: null }" 
+    x-effect="
+      console.log('Click Event');
+      const currentCustomer = Alpine.store('customer').id;
+      if (currentCustomer && currentCustomer !== prevCustomer) {
+        prevCustomer = currentCustomer;
+        // Find the active event row
+        const activeRow = $el.querySelector('.bg-blue-100.font-bold.text-blue-600');
+        if (activeRow) {
+          $nextTick(() => { activeRow.click(); });
+        }
+      }
+    "
+  >
+    {% for event in events %}
+    <div 
+      x-show="{{ 'true' if event.extra_visilble_all else 'false' }} || isVisible({
+        filter_a: {{ 'true' if event.type_a else 'false' }},
+        filter_b: {{ 'true' if event.type_b else 'false' }},
+        filter_c: {{ 'true' if event.type_c else 'false' }},
+        filter_d: {{ 'true' if event.type_d else 'false' }},
+        filter_e: {{ 'true' if event.type_e else 'false' }}
+      })"
+      class="p-2 cursor-pointer border-b"
+      :class="{
+        'bg-blue-100 font-bold text-blue-600': Alpine.store('event').id === {{ event.id }},
+        'bg-white font-normal text-gray-900': Alpine.store('event').id !== {{ event.id }}
+      }"
+      @click="
+        Alpine.store('event').id = {{ event.id }};
+        if (Alpine.store('customer').id)
+            enableEvent();
+      "
+      hx-get="{{ url_for('calls_event_detail', event_id=event.id) }}?list=short"
+      hx-target="#event-details"
+      hx-swap="innerHTML"
+      :hx-vals="JSON.stringify(Alpine.store('customer')?.id ? { customer_id: Alpine.store('customer').id } : {})"
+    >
+      {{ event.name }}
+    </div>
+    {% endfor %}
+  </div>
+</div>

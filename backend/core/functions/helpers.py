@@ -448,11 +448,19 @@ DEFAULT_TZ = "Europe/Stockholm"
 
 def local_to_utc(datetime_local_str: str, tz_name: str = DEFAULT_TZ) -> datetime:
     """
-    Convert a datetime-local string (YYYY-MM-DDTHH:MM) from user's timezone to UTC-aware datetime.
+    Convert a datetime-local string (YYYY-MM-DDTHH:MM) or date string (YYYY-MM-DD)
+    from user's timezone to UTC-aware datetime.
+    
+    If only date is provided, assumes time 00:00.
     """
     try:
-        # Parse naive datetime-local
-        naive_dt = datetime.strptime(datetime_local_str, "%Y-%m-%dT%H:%M")
+        if "T" in datetime_local_str:
+            # datetime-local format
+            naive_dt = datetime.strptime(datetime_local_str, "%Y-%m-%dT%H:%M")
+        else:
+            # date-only format, assume midnight
+            naive_dt = datetime.strptime(datetime_local_str, "%Y-%m-%d")
+        
         # Assign user timezone
         local_dt = naive_dt.replace(tzinfo=ZoneInfo(tz_name))
         # Convert to UTC
@@ -460,7 +468,6 @@ def local_to_utc(datetime_local_str: str, tz_name: str = DEFAULT_TZ) -> datetime
         return utc_dt
     except Exception as e:
         raise ValueError(f"Invalid datetime-local format: {datetime_local_str}") from e
-
 
 def utc_to_local(dt, tz_name: str = DEFAULT_TZ, fmt: str = "%Y-%m-%d %H:%M") -> str:
     """

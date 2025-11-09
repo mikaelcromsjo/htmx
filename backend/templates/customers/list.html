@@ -43,7 +43,7 @@ clearSelectedIds() {
     <input
         type="text"
         placeholder="{{ "Search name, number or phone." | t }}"
-        class="w-[400px] border border-gray-300 rounded pl-14 pr-3 py-2 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        class="w-[400px] border border-gray-300 rounded pl-4 pr-3 py-2 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
 
         x-model="query"
         @input.debounce.300ms="filterRows()"
@@ -62,7 +62,7 @@ clearSelectedIds() {
                     <th class="px-2 py-1 border">{{ "Command" | t }}</th>
                     <th class="px-2 py-1 border text-center" 
                         @click.stop>
-                        <input type="checkbox" @change="const checkAll = $event.target.checked;
+                        <input type="checkbox" x-show="query == ''" @change="const checkAll = $event.target.checked;
                             document.querySelectorAll('.customer-checkbox').forEach(cb => {
                                 if (cb.checked !== checkAll) {        // only toggle boxes that differ
                                     cb.checked = checkAll;
@@ -115,7 +115,7 @@ clearSelectedIds() {
 
                     <td class="px-2 py-1 border text-center" 
                         @click.stop>
-                        <input type="checkbox" class="customer-checkbox"
+                        <input type="checkbox" class="customer-checkbox"                            
                             :checked="selected[{{ customer.id }}] || false"
                             @change="toggle({{ customer.id }})">
                     </td>
