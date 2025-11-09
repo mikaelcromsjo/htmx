@@ -3,23 +3,32 @@
 {% block title %}{{ "Call Customer" | t }}{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-center mt-5">
-    <div class="card shadow" style="width: 400px;">
-        <div class="card-body text-center">
-            <h3 class="text-xl font-semibold card-title mb-4">{{ "Call Customer" | t }}</h3>
+<div class="flex justify-center mt-10">
+  <div class="w-80 rounded-2xl bg-white shadow-md p-6">
+    <div class="text-center">
+      <h3 class="text-xl font-semibold mb-4 text-gray-800">{{ "Call Customer" | t }}</h3>
 
-            <p><strong>{{ "Name" | t }}:</strong> <span id="name"></span></p>
-            <p><strong>{{ "Number" | t }}:</strong> <span id="number"></span></p>
+      <p class="text-gray-700">
+        <strong>{{ "Name" | t }}:</strong>
+        <span id="name" class="text-gray-900"></span>
+      </p>
+      <p class="text-gray-700 mt-1">
+        <strong>{{ "Number" | t }}:</strong>
+        <span id="number" class="text-gray-900"></span>
+      </p>
 
-            <div class="d-flex justify-content-center gap-2 mt-3">
-                <a id="call_href" href="#">
-                    <button class="btn btn-primary" onclick="call()">{{ "Call" | t }}</button>
-                </a>
-            </div>
-        </div>
+      <div class="flex justify-center mt-5">
+        <a id="call_href" href="#">
+          <button
+            type="button"
+            onclick="call()"
+            class="rounded-lg bg-indigo-600 px-5 py-2 text-white font-medium shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+          >
+            {{ "Call" | t }}
+          </button>
+        </a>
+      </div>
     </div>
+  </div>
 </div>
-
-
-
 {% endblock %}
