@@ -83,7 +83,7 @@
   "Calls": "Samtal",
   "Call": "Ring",
   "Call Info": "Samtalsinformation",
-  "Interested": "Återkommer",
+  "Interested": "Återkomm",
   "Not interested": "Nej",
   "Paid": "Betald",
   "Call Comment": "Samtalskommentar",
@@ -195,6 +195,6 @@
   "Planet": "Planet",
   "Select Caller...": "Välj Ringare...",
   "Search name, number or phone.": "Sök namn, nummer eller telefon",
-  "Pay at the door": "Betala vid dörr",
+  "Pay at the door": "Betalar där",
   "Did not attend": "Deltog ej"
 }
