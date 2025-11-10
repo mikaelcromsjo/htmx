@@ -104,10 +104,6 @@
 
     <!-- Event Status Options -->
     <div class="flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light" x-data>
-      <label class="items-center space-x-3 form-check form-check-inline">
-        <input name="event_status" value="-" x-model="$store.eventCustomer.status" disabled
-               class="auto-save event-disable form-check-input" type="radio">
-        <span>{{ "Dont know" | t }}</span>
       <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
         <input name="event_status" value="1" x-model="$store.eventCustomer.status" disabled
                class="auto-save event-disable form-check-input" type="radio">
