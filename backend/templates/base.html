@@ -140,7 +140,6 @@ input:disabled {
                 }
             }                
         });
-//        $nextTick(() => { if ($refs[active]) $refs[active].click(); });
         $nextTick(() => { $refs.all.forEach(el => el.click()); });     
     "
   >
@@ -259,6 +258,8 @@ input:disabled {
                     @click="
                         active = 'admin';
                     "
+                    hx-get="{{ url_for('admin_dashboard') }}" 
+                    hx-target="#admin_content"                    
                     :class="{'bg-gray-200': active === 'admin'}"
                     class="px-3 py-2 rounded hover:bg-gray-200">
                     {{ "Admin" | t }}
