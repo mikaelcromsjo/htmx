@@ -41,7 +41,7 @@
 <button 
     hx-post="/admin/script"
     hx-trigger="click"
-    hx-vals='{"script_name": "stats", "args": "--chart caller_performance --from {{ yestarday }} --to {{ today }}"}'
+    hx-vals='{"script_name": "stats", "args": "--chart caller_performance --from {{ yesterday }} --to {{ today }}"}'
     hx-target="#admin_content"
     hx-swap="innerHTML"
     class="px-3 py-1 border rounded bg-blue-100 hover:bg-blue-200"
