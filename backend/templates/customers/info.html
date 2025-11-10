@@ -89,21 +89,21 @@
 
 <div x-data="{ active: '{{ status_filter or "all" }}' }" class="flex flex-wrap gap-2 mb-4">
     <button 
-        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=1"
-        hx-target="#customer-info"
-        class="px-3 py-1 border rounded hover:bg-gray-200"
-        :class="{'bg-gray-100': {{ status_filter }} === 1}" >
-        {{ "Not interested" | t }}
-        <span>{{ totals.not_going }}</span>
-    </button>
-
-    <button 
         hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=2"
         hx-target="#customer-info"
         class="px-3 py-1 border rounded hover:bg-gray-200"
         :class="{'bg-gray-100': {{ status_filter }} === 2}" >
+        {{ "Not interested" | t }}
+        <span>{{ totals.s2 }}</span>
+    </button>
+
+    <button 
+        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=1"
+        hx-target="#customer-info"
+        class="px-3 py-1 border rounded hover:bg-gray-200"
+        :class="{'bg-gray-100': {{ status_filter }} === 1}" >
         {{ "Interested" | t }}
-        <span >{{ totals.maybe }}</span>
+        <span >{{ totals.s1 }}</span>
     </button>
 
     <button 
@@ -112,7 +112,7 @@
         class="px-3 py-1 border rounded hover:bg-gray-200"
         :class="{'bg-gray-100': {{ status_filter }} === 3}" >
         {{ "Comming" | t }}
-        <span>{{ totals.going }}</span>
+        <span>{{ totals.s3 }}</span>
     </button>
 
     <button 
@@ -121,7 +121,16 @@
         class="px-3 py-1 border rounded hover:bg-gray-200"
         :class="{'bg-gray-100': {{ status_filter }} === 4}" >
         {{ "Paid" | t }}
-        <span>{{ totals.paid }}</span>
+        <span>{{ totals.s4 }}</span>
+    </button>
+
+        <button 
+        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=6"
+        hx-target="#customer-info"
+        class="px-3 py-1 border rounded hover:bg-gray-200"
+        :class="{'bg-gray-100': {{ status_filter }} === 6}" >
+        {{ "Pay at the door" | t }}
+        <span>{{ totals.s6 }}</span>
     </button>
 
     <button 
@@ -130,7 +139,16 @@
         class="px-3 py-1 border rounded hover:bg-gray-200"
         :class="{'bg-gray-100': {{ status_filter }} === 5}" >
         {{ "Attended" | t }}
-        <span>{{ totals.attended }}</span>
+        <span>{{ totals.s5 }}</span>
+    </button>
+
+        <button 
+        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=7"
+        hx-target="#customer-info"
+        class="px-3 py-1 border rounded hover:bg-gray-200"
+        :class="{'bg-gray-100': {{ status_filter }} === 7}" >
+        {{ "Did not attend" | t }}
+        <span>{{ totals.s7 }}</span>
     </button>
 
     <button 
@@ -140,7 +158,7 @@
         :class="{'bg-gray-100': {{ status_filter }} === 0}" >
         {{ "All" | t }}
         <span>
-            {{ totals.not_going + totals.maybe + totals.going + totals.paid + totals.attended }}
+            {{ totals.all }}
         </span>
     </button>
 

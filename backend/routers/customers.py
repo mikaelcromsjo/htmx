@@ -267,18 +267,23 @@ def customer_detail(
         event_customers = query.all()
 
         # Calculate totals per status
-        totals = {"not_going":0, "maybe":0, "going":0, "paid":0, "attended":0}
+        totals = {"s1":0, "s2":0, "s3":0, "s4":0, "s5":0, "s6":0, "s7":0, "all":0}
         for ec in event_customers:
+            totals["all"] += 1
             if ec.status == 2:
-                totals["not_going"] += 1
+                totals["s2"] += 1
             elif ec.status == 1:
-                totals["maybe"] += 1
+                totals["s1"] += 1
             elif ec.status == 3:
-                totals["going"] += 1
+                totals["s3"] += 1
             elif ec.status == 4:
-                totals["paid"] += 1
+                totals["s4"] += 1
             elif ec.status == 5:
-                totals["attended"] += 1
+                totals["s5"] += 1
+            elif ec.status == 6:
+                totals["s6"] += 1
+            elif ec.status == 7:
+                totals["s7"] += 1
 
         
         if status_filter is not None:
