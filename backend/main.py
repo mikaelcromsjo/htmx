@@ -264,6 +264,8 @@ from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 
 templates.env.filters["date"] = utc_to_local
+templates.env.globals["now"] = datetime.utcnow
+templates.env.globals["timedelta"] = timedelta
 
 @app.get("/login")
 async def login_get(request: Request):

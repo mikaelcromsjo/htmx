@@ -24,7 +24,16 @@
 
     <style>
 
-
+@media print {
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid black !important;
+        padding: 8px;
+      }
+    }
 
         .highlight {
             outline: 2px solid black !important;
@@ -999,4 +1008,25 @@ function searchTable() {
     }
 }
 </script>
+
+<script>
+    function printTable(tableId) {
+      const table = document.getElementById(tableId).outerHTML;
+      const newWindow = window.open("");
+newWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Table</title>
+            <style>
+              table { border-collapse: collapse; width: 100%; }
+              th, td { border: 1px solid black; padding: 8px; text-align: left; }
+            </style>
+          </head>
+          <body>`);
+      newWindow.document.write(table);
+      newWindow.document.write("</body></html>");
+      newWindow.document.close();
+      newWindow.print();
+    }
+  </script>
 

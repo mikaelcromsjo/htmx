@@ -33,7 +33,35 @@
 >
     Visa alla event-resultat
 </button>
-    
+
+{% set yesterday = (now() - timedelta(days=1)).strftime('%Y-%m-%d') %}
+{% set tomorow = (now() + timedelta(days=1)).strftime('%Y-%m-%d') %}
+{% set today = now().strftime('%Y-%m-%d') %}
+
+<button 
+    hx-post="/admin/script"
+    hx-trigger="click"
+    hx-vals='{"script_name": "stats", "args": "--chart caller_performance --from {{ yestarday }} --to {{ today }}"}'
+    hx-target="#admin_content"
+    hx-swap="innerHTML"
+    class="px-3 py-1 border rounded bg-blue-100 hover:bg-blue-200"
+>
+    Visa alla ringares resultat idag
+</button>
+<button 
+    hx-post="/admin/script"
+    hx-trigger="click"
+    hx-vals='{"script_name": "stats", "args": "--chart event_participation --from {{ yesterday }} --to {{ today }}"}'
+    hx-target="#admin_content"
+    hx-swap="innerHTML"
+    class="px-3 py-1 border rounded bg-blue-100 hover:bg-blue-200"
+>
+    Visa alla event-resultat idag
+</button>
+
+
+<br/>
+
 <br/>
 <br/>
     
