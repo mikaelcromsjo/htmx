@@ -106,7 +106,10 @@
             <th class="px-3 py-1 border" style="width:200px">{{ "Interested" | t }}</th>
             <th class="px-3 py-1 border" style="width:200px">{{ "Comming" | t }}</th>
             <th class="px-3 py-1 border" style="width:200px">{{ "Paid" | t }}</th>
+            <th class="px-3 py-1 border" style="width:200px">{{ "Pay at the door" | t }}</th>
             <th class="px-3 py-1 border" style="width:200px">{{ "Attended" | t }}</th>
+            <th class="px-3 py-1 border" style="width:200px">{{ "Did not attend" | t }}</th>
+            
         </tr>
     </thead>
     <tbody>
@@ -116,8 +119,10 @@
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 2 %}✔{% endif %}</td>
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 1 %}✔{% endif %}</td>
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 3 %}✔{% endif %}</td>
+            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 6 %}✔{% endif %}</td>
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 4 %}✔{% endif %}</td>
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 5 %}✔{% endif %}</td>
+            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 7 %}✔{% endif %}</td>
         </tr>
         {% endfor %}
     </tbody>
