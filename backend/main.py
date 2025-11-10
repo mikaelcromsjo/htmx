@@ -151,14 +151,9 @@ def get_translator_cached(lang_code: str):
     """Return a translator for lang_code, caching it globally."""
     # Use lock for thread safety
     with _cache_lock:
-        if lang_code not in _translators_cache: #TODO CLEAR True DEVMODE
+        if lang_code not in _translators_cache:
             _translators_cache[lang_code] = get_translator(lang_code)
         return _translators_cache[lang_code]
-
-def translator_clear_cache():
-    """Clear the global translator cache in a thread-safe way."""
-    with _cache_lock:
-        _translators_cache.clear()
 
 # --- FastAPI app setup ---
 app = FastAPI(title="HTMX + Alpine.js Prototype", debug=True)
@@ -184,6 +179,7 @@ class LanguageMiddleware:
         if scope["type"] == "http":
             from starlette.requests import Request
             request = Request(scope, receive=receive)
+
 
             # Get lang_code from session or recreate it
             lang_code = request.session.get("lang_code")
@@ -221,11 +217,6 @@ def list_models():
 # Startup event
 @app.on_event("startup")
 def on_startup():
-
-    with _cache_lock:
-        _translators_cache.clear()
-        for lang in SUPPORTED_LANGUAGES:
-            _translators_cache[lang] = get_translator(lang)
 
     # Check DB connection
     try:
@@ -288,8 +279,12 @@ async def login_post(request: Request, username: str = Form(...), password: str 
         accept_language = request.headers.get("accept-language", "")
         lang_code = get_best_language_match(accept_language, SUPPORTED_LANGUAGES)
 
-    _translators_cache.clear()
-    templates.env.filters["t"] = get_translator_cached(lang_code)
+
+#    with _cache_lock:
+#        _translators_cache.clear()
+#        for lang in SUPPORTED_LANGUAGES:
+#            _translators_cache[lang_code] = get_translator(lang)
+#        templates.env.filters["t"] = get_translator_cached(lang)
 
     user = db.query(User).filter(User.username == username).first()
     if user and user.verify_password(password):
@@ -362,7 +357,7 @@ async def root(request: Request, user = Depends(get_current_user)):
         accept_language = request.headers.get("accept-language", "")
         lang_code = get_best_language_match(accept_language, SUPPORTED_LANGUAGES)
 
-    templates.env.filters["t"] = get_translator(lang_code)
+    templates.env.filters["t"] = get_translator_cached(lang_code)
 
     user = request.session.get("user")  # optional, might be None
     if user:

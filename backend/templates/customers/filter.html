@@ -4,6 +4,15 @@
     hx-swap="innerHTML"
     hx-ext="json-enc"
     class="space-y-4"
+    x-init="
+        $el.addEventListener('htmx:afterRequest', (event) => {
+            if (event.detail.xhr.status === 200) {
+                $store.modal.open = false;
+            } else if (event.detail.xhr.status >= 400) {
+                showPopup(event);
+            }
+        })
+    "
 >
 
 <h2 class="text-xl font-bold mb-4">{{ "Customer Filter" | t }}</h2>

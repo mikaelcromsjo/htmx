@@ -84,4 +84,113 @@
 <div class="mb-1"><strong>{{ "User ID" | t }}:</strong> {{ customer.user_id }}</div>
 {% endif %}
 
+<br/>    
+<br/>    
+
+<div x-data="{ active: '{{ status_filter or "all" }}' }" class="flex flex-wrap gap-2 mb-4">
+    <button 
+        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=1"
+        hx-target="#customer-info"
+        class="px-3 py-1 border rounded hover:bg-gray-200"
+        :class="{'bg-gray-100': {{ status_filter }} === 1}" >
+        {{ "Not interested" | t }}
+        <span>{{ totals.not_going }}</span>
+    </button>
+
+    <button 
+        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=2"
+        hx-target="#customer-info"
+        class="px-3 py-1 border rounded hover:bg-gray-200"
+        :class="{'bg-gray-100': {{ status_filter }} === 2}" >
+        {{ "Interested" | t }}
+        <span >{{ totals.maybe }}</span>
+    </button>
+
+    <button 
+        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=3"
+        hx-target="#customer-info"
+        class="px-3 py-1 border rounded hover:bg-gray-200"
+        :class="{'bg-gray-100': {{ status_filter }} === 3}" >
+        {{ "Comming" | t }}
+        <span>{{ totals.going }}</span>
+    </button>
+
+    <button 
+        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=4"
+        hx-target="#customer-info"
+        class="px-3 py-1 border rounded hover:bg-gray-200"
+        :class="{'bg-gray-100': {{ status_filter }} === 4}" >
+        {{ "Paid" | t }}
+        <span>{{ totals.paid }}</span>
+    </button>
+
+    <button 
+        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=5"
+        hx-target="#customer-info"
+        class="px-3 py-1 border rounded hover:bg-gray-200"
+        :class="{'bg-gray-100': {{ status_filter }} === 5}" >
+        {{ "Attended" | t }}
+        <span>{{ totals.attended }}</span>
+    </button>
+
+    <button 
+        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short"
+        hx-target="#customer-info"
+        class="px-3 py-1 border rounded hover:bg-gray-200"
+        :class="{'bg-gray-100': {{ status_filter }} === 0}" >
+        {{ "All" | t }}
+        <span>
+            {{ totals.not_going + totals.maybe + totals.going + totals.paid + totals.attended }}
+        </span>
+    </button>
+
+</div>
+
+<table class="w-full border border-gray-300 mt-2 table-fixed">
+  <thead class="bg-gray-100">
+    <tr>
+      <!-- Name column: auto width -->
+      <th class="px-3 py-1 border text-left whitespace-nowrap w-[50%]">
+        {{ "Name" | t }}
+      </th>
+
+      <!-- Other columns: equal width -->
+      <th class="px-3 py-1 border text-center w-[10%]">
+        {{ "Not interested" | t }}
+      </th>
+      <th class="px-3 py-1 border text-center w-[10%]">
+        {{ "Interested" | t }}
+      </th>
+      <th class="px-3 py-1 border text-center w-[10%]">
+        {{ "Comming" | t }}
+      </th>
+      <th class="px-3 py-1 border text-center w-[10%]">
+        {{ "Paid" | t }}
+      </th>
+      <th class="px-3 py-1 border text-center w-[10%]">
+        {{ "Pay at the door" | t }}
+      </th>
+      <th class="px-3 py-1 border text-center w-[10%]">
+        {{ "Attended" | t }}
+      </th>
+      <th class="px-3 py-1 border text-center w-[10%]">
+        {{ "Did not attend" | t }}
+      </th>
+    </tr>
+  </thead>
+    <tbody>
+        {% for ec in event_customers %} 
+        <tr class="hover:bg-gray-50">
+            <td class="px-3 py-1 border">{{ ec.event.name }} {{ ec.event.start_date.strftime('%Y-%m-%d') }}</td>
+            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 2 %}✔{% endif %}</td>
+            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 1 %}✔{% endif %}</td>
+            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 3 %}✔{% endif %}</td>
+            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 6 %}✔{% endif %}</td>
+            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 4 %}✔{% endif %}</td>
+            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 5 %}✔{% endif %}</td>
+            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 7 %}✔{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
