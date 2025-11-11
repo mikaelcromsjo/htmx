@@ -66,7 +66,7 @@ def assign_customers_caller(db: Session, ids: List[int], caller_id: int):
     return updated_rows
 
 def get_user_customers(db, request, user):
-#    calculate_last_call(db)
+    calculate_last_call(db)
     query = db.query(Customer)
 
     if user.admin != 1:

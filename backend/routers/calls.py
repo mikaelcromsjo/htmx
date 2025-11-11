@@ -255,6 +255,7 @@ async def save_call(
     event_id = update_data.event_id
     event_status = getattr(update_data, "event_status", None)
     customer_id = update_data.customer_id
+    status = getattr(update_data, "status", None)
 
     # update customer comment
     customer_comment = getattr(update_data, "customer_comment", None)
@@ -262,6 +263,13 @@ async def save_call(
         id=customer_id
     ).first()
     customer.comment = customer_comment
+
+    if (status == "1" or status == "2"):
+        # Ensure extra is a dict
+        if customer.extra is None:
+            customer.extra = {}
+        customer.extra["last_call_date"] = datetime.now(timezone.utc).replace(second=0, microsecond=0).isoformat()
+
     db.commit()
     db.refresh(customer)
 
@@ -345,7 +353,6 @@ async def save_call(
     if isinstance(call_id, str):
         existing_call = db.query(Call).filter_by(id=call_id).first()
 
-    status = getattr(update_data, "status", None)
     if (status):
         # Use existing call or create new one
         call = existing_call or Call()
@@ -361,12 +368,6 @@ async def save_call(
             call.call_date = datetime.now(timezone.utc)
             call.id = None  # let DB auto-generate if using Integer PK
             db.add(call)
-
-        if (status == "1" or status== "2"):
-            # Ensure extra is a dict
-            if call.extra is None:
-                call.extra = {}
-            call.extra["last_call_date"] = str(datetime.now(timezone.utc))
 
         # set caller_id from logged in user
         call.caller_id = user.caller_id

@@ -101,7 +101,7 @@ clearSelectedIds() {
         {% set number = 500 %}
     {% elif delta_days == 2 %}
         {% set number = 400 %}
-    {% elif delta_days < 0 %}
+    {% elif delta_days <= -1 %}
         {% set number = 0 %}
     {% elif delta_days <= 7 %}
         {% set number = 300 %}
@@ -119,7 +119,7 @@ clearSelectedIds() {
     {% set number = 0 %}
 {% endif %}
 
-                    <td class="px-2 py-1 border bg-green-{{number}}">{{ loop.index  }}</td>
+                    <td class="px-2 py-1 border bg-green-{{number}} ">{{ loop.index  }}</td>
                     <td class="px-2 py-1 border">{{ customer.first_name }} {{ customer.last_name }}</td>
                     <td class="px-2 py-1 border">{{ customer.email or ''}}</td>
                     <td class="px-2 py-1 border">{{ customer.phone or ''}}</td>
