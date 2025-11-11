@@ -1,0 +1,175 @@
+Perfect — using **Docker** makes Alembic setup even cleaner and reproducible. 🚀
+Let’s walk through exactly how to **add Alembic to your Dockerized FastAPI/Flask (SQLAlchemy + SQLite or Postgres)** app.
+
+---
+
+## 🧩 1. Verify Your Project Layout
+
+You likely have something like this:
+
+```
+app/
+│── main.py
+│── models.py
+│── database.py
+│── ...
+Dockerfile
+docker-compose.yml   (optional)
+```
+
+We’ll add Alembic here:
+
+```
+alembic/
+│── env.py
+│── versions/
+alembic.ini
+```
+
+---
+
+## 🪄 2. Install Alembic in Docker
+
+In your **Dockerfile**, add Alembic to the `pip install` line:
+
+```dockerfile
+RUN pip install --no-cache-dir alembic
+```
+
+If you already use `requirements.txt`, just add:
+
+```
+alembic
+```
+
+Then rebuild:
+
+```bash
+docker compose build
+```
+
+(or `docker build .` if not using compose)
+
+---
+
+## ⚙️ 3. Initialize Alembic
+
+Run this inside your container:
+
+```bash
+docker compose run --rm app alembic init alembic
+```
+
+*(replace `app` with your container/service name)*
+
+This creates:
+
+```
+alembic.ini
+alembic/
+  ├── env.py
+  ├── script.py.mako
+  └── versions/
+```
+
+---
+
+## 🧠 4. Configure Alembic for Your App
+
+### In `alembic.ini`:
+
+Set the DB connection string (for SQLite, for example):
+
+```ini
+sqlalchemy.url = sqlite:///./app.db
+```
+
+For Postgres (using Docker Compose service names):
+
+```ini
+sqlalchemy.url = postgresql+psycopg2://user:password@db:5432/app_db
+```
+
+---
+
+### In `alembic/env.py`:
+
+Import your models and metadata so Alembic can autogenerate migrations.
+
+Modify `env.py` to include something like:
+
+```python
+import sys
+from os import path
+sys.path.append(path.join(path.dirname(__file__), '..'))  # Ensure app is importable
+
+from app.models import Base  # <-- adjust import as needed
+from app.database import engine  # optional if you want engine reuse
+
+target_metadata = Base.metadata
+```
+
+---
+
+## ⚡ 5. Create a Migration (e.g., add `last_call_date`)
+
+Once you’ve updated your model:
+
+```python
+class Customer(Base):
+    __tablename__ = "customers"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    last_call_date = Column(DateTime, nullable=True)
+```
+
+Run inside the container:
+
+```bash
+docker compose run --rm app alembic revision --autogenerate -m "add last_call_date to customers"
+```
+
+That creates a new file in `alembic/versions/`.
+
+---
+
+## 🚀 6. Apply (upgrade) the migration
+
+Still inside Docker:
+
+```bash
+docker compose run --rm app alembic upgrade head
+```
+
+Now your container’s database schema is up to date.
+
+---
+
+## 🧩 7. (Optional) Automate Migration on Startup
+
+You can add this to your Docker entrypoint or startup script so migrations always apply automatically:
+
+```bash
+alembic upgrade head && python app/main.py
+```
+
+Or in Dockerfile CMD:
+
+```dockerfile
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+```
+
+---
+
+## ✅ Summary
+
+| Step               | Command                                        | Purpose                 |
+| ------------------ | ---------------------------------------------- | ----------------------- |
+| Initialize Alembic | `alembic init alembic`                         | Create migration folder |
+| Generate migration | `alembic revision --autogenerate -m "message"` | Detect schema changes   |
+| Apply migration    | `alembic upgrade head`                         | Update DB schema        |
+| Roll back          | `alembic downgrade -1`                         | Undo one migration      |
+
+---
+
+Would you like me to show you a **ready-to-use Dockerfile + Alembic config snippet** that automatically runs migrations when the container starts? (so you never need to do it manually).

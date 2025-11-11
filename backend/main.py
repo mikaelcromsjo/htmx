@@ -175,6 +175,8 @@ async def custom_http_exception_handler(request: Request, exc: StarletteHTTPExce
         # Don't redirect if already on login/logout
         if request.url.path not in ["/login", "/logout"]:
             return RedirectResponse(url="/login", status_code=303)
+    if exc.status_code == 404:
+        return
     raise exc
 
 
@@ -273,6 +275,12 @@ from starlette.middleware.sessions import SessionMiddleware
 templates.env.filters["date"] = utc_to_local
 templates.env.globals["now"] = datetime.utcnow
 templates.env.globals["timedelta"] = timedelta
+# Define a custom filter to parse datetimelocal strings
+def todatetime(value, fmt="%Y-%m-%dT%H:%M:%S"):
+    return datetime.strptime(value, fmt)
+
+# Add the filter to Jinja
+templates.env.filters["todatetime"] = todatetime
 
 @app.get("/login")
 async def login_get(request: Request):

@@ -152,7 +152,7 @@
 
    <!-- Answer -->
   <button type="button" id="a"
-          class="disabled auto-save btn customer-disable px-4 py-2 rounded
+          class="auto-save can-highlight customer-disable px-4 py-2 rounded
                  bg-green-600 text-white hover:bg-green-500 disabled:bg-green-800 disabled:opacity-100"         
           disabled onclick="document.getElementById('status_value').value='1'; highlightButton(this);enableCall();">
     {{ "Answer" | t }}
@@ -160,7 +160,7 @@
 
   <!-- No Answer -->
   <button type="button"
-          class="auto-save btn btn-danger btn-select customer-disable px-4 py-2 rounded
+          class="auto-save can-highlight customer-disable px-4 py-2 rounded
                  bg-red-600 text-white hover:bg-red-500 disabled:bg-red-800 disabled:opacity-100"
           disabled
           onclick="document.getElementById('status_value').value='2'; highlightButton(this);enableCall();">
@@ -170,7 +170,7 @@
 
   <!-- Outside Call -->
   <button type="button"
-          class="auto-save btn btn-warning btn-select customer-disable px-4 py-2 rounded
+          class="auto-save can-highlight customer-disable px-4 py-2 rounded
                  bg-yellow-500 text-white hover:bg-yellow-400 disabled:bg-yellow-700 disabled:opacity-100"
           disabled
           onclick="document.getElementById('status_value').value='3'; highlightButton(this);enableCall();">
@@ -217,7 +217,7 @@
 
   <!-- Alarm -->
   <button type="button"
-          class="customer-disable btn btn-success auto-save px-4 py-2 rounded
+          class="customer-disable auto-save px-4 py-2 rounded
                  bg-blue-600 text-white hover:bg-blue-500 disabled:bg-blue-800 disabled:opacity-100"
           disabled
           onclick="showAlarmModal()">
@@ -225,7 +225,7 @@
   </button>
 
   <button type="submit"
-          class="customer-disable btn btn-success auto-save px-4 py-2 rounded
+          class="customer-disable auto-save px-4 py-2 rounded
                  bg-green-600 text-white hover:bg-green-500 disabled:bg-green-800 disabled:opacity-100"
           disabled>
     {{ "Save" | t }}
@@ -311,7 +311,7 @@
 
 
 <script>
-  const buttons = document.querySelectorAll('.btn-select');
+  const buttons = document.querySelectorAll('.can-highlight');
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       buttons.forEach(b => b.classList.remove('highlight'));

@@ -362,6 +362,12 @@ async def save_call(
             call.id = None  # let DB auto-generate if using Integer PK
             db.add(call)
 
+        if (status == "1" or status== "2"):
+            # Ensure extra is a dict
+            if call.extra is None:
+                call.extra = {}
+            call.extra["last_call_date"] = str(datetime.now(timezone.utc))
+
         # set caller_id from logged in user
         call.caller_id = user.caller_id
 

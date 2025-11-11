@@ -88,8 +88,38 @@ clearSelectedIds() {
                     @click="selectedRow = {{ loop.index  }}"
                     >
 
+{% if customer.extra.last_call_date %}
+    {# Convert the call_date string to a datetime using your todatetime filter #}
+    {% set last_call = customer.extra.last_call_date | todatetime %}
+    
+    {# Calculate difference in days from today #}
+    {% set delta_days = (now().date() - last_call.date()).days %}
+    
+    {% if delta_days == 0 %}
+        {% set number = 800 %}
+    {% elif delta_days == 1 %}
+        {% set number = 700 %}
+    {% elif delta_days == 2 %}
+        {% set number = 600 %}
+    {% elif delta_days < 0 %}
+        {% set number = 0 %}
+    {% elif delta_days <= 7 %}
+        {% set number = 500 %}
+    {% elif delta_days <= 14 %}
+        {% set number = 400 %}
+    {% elif delta_days <= 21 %}
+        {% set number = 300 %}
+    {% elif delta_days <= 28 %}
+        {% set number = 200 %}
+    {% else %}
+        {% set number = 100 %}
+    {% endif %}
+{% else %}
+    {# If last_call_date is undefined, assign a default number #}
+    {% set number = 100 %}
+{% endif %}
 
-                    <td class="px-2 py-1 border">{{ loop.index  }}</td>
+                    <td class="px-2 py-1 border bg-green-{{number}}">{{ loop.index  }}</td>
                     <td class="px-2 py-1 border">{{ customer.first_name }} {{ customer.last_name }}</td>
                     <td class="px-2 py-1 border">{{ customer.email or ''}}</td>
                     <td class="px-2 py-1 border">{{ customer.phone or ''}}</td>

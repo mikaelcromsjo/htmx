@@ -2,14 +2,14 @@
 
 from sqlalchemy.orm import Session, declarative_base
 from typing import List, Optional
-from models.models import Customer, Caller
+from models.models import Customer, Caller, Call
 from sqlalchemy.orm import Session, joinedload
 from core.models.base import Base
 from fastapi import Request
 from pydantic import BaseModel, Field
 from core.functions.helpers import build_filters
 from typing import List, Optional
-
+import datetime
 
 class SelectedIDs(BaseModel):
     ids: List[int] = Field(..., alias="selected_ids")
@@ -66,6 +66,7 @@ def assign_customers_caller(db: Session, ids: List[int], caller_id: int):
     return updated_rows
 
 def get_user_customers(db, request, user):
+#    calculate_last_call(db)
     query = db.query(Customer)
 
     if user.admin != 1:
@@ -121,3 +122,33 @@ def exact_vals(rows, exact_filters):
         if include:
             results.append(row)
     return results
+
+def calculate_last_call(db: Session):
+    customers = db.query(Customer).all()
+
+    for customer in customers:
+        last_call = (
+            db.query(Call)
+            .filter(Call.customer_id == customer.id)
+            .filter(Call.status.in_([1, 2]))  # successful or answered calls
+            .order_by(Call.call_date.desc())
+            .first()
+        )
+
+        # Ensure `extra` exists and is a dict
+        if customer.extra is None:
+            customer.extra = {}
+
+        if last_call:
+            customer.extra["last_call_date"] = (
+                last_call.call_date.replace(second=0, microsecond=0).isoformat()
+                if isinstance(last_call.call_date, datetime.datetime)
+                else last_call.call_date.isoformat()
+                if isinstance(last_call.call_date, datetime.date)
+                else str(last_call.call_date)
+            )
+        else:
+            # No successful call found — clear the field
+            customer.extra.pop("last_call_date", None)
+
+    db.commit()
