@@ -116,7 +116,7 @@ clearSelectedIds() {
     {% endif %}
 {% else %}
     {# If last_call_date is undefined, assign a default number #}
-    {% set number = 100 %}
+    {% set number = 0 %}
 {% endif %}
 
                     <td class="px-2 py-1 border bg-green-{{number}}">{{ loop.index  }}</td>
