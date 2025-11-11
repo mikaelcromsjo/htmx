@@ -134,7 +134,7 @@
         {% for ec in event_customers %}
 
 {% set enableRow = user.admin > 0 or user.caller_id == ec.customer.caller_id %}
-<tr class="hover:bg-gray-50 {% if not enableRow %}opacity-50 pointer-events-none{% endif %}">
+<tr class="hover:bg-gray-100 {% if enableRow %} {% endif %} {% if not enableRow %} bg-gray-50 {% endif %}">
     
     <!-- Customer name -->
     <td class="px-3 py-1 border">
@@ -145,7 +145,8 @@
     {% for status in [2,1,3,4,6,5,7] %}
     <td class="px-3 py-1 border text-center">
 
-    <label class="custom-radio">
+    <label class="custom-radio {% if not enableRow %}pointer-events-none{% endif %}">
+
         <input
         type="radio"
         name="dummy-{{ ec.customer.id }}"
