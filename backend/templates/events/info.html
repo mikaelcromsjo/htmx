@@ -36,7 +36,7 @@
 
 
 <br/>    
-<br/>    
+<br/>
 
 <div x-data="{ active: '{{ status_filter or "all" }}' }" class="flex flex-wrap gap-2 mb-4">
     <button 
@@ -132,18 +132,59 @@
     </thead>
     <tbody>
         {% for ec in event_customers %}
-        <tr class="hover:bg-gray-50">
-            <td class="px-3 py-1 border">{{ ec.customer.first_name }} {{ ec.customer.last_name }}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 2 %}✔{% endif %}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 1 %}✔{% endif %}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 3 %}✔{% endif %}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 4 %}✔{% endif %}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 6 %}✔{% endif %}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 5 %}✔{% endif %}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 7 %}✔{% endif %}</td>
-        </tr>
+
+{% set enableRow = user.admin > 0 or user.caller_id == ec.customer.caller_id %}
+<tr class="hover:bg-gray-50 {% if not enableRow %}opacity-50 pointer-events-none{% endif %}">
+    
+    <!-- Customer name -->
+    <td class="px-3 py-1 border">
+      {{ ec.customer.first_name }} {{ ec.customer.last_name }}
+    </td>
+
+    <!-- STATUS RADIOS -->
+    {% for status in [2,1,3,4,6,5,7] %}
+    <td class="px-3 py-1 border text-center">
+
+    <label class="custom-radio">
+        <input
+        type="radio"
+        name="dummy-{{ ec.customer.id }}"
+        value="{{ status }}"
+        {% if ec.status == status %} checked {% endif %}
+
+        hx-trigger="change"
+        hx-post="{{ url_for('save_call') }}"
+        hx-swap="none"
+        hx-ext="json-enc"
+
+        hx-include="#status-form"
+        hx-vals='{
+          "customer_id": "{{ ec.customer.id }}",
+          "event_status": "{{ status }}"
+        }'
+      >
+      </label>
+
+
+    </td>
+    {% endfor %}
+
+  </tr>
+
+        
+
         {% endfor %}
     </tbody>
 </table>
+<form id="status-form"
+      hx-post="{{ url_for('save_call') }}"
+      hx-swap="none"
+      hx-ext="json-enc">
+
+  <input type="hidden" name="event_id" value="{{ event.id }}">
+  <input type="hidden" name="customer_id" value="">
+  <input type="hidden" name="event_status" value="">
+</form>
 <br/>
+
 <button onclick="printTable('customer-table')" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">{{ "Print" | t }}</button>

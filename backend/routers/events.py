@@ -71,6 +71,7 @@ def new_event(
 def event_detail(
     request: Request,
     event_id: int,
+    user = Depends(get_current_user),
     list: str | None = Query(default=None),
     status_filter: int | None = Query(default=None),
     db: Session = Depends(get_db),
@@ -120,7 +121,8 @@ def event_detail(
                 "event": event, 
                 "event_customers": event_customers,
                 "totals": totals,
-                "status_filter": status_filter
+                "status_filter": status_filter,
+                "user": user,
             }
         )
     else:

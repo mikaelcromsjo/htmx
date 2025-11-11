@@ -61,6 +61,9 @@ from sqlalchemy.orm import Session
 from models.models import Alarm
 from core.database import SessionLocal
 from sqlalchemy import func, or_, and_
+from fastapi.responses import RedirectResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
 
 async def alarm_scheduler():
     logger.info("✅ Alarm.")
@@ -158,9 +161,13 @@ def get_translator_cached(lang_code: str):
 # --- FastAPI app setup ---
 app = FastAPI(title="HTMX + Alpine.js Prototype", debug=True)
 
-
-from fastapi.responses import RedirectResponse
-from starlette.exceptions import HTTPException as StarletteHTTPException
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    # Only return the error message, no traceback
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
 
 @app.exception_handler(StarletteHTTPException)
 async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):

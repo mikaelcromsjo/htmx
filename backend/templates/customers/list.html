@@ -25,7 +25,6 @@ clearSelectedIds() {
     document.querySelectorAll('.customer-checkbox').forEach(cb => {
         if (cb.checked) {
             cb.checked = false;
-//            cb.dispatchEvent(new Event('change')); // triggers Alpine toggle if needed
         }
     });
 },
