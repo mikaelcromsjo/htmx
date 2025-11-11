@@ -3,6 +3,7 @@
 <div id="customer-container">
     <div id="customer-list"
         x-data="{
+            selectedRow: 0,
             selected: JSON.parse(localStorage.getItem('selectedCustomers') || '{}'),
             showSelect: JSON.parse(localStorage.getItem('showSelect') || 'true'),
             toggle(id) {
@@ -49,17 +50,17 @@ clearSelectedIds() {
     >
 </div>
 <div class="full-table">
-        <table class="table-auto w-full border overflow-x-auto">
+        <table class="table-fixed w-full border overflow-x-auto">
             <thead>
                 <tr>
-                    <th class="px-2 py-1 border">{{ "Nr" | t }}</th>
-                    <th class="px-2 py-1 border">{{ "Name" | t }}</th>
-                    <th class="px-2 py-1 border">{{ "Email" | t }}</th>
-                    <th class="px-2 py-1 border">{{ "Phone" | t }}</th>
-                    <th class="px-2 py-1 border">{{ "Location" | t }}</th>
-                    <th x-show="is_admin" class="px-2 py-1 border">{{ "Caller" | t }}</th>
-                    <th class="px-2 py-1 border">{{ "Command" | t }}</th>
-                    <th class="px-2 py-1 border text-center" 
+                    <th class="w-[5%] px-2 py-1 border">{{ "Nr" | t }}</th>
+                    <th class="w-[30%] px-2 py-1 border">{{ "Name" | t }}</th>
+                    <th class="w-[20%] px-2 py-1 border">{{ "Email" | t }}</th>
+                    <th class="w-[20%] px-2 py-1 border">{{ "Phone" | t }}</th>
+                    <th class="w-[20%] px-2 py-1 border">{{ "Location" | t }}</th>
+                    <th x-show="is_admin" class="w-[20%] px-2 py-1 border">{{ "Caller" | t }}</th>
+                    <th class="w-[20%] px-2 py-1 border">{{ "Command" | t }}</th>
+                    <th class="w-[5%] px-2 py-1 border text-center" 
                         @click.stop>
                         <input type="checkbox" x-show="query == ''" @change="const checkAll = $event.target.checked;
                             document.querySelectorAll('.customer-checkbox').forEach(cb => {
@@ -78,7 +79,15 @@ clearSelectedIds() {
                 <tr hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short"
                     hx-target="#customer-info"
                     hx-trigger="click"
-                    class="cursor-pointer hover:bg-gray-100">
+                    class="cursor-pointer"
+                    :class="{
+                            'bg-green-100 font-bold text-green-600': selectedRow === {{ loop.index }},
+                            'bg-white hover:bg-gray-100 text-gray-900': selectedRow != {{ loop.index }}
+                        }"
+                    class="cursor-pointer"
+                    @click="selectedRow = {{ loop.index  }}"
+                    >
+
 
                     <td class="px-2 py-1 border">{{ loop.index  }}</td>
                     <td class="px-2 py-1 border">{{ customer.first_name }} {{ customer.last_name }}</td>
@@ -87,7 +96,7 @@ clearSelectedIds() {
                     <td class="px-2 py-1 border">{{ customer.location or '' }}</td>
                     <td x-show="is_admin" class="px-2 py-1 border">{{ customer.caller.name }}</td>
 
-                    <td class="px-2 py-1 border text-center" 
+                    <td class="px-2 py-1 border text-center"
                         @click.stop
                         >
 

@@ -1,19 +1,28 @@
 <div id="event-container">
-    <div id="event-list">
+    <div id="event-list" 
+        x-data="{ selectedRow: 0 }">
             <div class="full-table">
-            <table class="table-auto w-full border overflow-x-auto">
+            <table class="table-fixed w-full border overflow-x-auto">
                 <thead>
                     <tr>
-                        <th class="px-2 py-1 border">{{ "Nr" | t }}</th>
-                        <th class="px-2 py-1 border">{{ "Name" | t }}</th>
-                        <th class="px-2 py-1 border">{{ "Start Date" | t }}</th>
-                        <th class="px-2 py-1 border" x-show="is_admin">{{ "Command" | t }}</th>
+                        <th class="w-[5%] px-2 py-1 border">{{ "Nr" | t }}</th>
+                        <th class="w-[30%] px-2 py-1 border">{{ "Name" | t }}</th>
+                        <th class="w-[30%] px-2 py-1 border">{{ "Start Date" | t }}</th>
+                        <th class="w-[30%] px-2 py-1 border" x-show="is_admin">{{ "Command" | t }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for event in events %}
-                    <tr hx-get="{{ url_for('event_detail', event_id=event.id) }}?list=short" hx-target="#event-info"
-                        hx-trigger="click" class="cursor-pointer hover:bg-gray-100">
+                    <tr hx-get="{{ url_for('event_detail', event_id=event.id) }}?list=short" 
+                        hx-target="#event-info"
+                        hx-trigger="click" 
+                        :class="{
+                            'bg-blue-100 font-bold text-blue-600 text-bold': selectedRow === {{ loop.index }},
+                            'bg-white hover:bg-gray-100 text-gray-900': selectedRow != {{ loop.index }}
+                        }"
+                        class="cursor-pointer"
+                        @click="selectedRow = {{ loop.index  }}"
+                        >
                         <td class="px-2 py-1 border">{{ loop.index  }}</td>
                         <td class="px-2 py-1 border">{{ event.name }}</td>
                         <td class="px-2 py-1 border">{{ event.start_date }}</td>

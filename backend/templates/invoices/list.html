@@ -13,8 +13,17 @@
             </thead>
             <tbody>
                 {% for invoice in invoices %}
-                <tr hx-get="{{ url_for('invoice_detail', invoice_id=invoice.id) }}?list=short" hx-target="#invoice-info"
-                    hx-trigger="click" class="cursor-pointer hover:bg-gray-100">
+                <tr hx-get="{{ url_for('invoice_detail', invoice_id=invoice.id) }}?list=short" 
+                    hx-target="#invoice-info"
+                    hx-trigger="click"
+                    :class="{
+                            'bg-blue-100 font-bold hover:bg-blue-200 text-blue-600': selectedRow === {{ loop.index }},
+                            'bg-white hover:bg-gray-100 text-gray-900': selectedRow != {{ loop.index }}
+                        }"
+                    class="cursor-pointer"
+                    @click="selectedRow = {{ loop.index  }}"
+                    >
+                    
                     <td class="px-2 py-1 border">{{ invoice.id }}</td>
                     <td class="px-2 py-1 border">{{ invoice.number }}</td>
                     <td class="px-2 py-1 border">{{ invoice.company.extra.company_name }}</td>

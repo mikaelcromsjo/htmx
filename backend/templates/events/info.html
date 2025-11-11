@@ -38,6 +38,40 @@
 <br/>    
 <br/>
 
+<div         x-data="{
+            selected: JSON.parse(localStorage.getItem('selectedCustomers') || '{}'),
+            showSelect: JSON.parse(localStorage.getItem('showSelect') || 'true'),
+            toggle(id) {
+                this.selected[id] = !this.selected[id];
+                localStorage.setItem('selectedCustomers', JSON.stringify(this.selected));
+            },
+            toggleSelect() {
+                this.showSelect = !this.showSelect;
+                localStorage.setItem('showSelect', JSON.stringify(this.showSelect));
+            },
+clearSelectedIds() {
+    // Loop through keys and set each to false
+    for (const id in this.selected) {
+        if (this.selected.hasOwnProperty(id)) {
+            this.selected[id] = false;
+        }
+    }
+    // Clear localStorage
+    localStorage.removeItem('selectedCustomers');
+    document.querySelectorAll('.customerevent-checkbox').forEach(cb => {
+        if (cb.checked) {
+            cb.checked = false;
+        }
+    });
+},
+            getSelectedIds() {
+                return Object.keys(this.selected)
+                            .filter(id => this.selected[id])
+                            .map(id => parseInt(id));
+            }
+        }"
+>
+
 <div x-data="{ active: '{{ status_filter or "all" }}' }" class="flex flex-wrap gap-2 mb-4">
     <button 
         hx-get="{{ url_for('event_detail', event_id=event.id) }}?list=short&status_filter=2"
@@ -127,6 +161,18 @@
             <th class="px-3 py-1 border w-[10%]">{{ "Pay at the door" | t }}</th>
             <th class="px-3 py-1 border w-[10%]">{{ "Attended" | t }}</th>
             <th class="px-3 py-1 border w-[10%]">{{ "Did not attend" | t }}</th>
+            <th x-show="showSelect" class="px-2 py-1 border text-center w-[10%]" 
+                @click.stop>
+                <input type="checkbox" @change="const checkAll = $event.target.checked;
+                    document.querySelectorAll('.customerevent-checkbox').forEach(cb => {
+                        if (cb.checked !== checkAll) {        // only toggle boxes that differ
+                            cb.checked = checkAll;
+                            cb.dispatchEvent(new Event('change')); // triggers Alpine toggle
+                        }
+                    })
+                ">
+    </th>
+
             
         </tr>
     </thead>
@@ -165,10 +211,15 @@
         }'
       >
       </label>
-
-
     </td>
+
     {% endfor %}
+                    <td x-show="showSelect" class="px-2 py-1 border text-center" 
+                        @click.stop>
+                        <input x-show="'{{ enableRow }}' == 'True'" type="checkbox" class="customerevent-checkbox"
+                            :checked="selected[{{ ec.customer.id }}] || false"
+                            @change="toggle({{ ec.customer.id }})">
+                    </td>
 
   </tr>
 
@@ -188,4 +239,29 @@
 </form>
 <br/>
 
+        <div class="mt-2 flex gap-2">
+            <button @click="toggleSelect()"
+                    class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+                    
+                {{ "Toggle Select Column" | t }}
+            </button>
+
+        <button x-on:click="clearSelectedIds()"
+                class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+                {{ "Clear Customers" | t }}
+        </button>
+
+
+        <button
+                :hx-vals="JSON.stringify({ selected_ids: getSelectedIds() })"
+                hx-post="/calls/dashboard"
+                hx-ext="json-enc"
+                hx-target="#calls_content"
+                class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+                {{ "Load Selected Customers" | t }}
+            </button>
+
+
 <button onclick="printTable('customer-table')" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">{{ "Print" | t }}</button>
+
+</div>
