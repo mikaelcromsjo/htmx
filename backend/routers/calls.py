@@ -264,7 +264,7 @@ async def save_call(
     ).first()
     customer.comment = customer_comment
 
-    if (status == "1" or status == "2"):
+    if (status == "1" or status == "3"):
         # Ensure extra is a dict
         if customer.extra is None:
             customer.extra = {}

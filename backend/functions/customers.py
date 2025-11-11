@@ -130,7 +130,7 @@ def calculate_last_call(db: Session):
         last_call = (
             db.query(Call)
             .filter(Call.customer_id == customer.id)
-            .filter(Call.status.in_([1, 2]))  # successful or answered calls
+            .filter(Call.status.in_([1, 3]))  # successful or answered calls
             .order_by(Call.call_date.desc())
             .first()
         )
