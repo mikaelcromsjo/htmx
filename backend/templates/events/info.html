@@ -119,7 +119,7 @@
 <table id="customer-table" class="w-full border border-gray-300 mt-2 table-fixed">
     <thead class="bg-gray-100">
         <tr>
-            <th class="px-3 py-1 border w-[50%]">{{ "Name" | t }}</th>
+            <th class="px-3 py-2 border w-[50%]">{{ "Name" | t }}</th>
             <th class="px-3 py-1 border w-[10%]">{{ "Not interested" | t }}</th>
             <th class="px-3 py-1 border w-[10%]">{{ "Interested" | t }}</th>
             <th class="px-3 py-1 border w-[10%]">{{ "Comming" | t }}</th>
@@ -137,13 +137,13 @@
 <tr class="hover:bg-gray-100 {% if enableRow %} {% endif %} {% if not enableRow %} bg-gray-50 {% endif %}">
     
     <!-- Customer name -->
-    <td class="px-3 py-1 border">
+    <td class="px-3 py-2 border">
       {{ ec.customer.first_name }} {{ ec.customer.last_name }}
     </td>
 
     <!-- STATUS RADIOS -->
     {% for status in [2,1,3,4,6,5,7] %}
-    <td class="px-3 py-1 border text-center">
+    <td class="px-3 border text-center">
 
     <label class="custom-radio {% if not enableRow %}pointer-events-none{% endif %}">
 
