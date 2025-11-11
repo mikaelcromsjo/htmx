@@ -96,23 +96,23 @@ clearSelectedIds() {
     {% set delta_days = (now().date() - last_call.date()).days %}
     
     {% if delta_days == 0 %}
-        {% set number = 800 %}
-    {% elif delta_days == 1 %}
-        {% set number = 700 %}
-    {% elif delta_days == 2 %}
         {% set number = 600 %}
+    {% elif delta_days == 1 %}
+        {% set number = 500 %}
+    {% elif delta_days == 2 %}
+        {% set number = 400 %}
     {% elif delta_days < 0 %}
         {% set number = 0 %}
     {% elif delta_days <= 7 %}
-        {% set number = 500 %}
-    {% elif delta_days <= 14 %}
-        {% set number = 400 %}
-    {% elif delta_days <= 21 %}
         {% set number = 300 %}
-    {% elif delta_days <= 28 %}
+    {% elif delta_days <= 14 %}
         {% set number = 200 %}
-    {% else %}
+    {% elif delta_days <= 21 %}
         {% set number = 100 %}
+    {% elif delta_days <= 28 %}
+        {% set number = 50 %}
+    {% else %}
+        {% set number = 0 %}
     {% endif %}
 {% else %}
     {# If last_call_date is undefined, assign a default number #}
