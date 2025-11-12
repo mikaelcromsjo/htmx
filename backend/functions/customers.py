@@ -140,15 +140,6 @@ def calculate_last_call(db: Session):
             customer.extra = {}
 
         if last_call:
-            customer.extra["last_call_date"] = (
-                last_call.call_date.replace(second=0, microsecond=0).isoformat()
-                if isinstance(last_call.call_date, datetime.datetime)
-                else last_call.call_date.isoformat()
-                if isinstance(last_call.call_date, datetime.date)
-                else str(last_call.call_date)
-            )
-        else:
-            # No successful call found — clear the field
-            customer.extra.pop("last_call_date", None)
+            customer.last_call_date = last_call.call_date
 
     db.commit()

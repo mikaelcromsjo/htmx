@@ -73,12 +73,11 @@ clearSelectedIds() {
                             'bg-white hover:bg-gray-100 text-gray-900': selectedRow != {{ loop.index }}
                         }" class="cursor-pointer" 
                         @click="selectedRow = {{ loop.index  }}; $store.modal.open = true">
-{# Get raw date value #}
-{% set raw_last_call = customer.extra.last_call_date %}
-{% set number = 0 %}  {# Default fallback value #}
 
-{% if raw_last_call %}
-    {% set last_call = raw_last_call | todatetime %}
+                        {% set number = 0 %}  {# Default fallback value #}
+
+{% if customer.last_call_date %}
+    {% set last_call = customer.last_call_date %}
     {% if last_call %}
         {% set delta_days = (now().date() - last_call.date()).days %}
 

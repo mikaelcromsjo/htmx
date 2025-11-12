@@ -57,7 +57,7 @@ docker compose build
 Run this inside your container:
 
 ```bash
-docker compose run --rm app alembic init alembic
+docker compose run --rm fastapi_htmx_dev alembic init alembic
 ```
 
 *(replace `app` with your container/service name)*

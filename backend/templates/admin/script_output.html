@@ -1,11 +1,4 @@
  <h1 class="text-2xl font-bold mb-6">Adminscript</h1>
- 
-
-<div class="mt-6 h-screen">
-  <div id="html-output" class="w-full border rounded shadow-inner mt-2 p-2" >
-    {{ html_output | safe }}
-  </div>
-</div>
 
  <!-- Script Output -->
     <div>
@@ -17,5 +10,13 @@
       {% endif %}
     </div>
     <br/>
-    <!-- HTML Output (unformatted / escaped) -->
+
+     <!-- HTML Output (unformatted / escaped) -->
+
+<div class="mt-6 h-screen">
+  <div id="html-output" class="w-full border rounded shadow-inner mt-2 p-2" >
+    {{ html_output | safe }}
+  </div>
+</div>
+
 </div>

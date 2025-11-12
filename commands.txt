@@ -20,3 +20,6 @@ docker exec -it fastapi_htmx_dev python /app/backend/scripts/manage_users.py adm
 manage_users   admin --caller Admin --admin 1 --password 1234
 manage_users   eva --caller Eva --admin 0 --password 1234
 manage_users   tobbe --caller Admin --admin 0 --password 1234
+
+
+git push -u origin migration

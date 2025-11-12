@@ -268,7 +268,7 @@ async def save_call(
         # Ensure extra is a dict
         if customer.extra is None:
             customer.extra = {}
-        customer.extra["last_call_date"] = datetime.now(timezone.utc).replace(second=0, microsecond=0).isoformat()
+        customer.last_call_date = datetime.now(timezone.utc)
 
     db.commit()
     db.refresh(customer)

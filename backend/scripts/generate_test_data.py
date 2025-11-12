@@ -9,9 +9,6 @@ if BASE_DIR not in sys.path:
 from core.database import SessionLocal
 from models.models import Caller, Customer, Call, Event, EventCustomer
 from core.models.models import User
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # -----------------------------
 # CONFIG (base numbers)

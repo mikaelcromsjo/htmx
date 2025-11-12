@@ -41,3 +41,7 @@ Pillow>=9.1.0
 fontTools>=4.0.0
 
 plotly
+
+#migration
+alembic
+python-dateutil
