@@ -1,3 +1,7 @@
+<div x-init="$store.modal.title = '{{ "Alarm" | t }}'"></div> 
+<div x-init="$store.modal.submit = ''"></div> 
+
+
 {% if alarm.note %}
 <div class="mb-1"><strong>{{ "Note" | t }}:</strong> {{ alarm.note }}</div>
 {% endif %}

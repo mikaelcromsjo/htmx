@@ -15,8 +15,11 @@
                 </thead>
                 <tbody>
                     {% for alarm in alarms %}
-                    <tr hx-get="{{ url_for('alarm_detail', alarm_id=alarm.id) }}?list=short" hx-target="#alarm-info"
-                        hx-trigger="click" class="cursor-pointer hover:bg-gray-100">
+                    <tr hx-get="{{ url_for('alarm_detail', alarm_id=alarm.id) }}?list=short" 
+                    hx-target="#modal-container"
+                        hx-trigger="click"
+                        @click="$store.modal.open = true"
+                        class="cursor-pointer hover:bg-gray-100">
                         <td class="px-2 py-1 border">{{ loop.index }}</td>
                         <td class="px-2 py-1 border">{{ alarm.date }}</td>
                         <td class="px-2 py-1 border">{{ alarm.reminder }}</td>
