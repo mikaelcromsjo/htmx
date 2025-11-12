@@ -275,10 +275,38 @@ from starlette.middleware.sessions import SessionMiddleware
 templates.env.filters["date"] = utc_to_local
 templates.env.globals["now"] = datetime.utcnow
 templates.env.globals["timedelta"] = timedelta
-# Define a custom filter to parse datetimelocal strings
-def todatetime(value, fmt="%Y-%m-%dT%H:%M:%S"):
-    return datetime.strptime(value, fmt)
 
+# Define a custom filter to parse datetimelocal strings
+def todatetime(value, fmts=None):
+    """
+    Safely parse a date string into a datetime object.
+    
+    Args:
+        value (str): The input date string.
+        fmts (list[str] | None): List of possible datetime formats to try.
+    
+    Returns:
+        datetime | None: Parsed datetime object, or None if parsing fails.
+    """
+    if not value:
+        return None  # gracefully handle None or empty strings
+
+    # Default list of common ISO-like formats
+    fmts = fmts or [
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%d %H:%M:%S.%f",
+        "%Y-%m-%d",  # date only
+    ]
+
+    for fmt in fmts:
+        try:
+            return datetime.strptime(value.strip(), fmt)
+        except ValueError:
+            continue  # try next format
+
+    
 # Add the filter to Jinja
 templates.env.filters["todatetime"] = todatetime
 
