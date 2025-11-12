@@ -1,8 +1,5 @@
-
-
 <div id="customer-container">
-    <div id="customer-list"
-        x-data="{
+    <div id="customer-list" x-data="{
             selectedRow: 0,
             selected: JSON.parse(localStorage.getItem('selectedCustomers') || '{}'),
             showSelect: JSON.parse(localStorage.getItem('showSelect') || 'true'),
@@ -34,35 +31,28 @@ clearSelectedIds() {
                             .filter(id => this.selected[id])
                             .map(id => parseInt(id));
             }
-        }"
-    >
+        }">
 
         <div x-data="searchTable()">
-<div class="relative my-2">🔎︎
-    <!-- Input -->
-    <input
-        type="text"
-        placeholder="{{ "Search name, number or phone." | t }}"
-        class="w-[400px] border border-gray-300 rounded pl-4 pr-3 py-2 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-
-        x-model="query"
-        @input.debounce.300ms="filterRows()"
-    >
-</div>
-<div class="full-table">
-        <table class="table-fixed w-full border overflow-x-auto">
-            <thead>
-                <tr>
-                    <th class="w-[5%] px-2 py-1 border">{{ "Nr" | t }}</th>
-                    <th class="w-[30%] px-2 py-1 border">{{ "Name" | t }}</th>
-                    <th class="w-[20%] px-2 py-1 border">{{ "Email" | t }}</th>
-                    <th class="w-[20%] px-2 py-1 border">{{ "Phone" | t }}</th>
-                    <th class="w-[20%] px-2 py-1 border">{{ "Location" | t }}</th>
-                    <th x-show="is_admin" class="w-[20%] px-2 py-1 border">{{ "Caller" | t }}</th>
-                    <th class="w-[20%] px-2 py-1 border">{{ "Command" | t }}</th>
-                    <th class="w-[5%] px-2 py-1 border text-center" 
-                        @click.stop>
-                        <input type="checkbox" x-show="query == ''" @change="const checkAll = $event.target.checked;
+            <div class="relative my-2">🔎︎
+                <!-- Input -->
+                <input type="text" placeholder="{{ " Search name, number or phone." | t }}"
+                    class="w-[400px] border border-gray-300 rounded pl-4 pr-3 py-2 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    x-model="query" @input.debounce.300ms="filterRows()">
+            </div>
+            <div class="full-table">
+                <table class="table-fixed w-full border overflow-x-auto">
+                    <thead>
+                        <tr>
+                            <th class="w-[5%] px-2 py-1 border">{{ "Nr" | t }}</th>
+                            <th class="w-[30%] px-2 py-1 border">{{ "Name" | t }}</th>
+                            <th class="w-[20%] px-2 py-1 border">{{ "Email" | t }}</th>
+                            <th class="w-[20%] px-2 py-1 border">{{ "Phone" | t }}</th>
+                            <th class="w-[20%] px-2 py-1 border">{{ "Location" | t }}</th>
+                            <th x-show="is_admin" class="w-[20%] px-2 py-1 border">{{ "Caller" | t }}</th>
+                            <th class="w-[20%] px-2 py-1 border">{{ "Command" | t }}</th>
+                            <th class="w-[5%] px-2 py-1 border text-center" @click.stop>
+                                <input type="checkbox" x-show="query == ''" @change="const checkAll = $event.target.checked;
                             document.querySelectorAll('.customer-checkbox').forEach(cb => {
                                 if (cb.checked !== checkAll) {        // only toggle boxes that differ
                                     cb.checked = checkAll;
@@ -70,130 +60,92 @@ clearSelectedIds() {
                                 }
                             })
                         ">
-                        </th>
+                            </th>
 
-                </tr>
-            </thead>
-            <tbody>
-                {% for customer in customers %}
-                <tr hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short"
-                    hx-target="#modal-container"
-                    _@click="$store.modal.open = true"
-
-                    _hx-target="#customer-info"
-                    hx-trigger="click"
-                    class="cursor-pointer"
-                    :class="{
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short"
+                            hx-target="#modal-container" 
+                            hx-trigger="click" class="cursor-pointer" :class="{
                             'bg-green-100 font-bold text-green-600': selectedRow === {{ loop.index }},
                             'bg-white hover:bg-gray-100 text-gray-900': selectedRow != {{ loop.index }}
-                        }"
-                    class="cursor-pointer"
-                    @click="selectedRow = {{ loop.index  }}; $store.modal.open = true"
-                    >
+                        }" class="cursor-pointer" @click="selectedRow = {{ loop.index  }}; $store.modal.open = true">
 
-{% if customer.extra.last_call_date %}
-    {# Convert the call_date string to a datetime using your todatetime filter #}
-    {% set last_call = customer.extra.last_call_date | todatetime %}
-    
-    {# Calculate difference in days from today #}
-    {% set delta_days = (now().date() - last_call.date()).days %}
-    
-    {% if delta_days == 0 %}
-        {% set number = 600 %}
-    {% elif delta_days == 1 %}
-        {% set number = 500 %}
-    {% elif delta_days == 2 %}
-        {% set number = 400 %}
-    {% elif delta_days <= -1 %}
-        {% set number = 0 %}
-    {% elif delta_days <= 7 %}
-        {% set number = 300 %}
-    {% elif delta_days <= 14 %}
-        {% set number = 200 %}
-    {% elif delta_days <= 21 %}
-        {% set number = 100 %}
-    {% elif delta_days <= 28 %}
-        {% set number = 50 %}
-    {% else %}
-        {% set number = 0 %}
-    {% endif %}
-{% else %}
-    {# If last_call_date is undefined, assign a default number #}
-    {% set number = 0 %}
-{% endif %}
+                            {% if customer.extra.last_call_date %}
+                            {# Convert the call_date string to a datetime using your todatetime filter #}
+                            {% set last_call = customer.extra.last_call_date | todatetime %}
 
-                    <td class="px-2 py-1 border bg-green-{{number}} ">{{ loop.index  }}</td>
-                    <td class="px-2 py-1 border">{{ customer.first_name }} {{ customer.last_name }}</td>
-                    <td class="px-2 py-1 border">{{ customer.email or ''}}</td>
-                    <td class="px-2 py-1 border">{{ customer.phone or ''}}</td>
-                    <td class="px-2 py-1 border">{{ customer.location or '' }}</td>
-                    <td x-show="is_admin" class="px-2 py-1 border">{{ customer.caller.name }}</td>
+                            {# Calculate difference in days from today #}
+                            {% set delta_days = (now().date() - last_call.date()).days %}
 
-                    <td class="px-2 py-1 border text-center"
-                        @click.stop
-                        >
+                            {% if delta_days == 0 %}
+                            {% set number = 600 %}
+                            {% elif delta_days == 1 %}
+                            {% set number = 500 %}
+                            {% elif delta_days == 2 %}
+                            {% set number = 400 %}
+                            {% elif delta_days <= -1 %} {% set number=0 %} {% elif delta_days <=7 %} {% set number=300
+                                %} {% elif delta_days <=14 %} {% set number=200 %} {% elif delta_days <=21 %} {% set
+                                number=100 %} {% elif delta_days <=28 %} {% set number=50 %} {% else %} {% set number=0
+                                %} {% endif %} {% else %} {# If last_call_date is undefined, assign a default number #}
+                                {% set number=0 %} {% endif %} <td class="px-2 py-1 border bg-green-{{number}} ">{{
+                                loop.index }}</td>
+                                <td class="px-2 py-1 border">{{ customer.first_name }} {{ customer.last_name }}</td>
+                                <td class="px-2 py-1 border">{{ customer.email or ''}}</td>
+                                <td class="px-2 py-1 border">{{ customer.phone or ''}}</td>
+                                <td class="px-2 py-1 border">{{ customer.location or '' }}</td>
+                                <td x-show="is_admin" class="px-2 py-1 border">{{ customer.caller.name }}</td>
 
-                        <button 
-                            hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}"
-                            hx-target="#modal-container"
-                            hx-swap="innerHTML"
-                            @click="$store.modal.open = true;"
-                        >
-                            {{ "Edit" | t }}
-                        </button>                
-                        <button 
-                            x-show="is_admin"
-                            hx-post="{{ url_for('delete_customer', customer_id=customer.id) }}"
-                            hx-on="htmx:afterRequest: 
+                                <td class="px-2 py-1 border text-center" @click.stop>
+
+                                    <button hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}"
+                                        hx-target="#modal-container" hx-swap="innerHTML"
+                                        @click="$store.modal.open = true;">
+                                        {{ "Edit" | t }}
+                                    </button>
+                                    <button x-show="is_admin"
+                                        hx-post="{{ url_for('delete_customer', customer_id=customer.id) }}" hx-on="htmx:afterRequest: 
                                 showPopup(event);
                                 htmx.ajax('GET', '{{ url_for('customers_list') }}', {target:'#customer-container'}); "
-                            hx-trigger="confirmed"
-                            x-confirm="{{'Are you sure you want to delete this record?' | t }}"
-                        >
-                                                    {{ "Delete" | t }}
-                        </button>   
-                    </td>
+                                        hx-trigger="confirmed"
+                                        x-confirm="{{'Are you sure you want to delete this record?' | t }}">
+                                        {{ "Delete" | t }}
+                                    </button>
+                                </td>
 
-                    <td class="px-2 py-1 border text-center" 
-                        @click.stop>
-                        <input type="checkbox" class="customer-checkbox"                            
-                            :checked="selected[{{ customer.id }}] || false"
-                            @change="toggle({{ customer.id }})">
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                                <td class="px-2 py-1 border text-center" @click.stop>
+                                    <input type="checkbox" class="customer-checkbox"
+                                        :checked="selected[{{ customer.id }}] || false"
+                                        @change="toggle({{ customer.id }})">
+                                </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
         <div class="mt-2 flex gap-2">
-            <button hx-get="{{ url_for('customer_detail', customer_id=0) }}"
-                    hx-target="#modal-container"
-                    @click="$store.modal.open = true"
-                    class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+            <button hx-get="{{ url_for('customer_detail', customer_id=0) }}" hx-target="#modal-container"
+                @click="$store.modal.open = true" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                 {{ "New Customer" | t }}
             </button>
 
-            <button hx-get="{{ url_for('customer_filter') }}"
-                    hx-target="#modal-container"
-                    @click="$store.modal.open = true"
-                    class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+            <button hx-get="{{ url_for('customer_filter') }}" hx-target="#modal-container"
+                @click="$store.modal.open = true" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                 {{ "Filter" | t }}
             </button>
 
-<button 
-    hx-post="{{ url_for('set_filter') }}"
-    hx-target="#customer-list"
-    hx-swap="innerHTML"
-    hx-ext="json-enc"
-    class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+            <button hx-post="{{ url_for('set_filter') }}" hx-target="#customer-list" hx-swap="innerHTML"
+                hx-ext="json-enc" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
 
                 {{ "Clear Filter" | t }}
             </button>
 
 
 
-<!--
+            <!--
             <button @click="toggleSelect()"
                     class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                     
@@ -205,56 +157,37 @@ clearSelectedIds() {
 
         <div class="mt-2 flex gap-2">
 
-        <button x-on:click="clearSelectedIds()"
-                class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+            <button x-on:click="clearSelectedIds()" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                 {{ "Clear Customers" | t }}
-        </button>
+            </button>
 
 
-        <button
-                :hx-vals="JSON.stringify({ selected_ids: getSelectedIds() })"
-                hx-post="/calls/dashboard"
-                hx-ext="json-enc"
-                hx-target="#calls_content"
+            <button :hx-vals="JSON.stringify({ selected_ids: getSelectedIds() })" hx-post="/calls/dashboard"
+                hx-ext="json-enc" hx-target="#calls_content"
                 class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                 {{ "Load Selected Customers" | t }}
             </button>
 
-<div x-data="{ caller_id: '', getSelectedIds }">
+            <div x-data="{ caller_id: '', getSelectedIds }">
 
-  <!-- Assign button -->
-  <button
-    :hx-vals="JSON.stringify({ caller_id: caller_id, selected_ids: { selected_ids: getSelectedIds() } })"
-    hx-post="/customers/assign"
-    hx-ext="json-enc"
-    hx-swap="none"
-    class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
-  >
-    {{ 'Assign' | t }}
-  </button>
+                <!-- Assign button -->
+                <button
+                    :hx-vals="JSON.stringify({ caller_id: caller_id, selected_ids: { selected_ids: getSelectedIds() } })"
+                    hx-post="/customers/assign" hx-ext="json-enc" hx-swap="none"
+                    class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+                    {{ 'Assign' | t }}
+                </button>
 
-  <!-- Caller selection -->
-  <select
-    id="caller-select"
-    name="caller_id"
-    x-model="caller_id"
-    class="border p-1"
-  >
+                <!-- Caller selection -->
+                <select id="caller-select" name="caller_id" x-model="caller_id" class="border p-1">
 
-    <option value="">{{ 'Select Caller...' | t }}</option>
-    {% for caller in callers %}
-      <option value="{{ caller.id }}">{{ caller.name }}</option>
-    {% endfor %}
-  </select>
+                    <option value="">{{ 'Select Caller...' | t }}</option>
+                    {% for caller in callers %}
+                    <option value="{{ caller.id }}">{{ caller.name }}</option>
+                    {% endfor %}
+                </select>
 
-</div>
+            </div>
 
-</div> 
-
-        
-    <div class="mt-4" id="customer-info"></div>
-        
+        </div>
     </div>
-
-</div>
-
