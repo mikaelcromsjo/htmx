@@ -28,21 +28,21 @@
       </div>
     </div>
 
-    <!-- Events Column -->
+    <!-- Products Column -->
     <div id="col3" class="border-end p-3 overflow-auto bg-light" style="flex:0 0 auto;">
-      <div class="font-semibold">{{ "Events" | t }}</div>
-      <div id="call-events" class="overflow-auto mt-2">
-        <div id="calls-event-list">
-          <!-- swap in events_list -->
-          {% include '/calls/events_list.html' %}
+      <div class="font-semibold">{{ "Products" | t }}</div>
+      <div id="call-products" class="overflow-auto mt-2">
+        <div id="calls-product-list">
+          <!-- swap in products_list -->
+          {% include '/calls/products_list.html' %}
         </div>
       </div>
     </div>
 
-    <!-- Event Info Column -->
+    <!-- Product Info Column -->
     <div id="col4" class="border-end p-3 overflow-auto bg-light" style="flex:0 0 auto;">
-      <div class="font-semibold">{{ "Event Info" | t }}</div>
-      <div id="event-details" class="overflow-auto mt-2 p-2 border"></div>
+      <div class="font-semibold">{{ "Product Info" | t }}</div>
+      <div id="product-details" class="overflow-auto mt-2 p-2 border"></div>
     </div>
   </div>
 
@@ -69,9 +69,9 @@
 
   <!-- Filters -->
   <div class="flex flex-wrap gap-3 p-2 mb-3 border rounded bg-light">
-    <template x-for="(value, type) in Alpine.store('eventFilters')" :key="type">
+    <template x-for="(value, type) in Alpine.store('productFilters')" :key="type">
       <label class="inline-flex items-center space-x-1 form-check form-check-inline">
-        <input type="checkbox" x-model="Alpine.store('eventFilters')[type]" 
+        <input type="checkbox" x-model="Alpine.store('productFilters')[type]" 
                class="form-check-input auto-save customer-disable">
         <span x-text="{
           filter_a: '{{ 'Parties' | t }}',
@@ -102,44 +102,44 @@
           document.getElementById('current_call').value = JSON.parse(event.detail.xhr.responseText).call_id;
           htmx.trigger('#customer-calls', 'load-customer')">
 
-    <!-- Event Status Options -->
+    <!-- Product Status Options -->
     <div class="flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light" x-data>
       <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
-        <input name="event_status" value="1" x-model="$store.eventCustomer.status" disabled
-               class="auto-save event-disable form-check-input" type="radio">
+        <input name="product_status" value="1" x-model="$store.productCustomer.status" disabled
+               class="auto-save product-disable form-check-input" type="radio">
         <span>{{ "Interested" | t }}</span>
       </label>
       <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
-        <input name="event_status" value="2" x-model="$store.eventCustomer.status" disabled
-               class="auto-save event-disable form-check-input" type="radio">
+        <input name="product_status" value="2" x-model="$store.productCustomer.status" disabled
+               class="auto-save product-disable form-check-input" type="radio">
         <span>{{ "Not interested" | t }}</span>
       </label>
       <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
-        <input name="event_status" value="3" x-model="$store.eventCustomer.status" disabled
-               class="auto-save event-disable form-check-input" type="radio">
+        <input name="product_status" value="3" x-model="$store.productCustomer.status" disabled
+               class="auto-save product-disable form-check-input" type="radio">
         <span>{{ "Comming" | t }}</span>
       </label>
       <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
-        <input name="event_status" value="4" x-model="$store.eventCustomer.status" disabled
-               class="auto-save event-disable form-check-input" type="radio">
+        <input name="product_status" value="4" x-model="$store.productCustomer.status" disabled
+               class="auto-save product-disable form-check-input" type="radio">
         <span>{{ "Paid" | t }}</span>
       </label>
       <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
-        <input name="event_status" value="6" x-model="$store.eventCustomer.status" disabled
-               class="auto-save event-disable form-check-input" type="radio">
+        <input name="product_status" value="6" x-model="$store.productCustomer.status" disabled
+               class="auto-save product-disable form-check-input" type="radio">
         <span>{{ "Pay at the door" | t }}</span>
       </label>
       <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
-        <input name="event_status" value="5" x-model="$store.eventCustomer.status" disabled
-               class="auto-save event-disable form-check-input" type="radio">
+        <input name="product_status" value="5" x-model="$store.productCustomer.status" disabled
+               class="auto-save product-disable form-check-input" type="radio">
         <span>{{ "Attended" | t }}</span>
       </label>
       <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
-        <input name="event_status" value="7" x-model="$store.eventCustomer.status" disabled
-               class="auto-save event-disable form-check-input" type="radio">
+        <input name="product_status" value="7" x-model="$store.productCustomer.status" disabled
+               class="auto-save product-disable form-check-input" type="radio">
         <span>{{ "Did not attend" | t }}</span>
       </label>
-      <input name="event_status" value="0" x-model="$store.eventCustomer.status" type="radio" class="hidden">
+      <input name="product_status" value="0" x-model="$store.productCustomer.status" type="radio" class="hidden">
     </div>
 
     <!-- Call Comment -->
@@ -185,10 +185,10 @@
           <textarea id="alarm_note" name="alarm_note" class="form-control mb-3 w-full p-2 border rounded" rows="3"></textarea>
 
           {{ "Date" | t }}
-          <input type="datetime-local" lang="sv" name="event_alarm_date" id="alarm_input"
+          <input type="datetime-local" lang="sv" name="product_alarm_date" id="alarm_input"
                  class="w-full mb-4 p-2 border rounded-lg">
           {{ "Reminder" | t }}
-          <select name="event_alarm_reminder" id="alarm_reminder" class="w-full mb-4 p-2 border rounded-lg">
+          <select name="product_alarm_reminder" id="alarm_reminder" class="w-full mb-4 p-2 border rounded-lg">
             <option value="30">{{ "30 minutes before" | t }}</option>
             <option value="60">{{ "1 hour before" | t }}</option>
             <option value="120">{{ "2 hours before" | t }}</option>
@@ -211,9 +211,9 @@
 
       <!-- Hidden inputs -->
       <input type="hidden" name="customer_comment" :value="$store.customer.comment">
-      <input type="hidden" name="event_id" :value="$store.event.id">
+      <input type="hidden" name="product_id" :value="$store.product.id">
       <input type="hidden" name="customer_id" :value="$store.customer.id">
-      <input type="hidden" name="id" id="current_call">
+      <input type="hidden" name="call_id" id="current_call">
 
   <!-- Alarm -->
   <button type="button"
@@ -271,8 +271,8 @@
       button.disabled = false;
     });
   }
-  function enableEvent() {
-    const buttons = document.querySelectorAll('.event-disable');
+  function enableProduct() {
+    const buttons = document.querySelectorAll('.product-disable');
     buttons.forEach(button => {
       button.disabled = false;
     });
@@ -291,8 +291,8 @@
     });
   }
 
-  function disableEvent() {
-    const buttons = document.querySelectorAll('.event-disable');
+  function disableProduct() {
+    const buttons = document.querySelectorAll('.product-disable');
     buttons.forEach(button => {
       button.disabled = true;
     });

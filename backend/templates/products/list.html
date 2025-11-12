@@ -1,0 +1,83 @@
+<div id="product-container">
+    <div id="product-list" 
+        x-data="{ selectedRow: 0 }">
+            <div class="full-table">
+            <table class="table-fixed w-full border overflow-x-auto">
+                <thead>
+                    <tr>
+                        <th class="w-[5%] px-2 py-1 border">{{ "Nr" | t }}</th>
+                        <th class="w-[30%] px-2 py-1 border">{{ "Name" | t }}</th>
+                        <th class="w-[30%] px-2 py-1 border">{{ "Start Date" | t }}</th>
+                        <th class="w-[30%] px-2 py-1 border" x-show="is_admin">{{ "Command" | t }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr hx-get="{{ url_for('product_detail', product_id=product.id) }}?list=short" 
+                        hx-target="#modal-container"
+                        hx-trigger="click" 
+                        :class="{
+                            'bg-blue-100 font-bold text-blue-600 text-bold': selectedRow === {{ loop.index }},
+                            'bg-white hover:bg-gray-100 text-gray-900': selectedRow != {{ loop.index }}
+                        }"
+                        class="cursor-pointer"
+                    @click="selectedRow = {{ loop.index  }}; $store.modal.open = true"
+                        >
+                        <td class="px-2 py-1 border">{{ loop.index  }}</td>
+                        <td class="px-2 py-1 border">{{ product.name }}</td>
+                        <td class="px-2 py-1 border">{{ product.start_date }}</td>
+                        <td class="px-2 py-1 border text-center" @click.stop x-show="is_admin">
+
+                            <button hx-get="{{ url_for('product_detail', product_id=product.id) }}"
+                                x-show="is_admin"
+                                hx-target="#modal-container" hx-swap="innerHTML" @click="$store.modal.open = true">
+                                {{ "Edit" | t }}
+                            </button>
+
+                            <button hx-post="{{ url_for('delete_product', product_id=product.id) }}"
+                                x-show="is_admin"
+                                hx-on="htmx:afterRequest: showPopup(event); reloadProducts();"
+                                hx-trigger="confirmed"
+                                x-confirm="{{'Are you sure you want to delete this record?' | t }}">
+                                {{ "Delete" | t }}
+                            </button>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+        </div>
+
+                    <div class="mt-2 flex gap-2">
+            <button x-show="is_admin" hx-get="/products/product/0" hx-target="#modal-container" @click="$store.modal.open = true"
+                class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+                {{ "New Product" | t }}
+            </button>
+            </div>
+
+        <div class="mt-2 flex gap-2">
+
+
+            <form hx-post="/products/set_filter" hx-target="#product-container" hx-swap="innerHTML" hx-ext="json-enc"
+                class="space-y-4">
+
+                <!-- Product date range -->
+                <div class="mb-2">
+                    <div class="flex gap-2 items-center">
+                        <input type="date" lang="sv" name="product_date_filter-start" value="" class="border p-1">
+                        <span>to</span>
+                        <input type="date" lang="sv" name="product_date_filter-end" value="" class="border p-1">
+                        <button type="submit" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
+                            {{ "Apply filters" | t }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>

@@ -1,7 +1,7 @@
 import csv
 from io import StringIO
 from fastapi import UploadFile, Form, File
-from models.models import Customer, Call, Event, Caller
+from models.models import Customer, Call, Product, Caller
 from core.functions.helpers import formatPhoneNr
 import json
 from typing import List, Union
@@ -56,9 +56,9 @@ SCRIPT_EXAMPLES = {
     "stats": [
         "Rita grafen 'calls_over_time' för daglig statistik (standardrange)<br>--chart calls_over_time",
         "Rita grafen 'caller_performance' för månadens statistik<br>--chart caller_performance",
-        "Rita grafen 'event_participation' för vecka 2025-10-01 till 2025-10-07<br>--from 2025-10-01 --to 2025-10-07 --chart event_participation",
+        "Rita grafen 'product_participation' för vecka 2025-10-01 till 2025-10-07<br>--from 2025-10-01 --to 2025-10-07 --chart product_participation",
         "Visa daglig statistik för anropare Kalle<br>--caller Kalle --chart calls_over_time",
-        "Visa statistik för eventtyp type_a under oktober<br>--from 2025-10-01 --to 2025-10-31 --event-type type_a --chart calls_over_time",
+        "Visa statistik för producttyp type_a under oktober<br>--from 2025-10-01 --to 2025-10-31 --product-type type_a --chart calls_over_time",
         "Generera rapport på engelska<br>--lang en --chart caller_performance"
     ],
     "test_data": [

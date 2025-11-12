@@ -7,7 +7,7 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 from core.database import SessionLocal
-from models.models import Caller, Customer, Call, Event, EventCustomer
+from models.models import Caller, Customer, Call, Product, ProductCustomer
 from core.models.models import User
 
 # -----------------------------
@@ -15,8 +15,8 @@ from core.models.models import User
 # -----------------------------
 CUSTOMERS_PER_CALLER = 50
 CALLS_PER_CUSTOMER = 200
-EVENTS_COUNT = 10
-EVENT_CUSTOMERS_PER_EVENT = 30
+PRODUCTS_COUNT = 10
+PRODUCT_CUSTOMERS_PER_PRODUCT = 30
 DATE_START = datetime.datetime(2026, 1, 1)
 DATE_END = datetime.datetime(2026, 12, 31)
 
@@ -96,15 +96,15 @@ def create_calls(session: Session, customers):
     print("Calls created")
 
 # -----------------------------
-# CREATE EVENTS
+# CREATE PRODUCTS
 # -----------------------------
-def create_events(session: Session):
-    events = []
-    for i in range(EVENTS_COUNT):
+def create_products(session: Session):
+    products = []
+    for i in range(PRODUCTS_COUNT):
         start_date = random_date(DATE_START, DATE_END)
         end_date = start_date + datetime.timedelta(days=random.randint(1,5))
-        e = Event(
-            name=f"Event {i+1}",
+        e = Product(
+            name=f"Product {i+1}",
             start_date=start_date,
             end_date=end_date,
             type_a=random.choice([True, False]),
@@ -113,27 +113,27 @@ def create_events(session: Session):
             type_d=random.choice([True, False])
         )
         session.add(e)
-        events.append(e)
+        products.append(e)
     session.commit()
-    print(f"Created {len(events)} events")
-    return events
+    print(f"Created {len(products)} products")
+    return products
 
 # -----------------------------
-# LINK CUSTOMERS TO EVENTS
+# LINK CUSTOMERS TO PRODUCTS
 # -----------------------------
-def create_event_customers(session: Session, events, customers):
-    for event in events:
-        num_participants = randomize(EVENT_CUSTOMERS_PER_EVENT)
+def create_product_customers(session: Session, products, customers):
+    for product in products:
+        num_participants = randomize(PRODUCT_CUSTOMERS_PER_PRODUCT)
         sampled_customers = random.sample(customers, min(num_participants, len(customers)))
         for cust in sampled_customers:
-            ec = EventCustomer(
-                event_id=event.id,
+            ec = ProductCustomer(
+                product_id=product.id,
                 customer_id=cust.id,
                 status=random.choices([1,2,3,4], weights=[0.1,0.3,0.3,0.3])[0]
             )
             session.add(ec)
     session.commit()
-    print("Event customers linked")
+    print("Product customers linked")
 
 # -----------------------------
 # MAIN
@@ -144,8 +144,8 @@ def main():
         callers, users = create_callers(session)
         customers = create_customers(session, callers, users)
         create_calls(session, customers)
-        events = create_events(session)
-        create_event_customers(session, events, customers)
+        products = create_products(session)
+        create_product_customers(session, products, customers)
         print("✅ Test data generation complete")
     finally:
         session.close()

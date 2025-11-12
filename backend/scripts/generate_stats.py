@@ -11,7 +11,7 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 from core.database import SessionLocal
-from models.models import Call, Customer, Event, EventCustomer, Caller
+from models.models import Call, Customer, Product, ProductCustomer, Caller
 
 # -----------------------------
 # MULTI-LANGUAGE SUPPORT (Swedish default)
@@ -20,12 +20,12 @@ LANG = {
     "en": {
         "calls_over_time": "📞 Calls Over Time",
         "caller_performance": "📊 Caller Performance",
-        "event_participation": "🎟️ Event Participation",
+        "product_participation": "🎟️ Product Participation",
         "no_call_data": "No call data found for given filters.",
-        "no_event_data": "No event participation data found.",
+        "no_product_data": "No product participation data found.",
         "x_date": "Date",
         "x_caller": "Caller",
-        "x_event": "Event",
+        "x_product": "Product",
         "y_calls": "Number of Calls",
         "y_customers": "Number of Customers",
         "total_all": "Total (All Callers)",
@@ -44,12 +44,12 @@ LANG = {
     "sv": {
         "calls_over_time": "📞 Samtal över tid",
         "caller_performance": "📊 Uppringar­prestation",
-        "event_participation": "🎟️ Evenemangs­deltagande",
+        "product_participation": "🎟️ Produktinformation",
         "no_call_data": "Inga samtalsdata hittades för givna filter.",
-        "no_event_data": "Ingen evenemangsdata hittades.",
+        "no_product_data": "Ingen produktdata hittades.",
         "x_date": "Datum",
         "x_caller": "Uppringare",
-        "x_event": "Evenemang",
+        "x_product": "Produkt",
         "y_calls": "Antal samtal",
         "y_customers": "Antal kunder",
         "total_all": "Totalt (alla uppringare)",
@@ -75,11 +75,11 @@ def parse_args():
     parser.add_argument("--from", dest="date_from", required=False, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--to", dest="date_to", required=False, help="End date (YYYY-MM-DD)")
     parser.add_argument("--caller", help="Filter by caller name")
-    parser.add_argument("--event-type", choices=["type_a", "type_b", "type_c", "type_d"], help="Filter events by type")
+    parser.add_argument("--product-type", choices=["type_a", "type_b", "type_c", "type_d"], help="Filter products by type")
     parser.add_argument("--chart", choices=[
         "calls_over_time",
         "caller_performance",
-        "event_participation",
+        "product_participation",
     ], required=True)
 #    parser.add_argument("--save", help="Path to save the HTML file", default="/app/backend/core/static/output.html")
     parser.add_argument("--lang", choices=["sv", "en"], default="sv", help="Språk / Language (sv or en)")
@@ -212,38 +212,38 @@ def caller_performance(session: Session, date_from, date_to, lang):
     return fig
 
 
-def event_participation(session: Session, date_from, date_to, event_type, caller_name, lang):
+def product_participation(session: Session, date_from, date_to, product_type, caller_name, lang):
     base_query = (
         session.query(
-            Event.name.label("event_name"),
+            Product.name.label("product_name"),
             Caller.name.label("caller_name"),
-            func.sum(case((EventCustomer.status == 1, 1), else_=0)).label("not_interested"),
-            func.sum(case((EventCustomer.status == 2, 1), else_=0)).label("interested"),
-            func.sum(case((EventCustomer.status == 3, 1), else_=0)).label("comming"),
-            func.sum(case((EventCustomer.status == 4, 1), else_=0)).label("paid"),
-            func.sum(case((EventCustomer.status == 5, 1), else_=0)).label("attended"),
+            func.sum(case((ProductCustomer.status == 1, 1), else_=0)).label("not_interested"),
+            func.sum(case((ProductCustomer.status == 2, 1), else_=0)).label("interested"),
+            func.sum(case((ProductCustomer.status == 3, 1), else_=0)).label("comming"),
+            func.sum(case((ProductCustomer.status == 4, 1), else_=0)).label("paid"),
+            func.sum(case((ProductCustomer.status == 5, 1), else_=0)).label("attended"),
         )
-        .join(Event, Event.id == EventCustomer.event_id)
-        .join(Customer, Customer.id == EventCustomer.customer_id)
+        .join(Product, Product.id == ProductCustomer.product_id)
+        .join(Customer, Customer.id == ProductCustomer.customer_id)
         .join(Caller, Caller.id == Customer.caller_id)
-        .filter(Event.start_date.between(date_from, date_to))
-        .group_by(Event.name, Caller.name)
-        .order_by(Event.start_date)
+        .filter(Product.start_date.between(date_from, date_to))
+        .group_by(Product.name, Caller.name)
+        .order_by(Product.start_date)
     )
 
     if caller_name and caller_name.lower() != "all":
         base_query = base_query.filter(Caller.name == caller_name)
 
-    if event_type:
-        base_query = base_query.filter(getattr(Event, event_type) == True)
+    if product_type:
+        base_query = base_query.filter(getattr(Product, product_type) == True)
 
     data = base_query.all()
     if not data:
-        print(lang["no_event_data"])
+        print(lang["no_product_data"])
         return None
 
     callers = sorted({row.caller_name for row in data})
-    events = sorted({row.event_name for row in data})
+    products = sorted({row.product_name for row in data})
     categories = ["not_interested", "interested", "comming", "paid", "attended"]
     colors = {
         "not_interested": "#d9534f",
@@ -253,13 +253,13 @@ def event_participation(session: Session, date_from, date_to, event_type, caller
         "attended": "#5cb85c",
     }
 
-    stats = {c: {e: {cat: 0 for cat in categories} for e in events} for c in callers}
+    stats = {c: {e: {cat: 0 for cat in categories} for e in products} for c in callers}
     for row in data:
         for cat in categories:
-            stats[row.caller_name][row.event_name][cat] = getattr(row, cat) or 0
+            stats[row.caller_name][row.product_name][cat] = getattr(row, cat) or 0
 
-    total = {e: {cat: 0 for cat in categories} for e in events}
-    for e in events:
+    total = {e: {cat: 0 for cat in categories} for e in products}
+    for e in products:
         for c in callers:
             for cat in categories:
                 total[e][cat] += stats[c][e][cat]
@@ -269,13 +269,13 @@ def event_participation(session: Session, date_from, date_to, event_type, caller
     for idx, caller in enumerate(callers):
         for cat in categories:
             hover_text = [
-                f"{lang['x_event']}: {e}<br>{lang['x_caller']}: {caller}<br>{lang['statuses'][cat]}: {stats[caller][e][cat]}"
-                for e in events
+                f"{lang['x_product']}: {e}<br>{lang['x_caller']}: {caller}<br>{lang['statuses'][cat]}: {stats[caller][e][cat]}"
+                for e in products
             ]
             fig.add_bar(
                 name=lang["statuses"][cat],   # ✅ visar rätt namn i legend / footer
-                x=events,
-                y=[stats[caller][e][cat] for e in events],
+                x=products,
+                y=[stats[caller][e][cat] for e in products],
                 marker_color=colors[cat],
                 offsetgroup=idx,
                 legendgroup=cat,
@@ -287,13 +287,13 @@ def event_participation(session: Session, date_from, date_to, event_type, caller
 
     for cat in categories:
         hover_text = [
-            f"{lang['x_event']}: {e}<br>{lang['statuses'][cat]}: {total[e][cat]}"
-            for e in events
+            f"{lang['x_product']}: {e}<br>{lang['statuses'][cat]}: {total[e][cat]}"
+            for e in products
         ]
         fig.add_bar(
             name=f"{lang['statuses'][cat]} ({lang['total_all']})",
-            x=events,
-            y=[total[e][cat] for e in events],
+            x=products,
+            y=[total[e][cat] for e in products],
             marker_color=colors[cat],
             offsetgroup="total",
             legendgroup="Total",
@@ -310,8 +310,8 @@ def event_participation(session: Session, date_from, date_to, event_type, caller
 
     fig.update_layout(
         barmode="stack",
-        title=f"{lang['event_participation']} {title_suffix}<br><sup>{date_from.date()} → {date_to.date()}</sup>",
-        xaxis_title=lang["x_event"],
+        title=f"{lang['product_participation']} {title_suffix}<br><sup>{date_from.date()} → {date_to.date()}</sup>",
+        xaxis_title=lang["x_product"],
         yaxis_title=lang["y_customers"],
         template="plotly_white",
         height=750,
@@ -349,8 +349,8 @@ def main():
             fig = calls_over_time(session, date_from, date_to, args.caller, lang)
         elif args.chart == "caller_performance":
             fig = caller_performance(session, date_from, date_to, lang)
-        elif args.chart == "event_participation":
-            fig = event_participation(session, date_from, date_to, args.event_type, args.caller, lang)
+        elif args.chart == "product_participation":
+            fig = product_participation(session, date_from, date_to, args.product_type, args.caller, lang)
         else:
             print(f"Chart '{args.chart}' not implemented.")
             return

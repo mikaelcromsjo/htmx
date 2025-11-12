@@ -8,7 +8,7 @@
                         <th class="px-2 py-1 border">{{ "Date" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Reminder" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Customer" | t }}</th>
-                        <th class="px-2 py-1 border">{{ "Event" | t }}</th>
+                        <th class="px-2 py-1 border">{{ "Product" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Note" | t }}</th>
                         <th class="px-2 py-1 border">{{ "Command" | t }}</th>
                     </tr>
@@ -24,7 +24,7 @@
                         <td class="px-2 py-1 border">{{ alarm.date }}</td>
                         <td class="px-2 py-1 border">{{ alarm.reminder }}</td>
                         <td class="px-2 py-1 border">{{ alarm.customer.first_name }} {{ alarm.customer.last_name }}</td>
-                        <td class="px-2 py-1 border">{{ alarm.event.name }}</td>
+                        <td class="px-2 py-1 border">{{ alarm.product.name }}</td>
                         <td class="px-2 py-1 border">{{ alarm.note }}</td>
                         <td class="px-2 py-1 border text-center" @click.stop>
 

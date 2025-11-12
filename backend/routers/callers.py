@@ -12,7 +12,7 @@ from core.database import get_db
 from templates import templates
 
 
-from models.models import Customer, Call, Event, Caller
+from models.models import Customer, Call, Product, Caller
 from core.functions.helpers import render
 from functions.customers import get_selected_ids, get_customers, get_user_customers, SelectedIDs
 

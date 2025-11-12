@@ -204,9 +204,9 @@
     </tr>
   </thead>
     <tbody>
-        {% for ec in event_customers %} 
+        {% for ec in product_customers %} 
         <tr class="hover:bg-gray-100">
-            <td class="px-3 py-2 border">{{ ec.event.name }} {{ ec.event.start_date.strftime('%Y-%m-%d') }}</td>
+            <td class="px-3 py-2 border">{{ ec.product.name }} {{ ec.product.start_date.strftime('%Y-%m-%d') }}</td>
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 2 %}✔{% endif %}</td>
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 1 %}✔{% endif %}</td>
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 3 %}✔{% endif %}</td>

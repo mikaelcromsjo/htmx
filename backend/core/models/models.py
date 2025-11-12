@@ -141,7 +141,7 @@ class TagLink(Base):
     id = Column(Integer, primary_key=True)
     tag_id = Column(ForeignKey("tags.id"))
     object_id = Column(Integer, index=True)
-    object_type = Column(String, index=True)  # e.g. "location", "event"
+    object_type = Column(String, index=True)  # e.g. "location", "product"
 
     tag = relationship("Tag")
 

@@ -11,7 +11,7 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 from core.database import SessionLocal
-from models.models import Caller, Customer, Call, Event, EventCustomer
+from models.models import Caller, Customer, Call, Product, ProductCustomer
 from core.models.models import User
 
 # Map class names to actual classes
@@ -19,8 +19,8 @@ MODEL_MAP = {
     "Caller": Caller,
     "Customer": Customer,
     "Call": Call,
-    "Event": Event,
-    "EventCustomer": EventCustomer,
+    "Product": Product,
+    "ProductCustomer": ProductCustomer,
     "User": User
 }
 

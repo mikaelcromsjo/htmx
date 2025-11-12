@@ -6,7 +6,7 @@ Features:
 - SQLite database with SQLAlchemy ORM
 - Jinja2 template rendering
 - Static file serving
-- Modular routers for customers, events, calls, alarms
+- Modular routers for customers, products, calls, alarms
 - One-page style app (HTMX returns fragments into a container)
 """
 
@@ -31,7 +31,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from core.models.base import Base
-from models.models import Alarm, Customer, Event
+from models.models import Alarm, Customer, Product
 
 from core.database import engine
 from core.auth import get_current_user
@@ -77,7 +77,7 @@ async def alarm_scheduler():
         try:
             due_alarms = (
                 db.query(Alarm)
-                .filter(Alarm.date >= now)  # event not passed
+                .filter(Alarm.date >= now)  # product not passed
                 .filter(
                     or_(
                         # First reminder: send only if reminder time reached and not yet sent
@@ -253,11 +253,11 @@ from state import user_data, active_connections
 # --- Routers ---
 # Routers should be defined in /routers/*.py and included here.
 # Each router file exposes a "router" object.
-from routers import customers, events, calls, alarms, callers, user, invoices, companies, alarms, admin, tags
+from routers import customers, products, calls, alarms, callers, user, invoices, companies, alarms, admin, tags
 
 app.include_router(tags.router, tags=["tags"])
 app.include_router(customers.router, tags=["customers"])
-app.include_router(events.router, tags=["events"])
+app.include_router(products.router, tags=["products"])
 app.include_router(calls.router, tags=["calls"])
 app.include_router(alarms.router, tags=["alarms"])
 app.include_router(callers.router, tags=["callers"])

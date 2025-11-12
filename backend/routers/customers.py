@@ -19,7 +19,7 @@ from templates import templates
 
 import data.constants as constants
 
-from models.models import Customer, CustomerUpdate, Caller, EventCustomer
+from models.models import Customer, CustomerUpdate, Caller, ProductCustomer
 from core.functions.helpers import populate, build_filters
 
 from models.models import Update
@@ -262,13 +262,13 @@ def customer_detail(
 
     if list == "short":
 
-    # Query event customers
-        query = db.query(EventCustomer).join(Customer).filter(EventCustomer.customer_id == customer_id)
-        event_customers = query.all()
+    # Query product customers
+        query = db.query(ProductCustomer).join(Customer).filter(ProductCustomer.customer_id == customer_id)
+        product_customers = query.all()
 
         # Calculate totals per status
         totals = {"s1":0, "s2":0, "s3":0, "s4":0, "s5":0, "s6":0, "s7":0, "all":0}
-        for ec in event_customers:
+        for ec in product_customers:
             totals["all"] += 1
             if ec.status == 2:
                 totals["s2"] += 1
@@ -287,10 +287,10 @@ def customer_detail(
 
         
         if status_filter is not None:
-            query = query.filter(EventCustomer.status == status_filter)
+            query = query.filter(ProductCustomer.status == status_filter)
         else:
             status_filter = 0
-        event_customers = query.all()
+        product_customers = query.all()
 
         # Render short template
         return templates.TemplateResponse(
@@ -304,7 +304,7 @@ def customer_detail(
                 "filters_map": constants.filters_map, 
                 "personalities_map": constants.personalities_map, 
                 "callers": callers,
-                "event_customers": event_customers,
+                "product_customers": product_customers,
                 "totals": totals,
                 "status_filter": status_filter
 

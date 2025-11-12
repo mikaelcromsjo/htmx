@@ -3,11 +3,11 @@
 
   <div x-data x-init='
         if (!document.getElementById("fix").checked) {
-          Alpine.store("eventFilters").filter_a = {{ customer.filter_a | tojson }};
-          Alpine.store("eventFilters").filter_b  = {{ customer.filter_b | tojson }};
-          Alpine.store("eventFilters").filter_c  = {{ customer.filter_c | tojson }};
-          Alpine.store("eventFilters").filter_d = {{ customer.filter_d | tojson }};
-          Alpine.store("eventFilters").filter_e = {{ customer.filter_e | tojson }};
+          Alpine.store("productFilters").filter_a = {{ customer.filter_a | tojson }};
+          Alpine.store("productFilters").filter_b  = {{ customer.filter_b | tojson }};
+          Alpine.store("productFilters").filter_c  = {{ customer.filter_c | tojson }};
+          Alpine.store("productFilters").filter_d = {{ customer.filter_d | tojson }};
+          Alpine.store("productFilters").filter_e = {{ customer.filter_e | tojson }};
         }
         Alpine.store("customer").comment = {{ customer.comment | tojson | safe }};
         '>

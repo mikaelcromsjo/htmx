@@ -1,0 +1,38 @@
+<div x-data x-init='
+  Alpine.store("productCustomer").status = String({{ product_status | tojson }} || "-");
+'>
+
+<div class="mb-2"><strong>{{ "Name" | t }}:</strong> {{ product.name }}</div>
+
+{% if product.price is not none and product.price > 0 %}
+<div class="mb-2"><strong>{{ "Price" | t }}:</strong> {{ product.price }} SEK</div>
+{% endif %}
+
+{% if product.description %}
+<div class="mb-2"><strong>{{ "Description" | t }}:</strong> {{ product.description }}</div>
+{% endif %}
+
+<div class="mb-2"><strong>{{ "Start Date" | t }}:</strong> {{ product.start_date.strftime('%Y-%m-%d %H:%M') }}</div>
+
+{% if product.end_date %}
+<div class="mb-2"><strong>{{ "End Date" | t }}:</strong> {{ product.end_date.strftime('%Y-%m-%d %H:%M') }}</div>
+{% endif %}
+
+<div class="mb-2"><strong>{{ "Product Types" | t }}:</strong>
+    {% set types = [] %}
+    {% if product.type_a %}{% set _ = types.append('Fester') %}{% endif %}
+    {% if product.type_b %}{% set _ = types.append('AW') %}{% endif %}
+    {% if product.type_c %}{% set _ = types.append('Föreläsning') %}{% endif %}
+    {% if product.type_d %}{% set _ = types.append('Aktivism') %}{% endif %}
+    {% if product.type_e %}{% set _ = types.append('Konferense') %}{% endif %}
+    {{ types | join(', ') if types else 'None' }}
+</div>
+
+<div class="mb-2">
+    {% set extras = [] %}
+    {% if product.extra_external %}{% set _ = extras.append('Extern') %}{% endif %}
+    {% if product.extra_non_political %}{% set _ = extras.append('Opolitisk') %}{% endif %}
+    {% if product.extra_visilble_all %}{% set _ = extras.append('Synlig för alla') %}{% endif %}
+    {{ extras | join(', ') if extras else '' }}
+</div>
+

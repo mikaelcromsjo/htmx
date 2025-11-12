@@ -22,7 +22,7 @@ from pydantic import BaseModel, field_validator
 from core.functions.helpers import formatPhoneNr
 
 
-# models set up in routes# ------------------------------------------------------
+# ------------------------------------------------------
 # SQLAlchemy Alarm model
 # ------------------------------------------------------
 class Alarm(BaseMixin, Base):
@@ -31,16 +31,18 @@ class Alarm(BaseMixin, Base):
     id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     customer = relationship("Customer")
-    event_id = Column(Integer, ForeignKey("events.id"), nullable=True)
-    event = relationship("Event")
+
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=True)
+    product = relationship("Product")
+
     caller_id = Column(Integer, ForeignKey("callers.id"), nullable=False)
     caller = relationship("Caller")
+
     date = Column(DateTime, nullable=False)
     reminder = Column(DateTime, nullable=False)
     reminder_sent = Column(DateTime, nullable=True)
     note = Column(String, nullable=True)
     extra = Column(MutableDict.as_mutable(JSON), default=dict)
-
 
 
 # -------------------------------------------------
@@ -59,28 +61,28 @@ class Customer(BaseMixin, Base):
     phone = Column(String, nullable=True)
     description_phone = Column(String, nullable=True)
     location = Column(String, nullable=True)
-    contributes = Column(Integer, nullable=True) # 1 not, 2 contributes, 3 Silver, 4 Gold
-    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True) # id number
-    # Relationship to caller
-    caller = relationship("Caller", back_populates="customers") 
-    previous_caller = Column(JSON, default=[]) # internal use only
-    previous_categories = Column(JSON, default=[]) # internal use only
+    contributes = Column(Integer, nullable=True)  # 1 not, 2 contributes, 3 Silver, 4 Gold
+    caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True)
+    caller = relationship("Caller", back_populates="customers")
+    previous_caller = Column(JSON, default=[])
+    previous_categories = Column(JSON, default=[])
     comment = Column(String, nullable=True)
     sub_caller = Column(String, nullable=True)
-    organisations = Column(JSON, default=[]) # list of ids
-    categories = Column(JSON, default=[]) # list of ids
-    personality_type = Column(Integer, nullable=True) # 0 Unknown, 1 Yellow, 2 Blue, 3 Red, 4 Green,  
+    organisations = Column(JSON, default=[])
+    categories = Column(JSON, default=[])
+    personality_type = Column(Integer, nullable=True)
     controlled = Column(Boolean, default=False)
-    filter_a = Column(Boolean, default=False) # activism
-    filter_b = Column(Boolean, default=False) # lectures
-    filter_c = Column(Boolean, default=False) # parties
-    filter_d = Column(Boolean, default=False) # politics
-    filter_e = Column(Boolean, default=False) # politics
-    filter_f = Column(Boolean, default=False) # politics
-    filter_g = Column(Boolean, default=False) # politics
-    filter_h = Column(Boolean, default=False) # politics
-    tags = Column(JSON, default=[]) # comma separated list
-    extra = Column(MutableDict.as_mutable(JSON), default=dict) # internal only
+    filter_a = Column(Boolean, default=False)
+    filter_b = Column(Boolean, default=False)
+    filter_c = Column(Boolean, default=False)
+    filter_d = Column(Boolean, default=False)
+    filter_e = Column(Boolean, default=False)
+    filter_f = Column(Boolean, default=False)
+    filter_g = Column(Boolean, default=False)
+    filter_h = Column(Boolean, default=False)
+    tags = Column(JSON, default=[])
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)
+
 
 
 class CustomerUpdate(BaseModel):
@@ -143,11 +145,11 @@ class CompanyUpdate(BaseModel):
     extra: Optional[Dict[str, Any]] = None
 
 
-# -----------------------------
-# SQLAlchemy ORM Event model
-# -----------------------------
-class Event(BaseMixin, Base):
-    __tablename__ = "events"
+# -------------------------------------------------
+# Product Model (formerly Event)
+# -------------------------------------------------
+class Product(BaseMixin, Base):
+    __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
@@ -169,9 +171,9 @@ class Event(BaseMixin, Base):
     extra_visilble_all = Column(Boolean, default=False)
 
     extra = Column(MutableDict.as_mutable(JSON), default=dict)
-    
 
-class EventUpdate(BaseModel):
+
+class ProductUpdate(BaseModel):
     name: str
     price: Optional[int] = None
     description: Optional[str] = None
@@ -250,7 +252,7 @@ class CallUpdate(BaseModel):
         from_attributes = True
 
 
-class EventUpdate(BaseModel):
+class ProductUpdate(BaseModel):
     name: str
     price: Optional[int] = None
     description: Optional[str] = None
@@ -278,16 +280,18 @@ class EventUpdate(BaseModel):
 
     
 
-class EventCustomer(BaseMixin, Base):
-    __tablename__ = "event_customers"
+# -------------------------------------------------
+# ProductCustomer Model (formerly EventCustomer)
+# -------------------------------------------------
+class ProductCustomer(BaseMixin, Base):
+    __tablename__ = "product_customers"
 
     id = Column(Integer, primary_key=True, index=True)
-    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     customer = relationship("Customer", lazy="joined")
-    event = relationship("Event", lazy="joined")
-    status = Column(Integer, nullable=False)  # 0 = no input, 1 not going, 2 = maybe, 3 = going, 4 = paid, 5 = attended
-
+    product = relationship("Product", lazy="joined")
+    status = Column(Integer, nullable=False)  # 0 = no input, 1 not going, 2 maybe, 3 going, 4 paid, 5 attended
 
 #
 

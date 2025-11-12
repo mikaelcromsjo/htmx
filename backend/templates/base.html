@@ -282,11 +282,11 @@ input:disabled {
 
                 <button 
                     @click="
-                        active = 'events';
+                        active = 'products';
                     "
-                    :class="{'bg-gray-200': active === 'events'}"
+                    :class="{'bg-gray-200': active === 'products'}"
                     class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "Events" | t }}
+                    {{ "Products" | t }}
                 </button>
 
                 <button 
@@ -361,7 +361,7 @@ input:disabled {
         <div x-ref="tabContent">
         <button hx-trigger="load" x-ref="users" hx-get="{{ url_for('user') }}" hx-target="#user_content" hx-push-url="false"></button>
         <button hx-trigger="load" x-ref="customers" hx-get="{{ url_for('customers_list') }}" hx-target="#customer_content" hx-push-url="false"></button>
-        <button hx-trigger="load" x-ref="events" hx-get="{{ url_for('events_list') }}" hx-target="#event_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="products" hx-get="{{ url_for('products_list') }}" hx-target="#product_content" hx-push-url="false"></button>
         <button hx-trigger="load" x-ref="calls" hx-get="{{ url_for('calls_dashboard') }}" hx-target="#calls_content" hx-push-url="false"></button>
         <button hx-trigger="load" x-ref="invoices" hx-get="{{ url_for('invoices_list') }}" hx-target="#invoice_content" hx-push-url="false"></button>
         <button hx-trigger="load" x-ref="companies" hx-get="{{ url_for('companies_list') }}" hx-target="#companies_content" hx-push-url="false"></button>
@@ -377,7 +377,7 @@ input:disabled {
         </div>
         <div id="companies_content" x-show="active === 'companies'" class="bg-white rounded shadow p-4">
         </div>
-        <div id="event_content" x-show="active === 'events'" class="bg-white rounded shadow p-4">
+        <div id="product_content" x-show="active === 'products'" class="bg-white rounded shadow p-4">
         </div>
         <div id="calls_content" x-show="active === 'calls'" class="bg-white rounded shadow p-4">
         </div>
@@ -871,7 +871,7 @@ connectWS();
 
     document.addEventListener('alpine:init', () => {
 
-    Alpine.store('eventFilters', {
+    Alpine.store('productFilters', {
         filter_a: true,
         filter_b: true,
         filter_c: true,
@@ -879,7 +879,7 @@ connectWS();
         filter_e: true
     });
 
-    Alpine.store('event', {
+    Alpine.store('product', {
         id: "",
     });
 
@@ -893,7 +893,7 @@ connectWS();
         id: "",
     });
 
-    Alpine.store('eventCustomer', {
+    Alpine.store('productCustomer', {
         status: "",
     });
 
@@ -925,8 +925,8 @@ function reloadCallsCustomers() {
   htmx.ajax('GET', '/calls/customers/', { target: '#calls-customer-list' });
 }
 
-function reloadCallsEvents() {
-  htmx.ajax('GET', '/calls/events/', { target: '#calls-events-list' });
+function reloadCallsProducts() {
+  htmx.ajax('GET', '/calls/products/', { target: '#calls-products-list' });
 }
 
 function reloadAlarms() {
@@ -938,19 +938,19 @@ function reloadCustomers() {
   htmx.ajax('GET', '/calls/customers/', { target: '#calls-customer-list' });
 }
 
-function reloadEvents() {
-  htmx.ajax('GET', '/events/', { target: '#event_content' });
-  htmx.ajax('GET', '/calls/events/', { target: '#calls-event-list' });
+function reloadProducts() {
+  htmx.ajax('GET', '/products/', { target: '#product_content' });
+  htmx.ajax('GET', '/calls/products/', { target: '#calls-product-list' });
 }
 
 
-// Attach event listeners once, so custom events still work
+// Attach product listeners once, so custom products still work
 document.body.addEventListener('callsCustomersReload', reloadCallsCustomers);
-document.body.addEventListener('callsEventsReload', reloadCallsEvents);
+document.body.addEventListener('callsProductsReload', reloadCallsProducts);
 document.body.addEventListener('callsDashboardReload', reloadCallsDashboard);
 document.body.addEventListener('alarmsReload', reloadAlarms);
 document.body.addEventListener('customersReload', reloadCustomers);
-document.body.addEventListener('eventsReload', reloadEvents);
+document.body.addEventListener('productsReload', reloadProducts);
 
 
 function showValidationErrors(error_fields, messages) {

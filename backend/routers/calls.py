@@ -14,7 +14,7 @@ from core.database import get_db
 from templates import templates
 
 
-from models.models import Customer, Call, Event, EventCustomer, Caller, Alarm
+from models.models import Customer, Call, Product, ProductCustomer, Caller, Alarm
 from core.functions.helpers import render
 from functions.customers import get_selected_ids, get_customers, SelectedIDs
 
@@ -46,12 +46,12 @@ def call_center_dashboard(
     customers = get_customers(db, user, ids)
 #    query = db.query(Call)
 #    calls = query.all()
-    query = db.query(Event)
-    events = query.all()
+    query = db.query(Product)
+    products = query.all()
 
     return render(
         "calls/dashboard.html",
-        {"request": request, "customers": customers, "events": events }, 
+        {"request": request, "customers": customers, "products": products }, 
     )
 
 
@@ -168,18 +168,18 @@ def customer_calls(
         {"request": request, "calls": calls},
     )
 
-@router.get("/", response_class=HTMLResponse, name="events_list")
-def events_list(
+@router.get("/", response_class=HTMLResponse, name="products_list")
+def products_list(
     request: Request,
     filter: Optional[str] = None,
     db: Session = Depends(get_db),
 ):
-    query = select(Event)
+    query = select(Product)
     if filter:
-        query = query.where(Event.name.contains(filter))
-    events = db.execute(query).scalars().all()
+        query = query.where(Product.name.contains(filter))
+    products = db.execute(query).scalars().all()
     return templates.TemplateResponse(
-        "events/list.html", {"request": request, "events": events}
+        "products/list.html", {"request": request, "products": products}
     )
 
 
@@ -252,10 +252,12 @@ async def save_call(
     user: User = Depends(get_current_user),
 ):
     
-    event_id = update_data.event_id
-    event_status = getattr(update_data, "event_status", None)
+    product_id = update_data.product_id
+    product_status = getattr(update_data, "product_status", None)
     customer_id = update_data.customer_id
     status = getattr(update_data, "status", None)
+    call_id = getattr(update_data, "call_id", None)
+
 
     # update customer comment
     customer_comment = getattr(update_data, "customer_comment", None)
@@ -273,24 +275,24 @@ async def save_call(
     db.commit()
     db.refresh(customer)
 
-    # save Alarm if event_alarm_date
-    event_alarm_date = getattr(update_data, "event_alarm_date", None)
+    # save Alarm if product_alarm_date
+    product_alarm_date = getattr(update_data, "product_alarm_date", None)
     alarm_note = getattr(update_data, "alarm_note", "")
 
-    if event_alarm_date:
+    if product_alarm_date:
         try:
-            naive_dt = datetime.strptime(event_alarm_date, "%Y-%m-%dT%H:%M")
-            event_alarm_date = naive_dt.astimezone(timezone.utc)            
+            naive_dt = datetime.strptime(product_alarm_date, "%Y-%m-%dT%H:%M")
+            product_alarm_date = naive_dt.astimezone(timezone.utc)            
         except ValueError:
-            event_alarm_date = datetime.now(timezone.utc)
+            product_alarm_date = datetime.now(timezone.utc)
 
         event_alarm_reminder_minutes = int(getattr(update_data, "event_alarm_reminder", 30))
-        event_alarm_reminder = event_alarm_date - timedelta(minutes=event_alarm_reminder_minutes)
+        event_alarm_reminder = product_alarm_date - timedelta(minutes=event_alarm_reminder_minutes)
 
         # Try to find existing alarm for this user & customer
         alarm = (
             db.query(Alarm)
-            .filter_by(customer_id=customer_id, caller_id=user.caller_id, event_id=event_id)
+            .filter_by(customer_id=customer_id, caller_id=user.caller_id, product_id=product_id)
             .first()
         )
 
@@ -301,12 +303,12 @@ async def save_call(
             print(f"Alarm found: {alarm.id}")
 
         # Update shared fields
-        alarm.date = event_alarm_date
+        alarm.date = product_alarm_date
         alarm.reminder = event_alarm_reminder
         alarm.reminder_sent =  None
         alarm.note = alarm_note
         alarm.extra = alarm.extra or {}
-        alarm.event_id = event_id
+        alarm.product_id = product_id
 
         try:
             db.commit()
@@ -318,28 +320,28 @@ async def save_call(
 
 
 
-    # Get the CustomerEvent match
-    event_customer = db.query(EventCustomer).filter_by(
-        customer_id=customer_id, event_id=event_id
+    # Get the CustomerProduct match
+    product_customer = db.query(ProductCustomer).filter_by(
+        customer_id=customer_id, product_id=product_id
     ).first()
 
-    # Check if event_customer exists
-    if (event_id and event_status):
-        if not event_customer:
-            print("No existing EventCustomer found. Creating a new one.")
-            event_customer = EventCustomer(
+    # Check if product_customer exists
+    if (product_id and product_status):
+        if not product_customer:
+            print("No existing ProductCustomer found. Creating a new one.")
+            product_customer = ProductCustomer(
                 customer_id=customer_id,
-                event_id=event_id
+                product_id=product_id
             )
         else:
-            print("Found existing EventCustomer:", event_customer)
+            print("Found existing ProductCustomer:", product_customer)
 
         # Update status
-        event_customer.status = event_status
-        print("Setting EventCustomer.status =", event_status)
+        product_customer.status = product_status
+        print("Setting ProductCustomer.status =", product_status)
 
         # Add to DB and commit
-        db.add(event_customer)
+        db.add(product_customer)
         try:
             db.commit()
             print("Database commit successful.")
@@ -349,10 +351,12 @@ async def save_call(
 
     # Try to fetch existing call by ID if provided
     existing_call = None
-    call_id = update_data.id if hasattr(update_data, "id") else None
     if isinstance(call_id, str):
         existing_call = db.query(Call).filter_by(id=call_id).first()
 
+    print ("callid", call_id)
+    if(existing_call):
+        print("exist")
     if (status):
         # Use existing call or create new one
         call = existing_call or Call()
@@ -384,7 +388,7 @@ async def save_call(
     else:
         responce = JSONResponse(content={"detail": "Saved"})
 
-    if (event_alarm_date):
+    if (product_alarm_date):
         responce.headers["HX-Trigger"] = "alarmsReload"
     return responce
 
@@ -467,57 +471,57 @@ def customer_call_log(customer_id: int, request: Request, db: Session = Depends(
 
 
 # ---------------------------
-# List Customer Events Fragment
+# List Customer Products Fragment
 # ---------------------------
-@router.get("/customer/{customer_id}/events", response_class=HTMLResponse)
-def list_customer_events(customer_id: int, request: Request, db: Session = Depends(get_db)):
+@router.get("/customer/{customer_id}/products", response_class=HTMLResponse)
+def list_customer_products(customer_id: int, request: Request, db: Session = Depends(get_db)):
     """
-    Return HTMX fragment with all events associated with a customer.
+    Return HTMX fragment with all products associated with a customer.
     """
-    events = (
-        db.query(models.CustomerEvent)
-        .filter(models.CustomerEvent.customerId == customer_id)
+    products = (
+        db.query(models.CustomerProduct)
+        .filter(models.CustomerProduct.customerId == customer_id)
         .all()
     )
 
     return templates.TemplateResponse(
-        "calls/fragments/customer_events.html",
-        {"request": request, "events": events, "customer_id": customer_id},
+        "calls/fragments/customer_products.html",
+        {"request": request, "products": products, "customer_id": customer_id},
     )
 
 
 # -----------------------------
-# Event Detail Modal (HTMX fragment)
+# Product Detail Modal (HTMX fragment)
 # -----------------------------
-@router.get("/event/{event_id}", response_class=HTMLResponse)
-def calls_event_detail(
+@router.get("/product/{product_id}", response_class=HTMLResponse)
+def calls_product_detail(
     request: Request,
-    event_id: int,
+    product_id: int,
     customer_id: str | None = Query(default=None),
     db: Session = Depends(get_db),
 ):
     
-    event = db.get(Event, event_id)
-    if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
+    product = db.get(Product, product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
         
 
-    # Get the EventCustomer match
-    event_customer = db.query(EventCustomer).filter_by(
-        customer_id=customer_id, event_id=event_id
+    # Get the ProductCustomer match
+    product_customer = db.query(ProductCustomer).filter_by(
+        customer_id=customer_id, product_id=product_id
     ).first()
 
 
-    event_status = None
-    if event_customer:
-        event_status = event_customer.status
+    product_status = None
+    if product_customer:
+        product_status = product_customer.status
 
     return templates.TemplateResponse(
-        "calls/event_info.html",
+        "calls/product_info.html",
         {
             "request": request, 
-            "event": event, 
-            "event_status": event_status,
+            "product": product, 
+            "product_status": product_status,
         }
     )
 
