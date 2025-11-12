@@ -77,7 +77,10 @@ clearSelectedIds() {
             <tbody>
                 {% for customer in customers %}
                 <tr hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short"
-                    hx-target="#customer-info"
+                    hx-target="#modal-container"
+                    _@click="$store.modal.open = true"
+
+                    _hx-target="#customer-info"
                     hx-trigger="click"
                     class="cursor-pointer"
                     :class="{
@@ -85,7 +88,7 @@ clearSelectedIds() {
                             'bg-white hover:bg-gray-100 text-gray-900': selectedRow != {{ loop.index }}
                         }"
                     class="cursor-pointer"
-                    @click="selectedRow = {{ loop.index  }}"
+                    @click="selectedRow = {{ loop.index  }}; $store.modal.open = true"
                     >
 
 {% if customer.extra.last_call_date %}
@@ -134,7 +137,7 @@ clearSelectedIds() {
                             hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}"
                             hx-target="#modal-container"
                             hx-swap="innerHTML"
-                            @click="$store.modal.open = true"
+                            @click="$store.modal.open = true;"
                         >
                             {{ "Edit" | t }}
                         </button>                

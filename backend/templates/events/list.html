@@ -14,14 +14,14 @@
                 <tbody>
                     {% for event in events %}
                     <tr hx-get="{{ url_for('event_detail', event_id=event.id) }}?list=short" 
-                        hx-target="#event-info"
+                        hx-target="#modal-container"
                         hx-trigger="click" 
                         :class="{
                             'bg-blue-100 font-bold text-blue-600 text-bold': selectedRow === {{ loop.index }},
                             'bg-white hover:bg-gray-100 text-gray-900': selectedRow != {{ loop.index }}
                         }"
                         class="cursor-pointer"
-                        @click="selectedRow = {{ loop.index  }}"
+                    @click="selectedRow = {{ loop.index  }}; $store.modal.open = true"
                         >
                         <td class="px-2 py-1 border">{{ loop.index  }}</td>
                         <td class="px-2 py-1 border">{{ event.name }}</td>
@@ -79,6 +79,5 @@
 
         </div>
     </div>
-    <div class="mt-4" id="event-info">
-    </div>
+
 </div>

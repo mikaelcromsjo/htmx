@@ -1,3 +1,8 @@
+<div x-init="$store.modal.title = '{{ "Event Information" | t }}: {{ event.name }}'"></div> 
+<div x-init="$store.modal.submit = ''"></div> 
+
+    <div class="mt-4" id="event-info">
+
 <div class="mb-1"><strong>{{ "Name" | t }}:</strong> {{ event.name }}</div>
 
 {% if event.price is not none and event.price > 0 %}
@@ -265,3 +270,5 @@ clearSelectedIds() {
 <button onclick="printTable('customer-table')" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">{{ "Print" | t }}</button>
 
 </div>
+
+    </div>

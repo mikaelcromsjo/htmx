@@ -1,5 +1,7 @@
  <div x-init="$store.modal.title = 'Event: {{ event.name }}'"></div> 
- 
+ <div x-init="$store.modal.submit = '{{ "Save" | t }}'"></div> 
+
+
 <form 
     hx-post="{{ url_for('upsert_event') }}"
     hx-target="#event-list" 

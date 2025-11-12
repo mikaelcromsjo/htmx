@@ -456,13 +456,18 @@ input:disabled {
       </button>
 
     <!-- Close o 200 responce -->
-      <button 
-        type="button"
-        class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-500 disabled:bg-green-800"
-        @click="document.querySelector('#modal-container form').requestSubmit();"
-      >
-        OK
-      </button>
+<div x-data>
+  <!-- Button shows only if submit text is not empty -->
+  <template x-if="$store.modal.submit && $store.modal.submit !== ''">
+    <button 
+      type="button"
+      class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-500 disabled:bg-green-800"
+      @click="document.querySelector('#modal-container form').requestSubmit();"
+    >
+      <span x-text="$store.modal.submit"></span>
+    </button>
+  </template>    
+    </div>
     </div>
   </div>
 </div>
@@ -894,6 +899,7 @@ connectWS();
 
     Alpine.store('modal', {
         title: "",
+        submit: "",
         open: false
     });
 
@@ -905,7 +911,7 @@ connectWS();
 </script>
 
 <!-- empty title when modal.open is false-->
-<div x-data x-effect="$store.modal.open || ($store.modal.title = '')"></div>
+<div x-data x-effect="$store.modal.open || ($store.modal.title = ''; $store.modal.submit = '')"></div>
 
 <meta name="htmx-history-cache-size" content="0">
 
