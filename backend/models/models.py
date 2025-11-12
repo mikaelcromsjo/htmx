@@ -167,7 +167,8 @@ class Event(BaseMixin, Base):
     extra_non_political = Column(Boolean, default=False)
     extra_visilble_all = Column(Boolean, default=False)
 
-    extra = Column(MutableDict.as_mutable(JSON), default=dict)    
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)
+    
 
 class EventUpdate(BaseModel):
     name: str
@@ -219,8 +220,6 @@ class InvoiceUpdate(BaseModel):
 
     class Config:
         from_attributes = True
-    
-
 
 
 # -----------------------------
@@ -235,7 +234,7 @@ class Call(BaseMixin, Base):
     call_date = Column(DateTime, nullable=False)
     status = Column(JSON, default=[])
     note = Column(String, nullable=False)
-    extra = Column(MutableDict.as_mutable(JSON), default=dict)    
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)
 
 
 class CallUpdate(BaseModel):
