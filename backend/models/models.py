@@ -64,8 +64,8 @@ class Customer(BaseMixin, Base):
     contributes = Column(Integer, nullable=True)  # 1 not, 2 contributes, 3 Silver, 4 Gold
     caller_id = Column(Integer, ForeignKey("callers.id"), nullable=True)
     caller = relationship("Caller", back_populates="customers")
-    previous_caller = Column(JSON, default=[])
-    previous_categories = Column(JSON, default=[])
+#    previous_caller = Column(JSON, default=[])
+#    previous_categories = Column(JSON, default=[])
     comment = Column(String, nullable=True)
     sub_caller = Column(String, nullable=True)
     organisations = Column(JSON, default=[])
@@ -82,8 +82,6 @@ class Customer(BaseMixin, Base):
     filter_h = Column(Boolean, default=False)
     tags = Column(JSON, default=[])
     extra = Column(MutableDict.as_mutable(JSON), default=dict)
-
-
 
 class CustomerUpdate(BaseModel):
     first_name: str
@@ -152,10 +150,12 @@ class Product(BaseMixin, Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
+    type_name = Column(Integer, nullable=True)
     name = Column(String, nullable=False)
     price = Column(Integer, nullable=True)
     description = Column(String, nullable=True)
-    start_date = Column(DateTime, nullable=False)
+#    start_date = Column(DateTime, nullable=False)
+    start_date = Column(DateTime, nullable=True)
     end_date = Column(DateTime, nullable=True)
 
     type_a = Column(Boolean, default=False)
@@ -166,6 +166,7 @@ class Product(BaseMixin, Base):
     type_f = Column(Boolean, default=False)
     type_g = Column(Boolean, default=False)
     type_h = Column(Boolean, default=False)
+
     extra_external = Column(Boolean, default=False)
     extra_non_political = Column(Boolean, default=False)
     extra_visilble_all = Column(Boolean, default=False)
@@ -177,7 +178,8 @@ class ProductUpdate(BaseModel):
     name: str
     price: Optional[int] = None
     description: Optional[str] = None
-    start_date: datetime
+    type_name: str
+    start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
 
     type_a: bool = False
@@ -188,11 +190,10 @@ class ProductUpdate(BaseModel):
     type_f: bool = False
     type_g: bool = False
     type_h: bool = False
+
     extra_external: bool = False
     extra_non_political: bool = False
     extra_visilble_all: bool = False
-
-
     extra: Optional[Dict[str, Any]] = None
 
     class Config:
@@ -256,7 +257,7 @@ class ProductUpdate(BaseModel):
     name: str
     price: Optional[int] = None
     description: Optional[str] = None
-    start_date: datetime
+    start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
 
     type_a: bool = False
@@ -272,12 +273,10 @@ class ProductUpdate(BaseModel):
     extra_non_political: bool = False
     extra_visilble_all: bool = False
 
-
     extra: Optional[Dict[str, Any]] = None
 
     class Config:
         from_attributes = True
-
     
 
 # -------------------------------------------------
@@ -292,6 +291,9 @@ class ProductCustomer(BaseMixin, Base):
     customer = relationship("Customer", lazy="joined")
     product = relationship("Product", lazy="joined")
     status = Column(Integer, nullable=False)  # 0 = no input, 1 not going, 2 maybe, 3 going, 4 paid, 5 attended
+    type_status = Column(Integer, nullable=True)
+    order_date = Column(DateTime, nullable=True)
+    extra = Column(MutableDict.as_mutable(JSON), default=dict)
 
 #
 
