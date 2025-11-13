@@ -376,6 +376,9 @@ async def save_call(
         # set caller_id from logged in user
         call.caller_id = user.caller_id
 
+        if (not call.note):
+            call.note=""
+
         try:
             db.commit()
             db.refresh(call)

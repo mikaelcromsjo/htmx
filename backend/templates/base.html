@@ -440,7 +440,7 @@ input:disabled {
     <div 
       id="modal-container" 
       class="p-4 overflow-y-auto flex-grow"
-      style="min-height: 0;"  <!-- ensures scroll works in older flexbox browsers -->
+      style="min-height: 0;"  
       x-effect="if ($store.modal.open) $nextTick(() => { $el.scrollTop = 0; });"
     >
       <!-- HTMX content goes here -->
