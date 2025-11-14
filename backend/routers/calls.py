@@ -9,6 +9,7 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 from datetime import datetime, timezone
 
+import data.constants as constants
 
 from core.database import get_db
 from templates import templates
@@ -51,7 +52,7 @@ def call_center_dashboard(
 
     return render(
         "calls/dashboard.html",
-        {"request": request, "customers": customers, "products": products }, 
+        {"request": request, "customers": customers, "products": products, "products_json": constants.products },
     )
 
 
@@ -525,6 +526,7 @@ def calls_product_detail(
             "request": request, 
             "product": product, 
             "product_status": product_status,
+            "products_map": constants.products_map,
         }
     )
 

@@ -375,6 +375,7 @@ def admin_data(request: Request):
         {
             "request": request,
             "categories_json": json.dumps(constants.categories, indent=2, ensure_ascii=False),
+            "products_json": json.dumps(constants.products, indent=2, ensure_ascii=False),
             "organisations_json": json.dumps(constants.organisations, indent=2, ensure_ascii=False),
             "filters_json": json.dumps(constants.filters, indent=2, ensure_ascii=False),
             "personalities_json": json.dumps(constants.personalities, indent=2, ensure_ascii=False),
@@ -386,6 +387,7 @@ def admin_data(request: Request):
 def save_data(
     request: Request,
     categories_text: str = Form(...),
+    products_text: str = Form(...),
     organisations_text: str = Form(...),
     filters_text: str = Form(...),
     personalities_text: str = Form(...),
@@ -393,6 +395,7 @@ def save_data(
     """Save edited JSON, then reload data.constants."""
     try:
         new_categories = json.loads(categories_text)
+        new_products = json.loads(products_text)
         new_organisations = json.loads(organisations_text)
         new_filters = json.loads(filters_text)
         new_personalities = json.loads(personalities_text)
@@ -403,6 +406,7 @@ def save_data(
 
     # Save to disk
     save_json("categories.json", new_categories)
+    save_json("products.json", new_products)
     save_json("organisations.json", new_organisations)
     save_json("filters.json", new_filters)
     save_json("personalities.json", new_personalities)
@@ -415,6 +419,7 @@ def save_data(
         {
             "request": request,
             "categories_json": json.dumps(constants.categories, indent=2, ensure_ascii=False),
+            "products_json": json.dumps(constants.products, indent=2, ensure_ascii=False),
             "organisations_json": json.dumps(constants.organisations, indent=2, ensure_ascii=False),
             "filters_json": json.dumps(constants.filters, indent=2, ensure_ascii=False),
             "personalities_json": json.dumps(constants.personalities, indent=2, ensure_ascii=False),

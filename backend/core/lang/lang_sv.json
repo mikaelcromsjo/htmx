@@ -190,9 +190,9 @@
   "Conferences": "Konferenser",
   "Gives Donation": "Ger gåvor",
   "Likes AW": "Bjuds till föreläsning-AW",
-  "Comming": "Kommer",
+  "Comming": "Ja",
   "Reminder Sent": "Påminnelse skickad",
-  "Going": "Kommer",
+  "Going": "Ja",
   "Extra": "Extra",
   "Planet": "Planet",
   "Select Caller...": "Välj Ringare...",
@@ -204,5 +204,6 @@
   "Customer Information": "Kundinformation",
   "Product Information": "Produktinformation",
   " Search name, number or phone.": " Search name, number or phone.",
-  "New Event": "New Event"
+  "New Event": "New Event",
+  "Product Type": "Product Type"
 }

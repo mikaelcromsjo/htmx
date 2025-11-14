@@ -405,7 +405,6 @@ input:disabled {
     class="bg-white rounded-xl shadow-lg w-full max-w-7xl mx-4 flex flex-col"
     style="max-height: 90vh; overflow: hidden;"
     x-transition.scale
-    @click.away="$store.modal.open = false"
   >
     <!-- Modal header -->
     <div class="flex justify-between items-center p-4 border-b flex-shrink-0">
@@ -881,6 +880,7 @@ connectWS();
 
     Alpine.store('product', {
         id: "",
+        type_id: "",
     });
 
     Alpine.store('customer', {
@@ -911,7 +911,10 @@ connectWS();
 </script>
 
 <!-- empty title when modal.open is false-->
-<div x-data x-effect="$store.modal.open || ($store.modal.title = ''; $store.modal.submit = '')"></div>
+<div x-data x-effect="if (!$store.modal.open) {
+            $store.modal.title = '';
+            $store.modal.submit = '';
+        }"></div>
 
 <meta name="htmx-history-cache-size" content="0">
 

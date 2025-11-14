@@ -2,6 +2,8 @@
 from fastapi import APIRouter, Depends, Request, Form, HTTPException
 from fastapi import APIRouter, Depends, Form, Request, HTTPException, Query
 
+import data.constants as constants
+
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy import Column, Integer, String, DateTime, JSON, select
 from sqlalchemy.orm import Session, declarative_base
@@ -77,11 +79,14 @@ def product_detail(
     db: Session = Depends(get_db),
 ):
     
-
     product = db.get(Product, product_id)
     if not product:
         product = Product().empty()
-    
+
+    print ("name", product.name)
+    print ("type", product.type_id)
+
+
     if list == "short":
 
     # Query product customers
@@ -123,16 +128,24 @@ def product_detail(
                 "totals": totals,
                 "status_filter": status_filter,
                 "user": user,
+                "products_map": constants.products_map,
             }
         )
     else:
         # Render full template
         return templates.TemplateResponse(
-            "products/edit.html", {"request": request, "product": product, "editable": True}
+            "products/edit.html", {"request": request, 
+                                   "product": product, 
+                                   "editable": True,
+                                    "products": constants.products,
+                                    }
         )
      
 
+from sqlalchemy.inspection import inspect
 
+def to_dict(obj):
+    return {c.key: getattr(obj, c.key) for c in inspect(obj).mapper.column_attrs}
 
 
 # -----------------------------
@@ -147,7 +160,6 @@ async def upsert_product(
     user = Depends(get_current_user)
 ):
     
-    print (update_data.model_dump())
     if not user.admin:
         raise HTTPException(status_code=401, detail="Error. Only Admin can edit products")
     
@@ -181,8 +193,8 @@ async def upsert_product(
 
     # Populate DB model dynamically
     product = populate(data_dict, product, ProductUpdate)
-
     db.add(product)
+
     db.commit()
     db.refresh(product)
 
@@ -190,7 +202,10 @@ async def upsert_product(
     products = db.query(Product).all()
     response = templates.TemplateResponse(
         "products/list.html",
-        {"request": request, "products": products},
+        {
+            "request": request, 
+            "products": products
+         },
     )
     # Set the popup message in a custom header
     response.headers["HX-Popup-Message"] = "Saved"

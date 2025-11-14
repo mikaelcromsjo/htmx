@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 from pydantic import BaseModel, field_validator
 
 from core.database import Base
+
 from core.models.models import BaseMixin, Update
 
 from typing import List, Optional, Dict, Any
@@ -150,11 +151,10 @@ class Product(BaseMixin, Base):
     __tablename__ = "products"
 
     id = Column(Integer, primary_key=True, index=True)
-    type_name = Column(Integer, nullable=True)
+    type_id = Column(String, nullable=False, default="p1")
     name = Column(String, nullable=False)
     price = Column(Integer, nullable=True)
     description = Column(String, nullable=True)
-#    start_date = Column(DateTime, nullable=False)
     start_date = Column(DateTime, nullable=True)
     end_date = Column(DateTime, nullable=True)
 
@@ -178,7 +178,7 @@ class ProductUpdate(BaseModel):
     name: str
     price: Optional[int] = None
     description: Optional[str] = None
-    type_name: str
+    type_id: Optional[str] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
 
@@ -247,32 +247,6 @@ class CallUpdate(BaseModel):
     call_date: Optional[datetime] = None
     status: int
     note: str = ""
-    extra: Optional[Dict[str, Any]] = None
-
-    class Config:
-        from_attributes = True
-
-
-class ProductUpdate(BaseModel):
-    name: str
-    price: Optional[int] = None
-    description: Optional[str] = None
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
-
-    type_a: bool = False
-    type_b: bool = False
-    type_c: bool = False
-    type_d: bool = False
-    type_e: bool = False
-    type_f: bool = False
-    type_g: bool = False
-    type_h: bool = False
-
-    extra_external: bool = False
-    extra_non_political: bool = False
-    extra_visilble_all: bool = False
-
     extra: Optional[Dict[str, Any]] = None
 
     class Config:

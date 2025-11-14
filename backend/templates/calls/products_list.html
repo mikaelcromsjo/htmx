@@ -39,6 +39,7 @@
       }"
       @click="
         Alpine.store('product').id = {{ product.id }};
+        Alpine.store('product').type_id = '{{ product.type_id }}';
         if (Alpine.store('customer').id)
             enableProduct();
       "

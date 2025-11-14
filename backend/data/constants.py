@@ -10,6 +10,7 @@ def load_json(filename):
 
 # --- Load data ---
 categories = load_json("categories.json")
+products = load_json("products.json")
 organisations = load_json("organisations.json")
 personalities = load_json("personalities.json")
 filters = load_json("filters.json")
@@ -29,6 +30,23 @@ for cid, cat in categories.items():
             "parent": cid,
             "type": "item"
         }
+
+
+# --- Transform data ---
+products_map = {}
+for pid, prod in products.items():
+    products_map[pid] = {
+        "name": prod["name"],
+        "type": "product"
+    }
+    # Add items under this category
+    for iid, item in prod["items"].items():
+        products_map[iid] = {
+            "name": item,
+            "parent": pid,
+            "type": "options"
+        }
+
 
 organisations_map = {org["id"]: org["name"] for org in organisations}
 filters_map = {flt["id"]: flt["name"] for flt in filters}

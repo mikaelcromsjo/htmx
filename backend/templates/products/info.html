@@ -5,6 +5,8 @@
 
 <div class="mb-1"><strong>{{ "Name" | t }}:</strong> {{ product.name }}</div>
 
+<div class="mb-1">    <strong>{{ "Product Type" | t }}:</strong> {{ products_map[product.type_id].name }}</div>
+
 {% if product.price is not none and product.price > 0 %}
 <div class="mb-1"><strong>{{ "Price" | t }}:</strong> {{ product.price }} SEK</div>
 {% endif %}
@@ -13,7 +15,9 @@
 <div class="mb-1"><strong>{{ "Description" | t }}:</strong> {{ product.description }}</div>
 {% endif %}
 
+{% if product.start_date %}
 <div class="mb-1"><strong>{{ "Start Date" | t }}:</strong> {{ product.start_date.strftime('%Y-%m-%d %H:%M') }}</div>
+{% endif %}
 
 {% if product.end_date %}
 <div class="mb-1"><strong>{{ "End Date" | t }}:</strong> {{ product.end_date.strftime('%Y-%m-%d %H:%M') }}</div>

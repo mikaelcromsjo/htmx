@@ -16,7 +16,6 @@
         }
     })
 "
-
     >
 
 
@@ -26,6 +25,23 @@
         <label class="block font-semibold">{{ "ID" | t }}</label>
         <input type="text" name="id" value="{{ product.id }}" class="border p-1 w-full"/>
     </div>
+
+    {% endif %}
+
+
+    {% if not product.id %}
+
+    <div class="mb-2">
+        <label class="block font-semibold">{{ "Product Type" | t }}</label>
+        <select name="type_id" class="border p-1 w-full">
+          {% for pid, product in products.items() %}
+              <option value="{{ pid }}">
+                {{ product.name }}
+              </option>
+          {% endfor %}
+        </select>
+    </div>
+
     {% endif %}
 
     <!-- Name -->
