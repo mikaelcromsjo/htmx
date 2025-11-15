@@ -128,7 +128,7 @@
               {% for item_id, item_name in product["items"].items() %}
             <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
 
-              <input x-bind:disabled="isTypeEnabled" name="product_type_status-{{type_id}}" type="radio" value="{{ item_id }}"
+              <input x-bind:disabled="!isTypeEnabled" name="product_type_status-{{type_id}}" type="radio" value="{{ item_id }}"
                 class="auto-save product-disable form-check-input" x-model="$store.productCustomer.type_status"
                 disabled>
               <span>{{ item_name }}</span>
