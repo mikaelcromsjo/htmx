@@ -91,6 +91,8 @@
 <div class="mb-1"><strong>{{ "User ID" | t }}:</strong> {{ customer.user_id }}</div>
 {% endif %}
 
+{% if totals.all > 0 %}
+
 <br/>    
 <br/>    
 
@@ -168,3 +170,4 @@
 </table>
 
     </div>
+{% endif %}

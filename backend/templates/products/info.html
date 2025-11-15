@@ -25,13 +25,15 @@
 
 <div class="mb-1"><strong>{{ "Product Types" | t }}:</strong>
     {% set types = [] %}
-    {% if product.type_a %}{% set _ = types.append('Party') %}{% endif %}
-    {% if product.type_b %}{% set _ = types.append('AW') %}{% endif %}
-    {% if product.type_c %}{% set _ = types.append('Föreläsning') %}{% endif %}
-    {% if product.type_d %}{% set _ = types.append('Aktivism') %}{% endif %}
-    {% if product.type_e %}{% set _ = types.append('Konferens') %}{% endif %}
-    {% if product.type_f %}{% set _ = types.append('Medlemskap') %}{% endif %}
-    {% if product.type_g %}{% set _ = types.append('Prenumeration') %}{% endif %}
+    {% if product.type_a %}{% set _ = types.append(filters_map["filter_a"]) %}{% endif %}
+    {% if product.type_b_ %}{% set _ = types.append(filters_map["filter_b"]) %}{% endif %}
+    {% if product.type_c %}{% set _ = types.append(filters_map["filter_c"]) %}{% endif %}
+    {% if product.type_d %}{% set _ = types.append(filters_map["filter_d"]) %}{% endif %}
+    {% if product.type_e %}{% set _ = types.append(filters_map["filter_e"]) %}{% endif %}
+    {% if product.type_f %}{% set _ = types.append(filters_map["filter_f"]) %}{% endif %}
+    {% if product.type_g %}{% set _ = types.append(filters_map["filter_g"]) %}{% endif %}
+
+
     {{ types | join(', ') if types else '' }}
 </div>
 
@@ -45,43 +47,12 @@
     {{ extras | join(', ') if extras else '' }}
 {% endif %}
 
+{% if totals.all > 0 %}
 
 <br/>    
 <br/>
 
-<div         x-data="{
-            selected: JSON.parse(localStorage.getItem('selectedCustomers') || '{}'),
-            showSelect: JSON.parse(localStorage.getItem('showSelect') || 'true'),
-            toggle(id) {
-                this.selected[id] = !this.selected[id];
-                localStorage.setItem('selectedCustomers', JSON.stringify(this.selected));
-            },
-            toggleSelect() {
-                this.showSelect = !this.showSelect;
-                localStorage.setItem('showSelect', JSON.stringify(this.showSelect));
-            },
-clearSelectedIds() {
-    // Loop through keys and set each to false
-    for (const id in this.selected) {
-        if (this.selected.hasOwnProperty(id)) {
-            this.selected[id] = false;
-        }
-    }
-    // Clear localStorage
-    localStorage.removeItem('selectedCustomers');
-    document.querySelectorAll('.customerproduct-checkbox').forEach(cb => {
-        if (cb.checked) {
-            cb.checked = false;
-        }
-    });
-},
-            getSelectedIds() {
-                return Object.keys(this.selected)
-                            .filter(id => this.selected[id])
-                            .map(id => parseInt(id));
-            }
-        }"
->
+<div x-data>
 
 <div x-data="{ active: '{{ status_filter or "all" }}' }" class="flex flex-wrap gap-2 mb-4">
     <button 
@@ -156,7 +127,7 @@ clearSelectedIds() {
     {% endfor %}
 {% endif %}
 
-            <th x-show="showSelect" class="px-2 py-1 border text-center w-[10%]" 
+            <th x-show="$store.customers.showSelect" class="px-2 py-1 border text-center w-[10%]" 
                 @click.stop>
                 <input type="checkbox" @change="const checkAll = $event.target.checked;
                     document.querySelectorAll('.customerproduct-checkbox').forEach(cb => {
@@ -244,11 +215,11 @@ clearSelectedIds() {
 
     {% endfor %}
 
-                    <td x-show="showSelect" class="px-2 py-1 border text-center" 
+                    <td x-show="$store.customers.showSelect" class="px-2 py-1 border text-center" 
                         @click.stop>
                         <input x-show="'{{ enableRow }}' == 'True'" type="checkbox" class="customerproduct-checkbox"
-                            :checked="selected[{{ ec.customer.id }}] || false"
-                            @change="toggle({{ ec.customer.id }})">
+                            :checked="$store.customers.selected[{{ ec.customer.id }}] || false"
+                            @change="$store.customers.toggle({{ ec.customer.id }})">
                     </td>
 
   </tr>
@@ -268,23 +239,30 @@ clearSelectedIds() {
   <input type="hidden" name="product_status" value="">
   <input type="hidden" name="product_type_status" value="">
 </form>
+
 <br/>
 
+    <span
+        class="inline-flex items-center justify-center rounded border rounded bg-gray-100 px-2 py-0.5"
+        x-text="'{{ "Selected" | t }} ' + $store.customers.getSelectedIds().length"
+    ></span>
+
+<!--
         <div class="mt-2 flex gap-2">
-            <button @click="toggleSelect()"
+            <button @click="$store.customers.toggleSelect()"
                     class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                     
                 {{ "Toggle Select Column" | t }}
             </button>
-
-        <button x-on:click="clearSelectedIds()"
+-->
+        <button x-on:click="$store.customers.clearSelectedIds()"
                 class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                 {{ "Clear Customers" | t }}
         </button>
 
 
         <button
-                :hx-vals="JSON.stringify({ selected_ids: getSelectedIds() })"
+                :hx-vals="JSON.stringify({ selected_ids: $store.customers.getSelectedIds() })"
                 hx-post="/calls/dashboard"
                 hx-ext="json-enc"
                 hx-target="#calls_content"
@@ -295,6 +273,9 @@ clearSelectedIds() {
 
 <button onclick="printTable('customer-table')" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">{{ "Print" | t }}</button>
 
+
 </div>
 
     </div>
+
+    {% endif %}

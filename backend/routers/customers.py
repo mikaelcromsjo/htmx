@@ -307,7 +307,6 @@ def customer_detail(
                 "product_customers": product_customers,
                 "totals": totals,
                 "status_filter": status_filter
-
             }
         )
     else:
@@ -319,7 +318,7 @@ def customer_detail(
                 "customer": customer, 
                 "categories": constants.categories, 
                 "organisations": constants.organisations, 
-                "filters": constants.filters, 
+                "filters_json": constants.filters, 
                 "personalities": constants.personalities, 
                 "callers": callers,
             }

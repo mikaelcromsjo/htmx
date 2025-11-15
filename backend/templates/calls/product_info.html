@@ -31,13 +31,13 @@
 
 <div class="mb-2"><strong>{{ "Product Types" | t }}:</strong>
     {% set types = [] %}
-    {% if product.type_a %}{% set _ = types.append('Fester') %}{% endif %}
-    {% if product.type_b %}{% set _ = types.append('AW') %}{% endif %}
-    {% if product.type_c %}{% set _ = types.append('Föreläsning') %}{% endif %}
-    {% if product.type_d %}{% set _ = types.append('Aktivism') %}{% endif %}
-    {% if product.type_e %}{% set _ = types.append('Konferense') %}{% endif %}
-    {% if product.type_f %}{% set _ = types.append('Medlemskap') %}{% endif %}
-    {% if product.type_g %}{% set _ = types.append('Prenumeration') %}{% endif %}
+    {% if product.type_a %}{% set _ = types.append(filters_map["filter_a"]) %}{% endif %}
+    {% if product.type_b_ %}{% set _ = types.append(filters_map["filter_b"]) %}{% endif %}
+    {% if product.type_c %}{% set _ = types.append(filters_map["filter_c"]) %}{% endif %}
+    {% if product.type_d %}{% set _ = types.append(filters_map["filter_d"]) %}{% endif %}
+    {% if product.type_e %}{% set _ = types.append(filters_map["filter_e"]) %}{% endif %}
+    {% if product.type_f %}{% set _ = types.append(filters_map["filter_f"]) %}{% endif %}
+    {% if product.type_g %}{% set _ = types.append(filters_map["filter_g"]) %}{% endif %}
     {{ types | join(', ') if types else 'None' }}
 </div>
 

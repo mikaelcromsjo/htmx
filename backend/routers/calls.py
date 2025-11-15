@@ -52,7 +52,7 @@ def call_center_dashboard(
 
     return render(
         "calls/dashboard.html",
-        {"request": request, "customers": customers, "products": products, "products_json": constants.products },
+        {"request": request, "customers": customers, "products": products, "products_json": constants.products, "filters_map": constants.filters_map },
     )
 
 
@@ -72,6 +72,21 @@ def call_customers_list(
         {"request": request, "customers": customers}, 
     )
 
+@router.get("/products_list", response_class=HTMLResponse, name="calls_products_list")
+def call_poducts_list(
+    request: Request,
+    selected_ids: Optional[SelectedIDs] = None,
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
+):
+    
+    query = db.query(Product)
+    products = query.all()
+
+    return render(
+        "calls/products_list.html",
+        {"request": request, "products": products, "filters_map": constants.filters_map}, 
+    )
 
 
 # -----------------------------
@@ -341,6 +356,9 @@ async def save_call(
         # Update status
         if product_status:
             product_customer.status = product_status
+            if (product_status == "3" and product_customer.order_date == None):
+                product_customer.order_date = datetime.now(timezone.utc)
+                print ("order_date set")
         if product_type_status:
             product_customer.type_status = product_type_status
         print("Setting ProductCustomer.type_status =", product_type_status)
@@ -357,9 +375,6 @@ async def save_call(
     if isinstance(call_id, str):
         existing_call = db.query(Call).filter_by(id=call_id).first()
 
-    print ("callid", call_id)
-    if(existing_call):
-        print("exist")
     if (status):
         # Use existing call or create new one
         call = existing_call or Call()
@@ -532,6 +547,7 @@ def calls_product_detail(
             "product_status": product_status,
             "product_type_status": product_type_status,
             "products_map": constants.products_map,
+            "filters_map": constants.filters_map
         }
     )
 

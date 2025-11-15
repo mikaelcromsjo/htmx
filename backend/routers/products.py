@@ -115,7 +115,6 @@ def product_detail(
             status_filter = 0
         product_customers = query.all()
 
-
         # Render short template
         return templates.TemplateResponse(
             "products/info.html",
@@ -127,7 +126,8 @@ def product_detail(
                 "status_filter": status_filter,
                 "user": user,
                 "products_map": constants.products_map,
-                "products_json": constants.products
+                "products_json": constants.products,
+                "filters_map": constants.filters_map
             }
         )
     else:
@@ -209,7 +209,7 @@ async def upsert_product(
     )
     # Set the popup message in a custom header
     response.headers["HX-Popup-Message"] = "Saved"
-    response.headers["HX-Trigger"] = "dashboardProductsReload"
+    response.headers["HX-Trigger"] = "callsProductsReload"
     return response
 
 # DELETE product

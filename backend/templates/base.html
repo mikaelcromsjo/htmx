@@ -873,6 +873,41 @@ connectWS();
 
     document.addEventListener('alpine:init', () => {
 
+Alpine.store('customers', {
+        selected: JSON.parse(localStorage.getItem('selectedCustomers') || '{}'),
+        showSelect: 'true',
+
+        toggle(id) {
+            this.selected[id] = !this.selected[id];
+            localStorage.setItem('selectedCustomers', JSON.stringify(this.selected));
+        },
+
+        toggleSelect() {
+            this.showSelect = !this.showSelect;
+            localStorage.setItem('showSelect', JSON.stringify(this.showSelect));
+        },
+
+        clearSelectedIds() {
+            for (const id in this.selected) {
+                if (this.selected.hasOwnProperty(id)) {
+                    this.selected[id] = false;
+                }
+            }
+
+            localStorage.removeItem('selectedCustomers');
+
+            document.querySelectorAll('.customerproduct-checkbox').forEach(cb => {
+                if (cb.checked) cb.checked = false;
+            });
+        },
+
+        getSelectedIds() {
+            return Object.keys(this.selected)
+                         .filter(id => this.selected[id])
+                         .map(id => parseInt(id));
+        }
+      });
+
     Alpine.store('productFilters', {
         filter_a: true,
         filter_b: true,
@@ -909,9 +944,6 @@ connectWS();
         open: false
     });
 
-
-
-
 });
 
 </script>
@@ -935,7 +967,7 @@ function reloadCallsCustomers() {
 }
 
 function reloadCallsProducts() {
-  htmx.ajax('GET', '/calls/products/', { target: '#calls-products-list' });
+  htmx.ajax('GET', '/calls/products_list/', { target: '#calls-product-list' });
 }
 
 function reloadAlarms() {

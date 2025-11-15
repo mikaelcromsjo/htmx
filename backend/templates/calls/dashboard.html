@@ -73,14 +73,15 @@
           <label class="inline-flex items-center space-x-1 form-check form-check-inline">
             <input type="checkbox" x-model="Alpine.store('productFilters')[type]"
               class="form-check-input auto-save customer-disable">
+
             <span x-text="{
-          filter_a: '{{ 'Parties' | t }}',
-          filter_b: '{{ 'AW' | t }}',
-          filter_c: '{{ 'Lectures' | t }}',
-          filter_d: '{{ 'Activism' | t }}',
-          filter_e: '{{ 'Conferences' | t }}',
-          filter_f: '{{ 'Members' | t }}',
-          filter_g: '{{ 'Subscribers' | t }}'
+          filter_a: '{{filters_map['filter_a']}}',
+          filter_b: '{{filters_map['filter_b']}}',
+          filter_c: '{{filters_map['filter_c']}}',
+          filter_d: '{{filters_map['filter_d']}}',
+          filter_e: '{{filters_map['filter_e']}}',
+          filter_f: '{{filters_map['filter_f']}}',
+          filter_g: '{{filters_map['filter_g']}}'
         }[type] || (type.charAt(0).toUpperCase() + type.slice(1))"></span>
           </label>
         </template>
@@ -109,6 +110,8 @@
 
       <input name="product_type_status" :value="$store.productCustomer.type_status" class="hidden">
 
+
+      <div  class="flex flex-wrap gap-2">
 
         <!-- Product Status Options -->
 
@@ -159,6 +162,7 @@
           </div>
           {% endfor %}
 
+    </div>
     </div>
     </div>
     <!-- Call Comment -->

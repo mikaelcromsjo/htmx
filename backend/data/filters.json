@@ -1,22 +1,30 @@
 [
   {
     "id": "filter_a",
-    "name": "Intresserad av Fester"
+    "name": "Fester"
   },
   {
     "id": "filter_b",
-    "name": "Intresserad av After Work"
+    "name": "AW"
   },
   {
     "id": "filter_c",
-    "name": "Intresserad av Föreläsningar"
+    "name": "Föreläsningar"
   },
   {
     "id": "filter_d",
-    "name": "Intresserad av Aktivism"
+    "name": "Aktivism"
   },
   {
     "id": "filter_e",
-    "name": "Intresserad av Konferenser"
+    "name": "Konferenser"
+  },
+  {
+    "id": "filter_f",
+    "name": "Prenumeration"
+  },
+  {
+    "id": "filter_g",
+    "name": "Medlemskap"
   }
 ]
