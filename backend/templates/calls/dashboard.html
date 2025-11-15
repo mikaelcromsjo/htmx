@@ -97,8 +97,24 @@
           document.getElementById('current_call').value = JSON.parse(event.detail.xhr.responseText).call_id;
           htmx.trigger('#customer-calls', 'load-customer')">
 
+      <div 
+          x-data="{ ready: false }"
+          x-init="
+              // Wait for Alpine + store to hydrate
+              $nextTick(() => { ready = true })
+          "
+      >
+
+      <input name="product_type_status" :value="$store.productCustomer.type_status" class="hidden">
+
+
         <!-- Product Status Options -->
-        <div class="flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light" x-data>
+
+        <div  class="flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light" x-data>
+
+            <input name="product_status" value="0" x-model="$store.productCustomer.status"
+              class="hidden auto-save product-disable form-check-input" type="radio">
+
           <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
             <input name="product_status" value="1" x-model="$store.productCustomer.status" disabled
               class="auto-save product-disable form-check-input" type="radio">
@@ -126,6 +142,10 @@
           {% for type_id, product in products_json.items() %}
           <div x-show="$store.product.type_id == '{{ type_id }}'">
               {% for item_id, item_name in product["items"].items() %}
+
+            <input name="product_type_status-{{type_id}}" value="0" x-model="$store.productCustomer.type_status"
+              class="hidden auto-save product-disable form-check-input" type="radio">
+
             <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
 
               <input x-bind:disabled="!isTypeEnabled" name="product_type_status-{{type_id}}" type="radio" value="{{ item_id }}"
@@ -136,11 +156,9 @@
             {% endfor %}
           </div>
           {% endfor %}
-        <input name="product_type_status" value="0" :value="$store.productCustomer.type_status" class="hidden">
-        <input name="product_status" value="0" :value="$store.productCustomer.type_status" class="hidden">
 
     </div>
-
+    </div>
     <!-- Call Comment -->
     <label class="font-semibold mb-1 block w-full">{{ "Call Comment" | t }}</label>
     <textarea name="note" class="auto-save call-disable form-control mb-3 w-full p-2 border rounded shadow-sm" disabled

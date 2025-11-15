@@ -38,6 +38,8 @@
         'bg-white font-normal text-gray-900': Alpine.store('product').id !== {{ product.id }}
       }"
       @click="
+        Alpine.store('productCustomer').status = '0';
+        Alpine.store('productCustomer').type_status = '0';
         Alpine.store('product').id = {{ product.id }};
         Alpine.store('product').type_id = '{{ product.type_id }}';
         if (Alpine.store('customer').id)
