@@ -198,6 +198,23 @@
     </label>
 </div>
 
+<div class="mb-2">
+    <label class="inline-flex items-center">
+        <input type="hidden" name="filter_f" value="false">
+        <input type="checkbox" name="filter_f" value="true" {% if customer.filter_f %}checked{% endif %} class="mr-2"/>
+        {{ "Likes Subscription" | t }}
+    </label>
+</div>
+
+<div class="mb-2">
+    <label class="inline-flex items-center">
+        <input type="hidden" name="filter_g" value="false">
+        <input type="checkbox" name="filter_g" value="true" {% if customer.filter_g %}checked{% endif %} class="mr-2"/>
+        {{ "Likes Membership" | t }}
+    </label>
+</div>
+
+
 <div class="mb-2 tagify-wrapper"
      x-data
      x-init="initTagify($el)"

@@ -109,6 +109,7 @@ clearSelectedIds() {
         <span>{{ totals.s3 }}</span>
     </button>
 
+    <!--
 {% set product_info = products_json.get(product.type_id) %}
 
 {% if product_info %}
@@ -123,6 +124,7 @@ clearSelectedIds() {
         </button>
     {% endfor %}
 {% endif %}
+-->
 
     <button 
         hx-get="{{ url_for('product_detail', product_id=product.id) }}?list=short"

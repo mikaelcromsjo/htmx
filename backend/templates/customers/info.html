@@ -123,42 +123,6 @@
     </button>
 
     <button 
-        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=4"
-        hx-target="#customer-info"
-        class="px-3 py-1 border rounded hover:bg-gray-200"
-        :class="{'bg-gray-100': {{ status_filter }} === 4}" >
-        {{ "Paid" | t }}
-        <span>{{ totals.s4 }}</span>
-    </button>
-
-        <button 
-        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=6"
-        hx-target="#customer-info"
-        class="px-3 py-1 border rounded hover:bg-gray-200"
-        :class="{'bg-gray-100': {{ status_filter }} === 6}" >
-        {{ "Pay at the door" | t }}
-        <span>{{ totals.s6 }}</span>
-    </button>
-
-    <button 
-        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=5"
-        hx-target="#customer-info"
-        class="px-3 py-1 border rounded hover:bg-gray-200"
-        :class="{'bg-gray-100': {{ status_filter }} === 5}" >
-        {{ "Attended" | t }}
-        <span>{{ totals.s5 }}</span>
-    </button>
-
-        <button 
-        hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short&status_filter=7"
-        hx-target="#customer-info"
-        class="px-3 py-1 border rounded hover:bg-gray-200"
-        :class="{'bg-gray-100': {{ status_filter }} === 7}" >
-        {{ "Did not attend" | t }}
-        <span>{{ totals.s7 }}</span>
-    </button>
-
-    <button 
         hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short"
         hx-target="#customer-info"
         class="px-3 py-1 border rounded hover:bg-gray-200"
@@ -189,31 +153,15 @@
       <th class="px-3 py-1 border text-center w-[10%]">
         {{ "Comming" | t }}
       </th>
-      <th class="px-3 py-1 border text-center w-[10%]">
-        {{ "Paid" | t }}
-      </th>
-      <th class="px-3 py-1 border text-center w-[10%]">
-        {{ "Pay at the door" | t }}
-      </th>
-      <th class="px-3 py-1 border text-center w-[10%]">
-        {{ "Attended" | t }}
-      </th>
-      <th class="px-3 py-1 border text-center w-[10%]">
-        {{ "Did not attend" | t }}
-      </th>
     </tr>
   </thead>
     <tbody>
         {% for ec in product_customers %} 
         <tr class="hover:bg-gray-100">
-            <td class="px-3 py-2 border">{{ ec.product.name }} {{ ec.product.start_date.strftime('%Y-%m-%d') }}</td>
+            <td class="px-3 py-2 border">{{ ec.product.name }}</td>
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 2 %}✔{% endif %}</td>
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 1 %}✔{% endif %}</td>
             <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 3 %}✔{% endif %}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 4 %}✔{% endif %}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 6 %}✔{% endif %}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 5 %}✔{% endif %}</td>
-            <td class="px-3 py-1 border text-green-600 font-bold text-center">{% if ec.status == 7 %}✔{% endif %}</td>
         </tr>
         {% endfor %}
     </tbody>
