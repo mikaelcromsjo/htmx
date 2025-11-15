@@ -255,6 +255,7 @@ async def save_call(
     
     product_id = update_data.product_id
     product_status = getattr(update_data, "product_status", None)
+    product_type_status = getattr(update_data, "product_type_status", None)
     customer_id = update_data.customer_id
     status = getattr(update_data, "status", None)
     call_id = getattr(update_data, "call_id", None)
@@ -267,7 +268,7 @@ async def save_call(
     ).first()
     customer.comment = customer_comment
 
-    if (status == "1" or status == "3"):
+    if (status == "1" or status == "3"): #1 and 3 is hardcoded for answer/extrnal
         # Ensure extra is a dict
         if customer.extra is None:
             customer.extra = {}
@@ -339,16 +340,15 @@ async def save_call(
 
         # Update status
         product_customer.status = product_status
-        print("Setting ProductCustomer.status =", product_status)
+        product_customer.type_status = product_type_status
+        print("Setting ProductCustomer.type_status =", product_type_status)
 
         # Add to DB and commit
         db.add(product_customer)
         try:
             db.commit()
-            print("Database commit successful.")
         except Exception as e:
             db.rollback()
-            print("Database commit failed:", e)
 
     # Try to fetch existing call by ID if provided
     existing_call = None
@@ -517,8 +517,10 @@ def calls_product_detail(
 
 
     product_status = None
+    product_type_status = None
     if product_customer:
         product_status = product_customer.status
+        product_type_status = product_customer.type_status
 
     return templates.TemplateResponse(
         "calls/product_info.html",
@@ -526,6 +528,7 @@ def calls_product_detail(
             "request": request, 
             "product": product, 
             "product_status": product_status,
+            "product_type_status": product_type_status,
             "products_map": constants.products_map,
         }
     )

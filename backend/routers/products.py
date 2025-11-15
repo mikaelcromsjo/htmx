@@ -47,7 +47,7 @@ def products_list(
     products = db.execute(query).scalars().all()
     return templates.TemplateResponse(
         "products/list.html", {
-            "request": request, "products": products, "is_admin": user.admin, "products_map": constants.products_map,
+            "request": request, "products": products, "is_admin": user.admin, "products_map": constants.products_map
 }
     )
 
@@ -127,6 +127,7 @@ def product_detail(
                 "status_filter": status_filter,
                 "user": user,
                 "products_map": constants.products_map,
+                "products_json": constants.products
             }
         )
     else:

@@ -206,5 +206,11 @@
   " Search name, number or phone.": " Search name, number or phone.",
   "New Event": "New Event",
   "Product Type": "Product Type",
-  "Product Typ": "Product Typ"
+  "Product Typ": "Product Typ",
+  "Ej Betald": "Ej Betald",
+  "Betald": "Betald",
+  "Betalar senare": "Betalar senare",
+  "Deltog ej": "Deltog ej",
+  "Deltog": "Deltog",
+  "Ej betald": "Ej betald"
 }
