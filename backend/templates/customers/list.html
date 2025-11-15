@@ -74,12 +74,15 @@ clearSelectedIds() {
                         }" class="cursor-pointer" 
                         @click="selectedRow = {{ loop.index  }}; $store.modal.open = true">
 
-                        {% set number = 0 %}  {# Default fallback value #}
+{% set number = 0 %}  {# Default fallback value #}
 
-{% if customer.last_call_date %}
+{% if customer.last_call_date is not none %}
+    {# Convert to date safely #}
     {% set last_call = customer.last_call_date %}
-    {% if last_call %}
-        {% set delta_days = (now().date() - last_call.date()).days %}
+    {% set last_call_date = last_call.date() if last_call.__class__.__name__ == 'datetime' else None %}
+
+    {% if last_call_date is not none %}
+        {% set delta_days = (now().date() - last_call_date).days %}
 
         {% if delta_days == 0 %}
             {% set number = 600 %}
@@ -101,7 +104,7 @@ clearSelectedIds() {
             {% set number = 0 %}
         {% endif %}
     {% endif %}
-{% endif %} 
+{% endif %}
                                 
                                 <td class="px-2 py-1 border bg-green-{{number}} ">{{
                                 loop.index }}</td>

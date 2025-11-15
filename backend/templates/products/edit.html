@@ -101,7 +101,18 @@
   <label>
     <input type="hidden" name="type_e" value="false">
     <input type="checkbox" name="type_e" value="true" {% if product.type_e %}checked{% endif %}/> {{ "Conferences" | t }}
-  </label>
+  </label><br/>
+
+  <label>
+    <input type="hidden" name="type_f" value="false">
+    <input type="checkbox" name="type_f" value="true" {% if product.type_f %}checked{% endif %}/> {{ "Membership" | t }}
+  </label><br/>
+
+  <label>
+    <input type="hidden" name="type_g" value="false">
+    <input type="checkbox" name="type_g" value="true" {% if product.type_g %}checked{% endif %}/> {{ "Subscription" | t }}
+  </label><br/>
+
 </fieldset>
 
 <!-- Extra Options -->

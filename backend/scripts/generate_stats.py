@@ -75,7 +75,7 @@ def parse_args():
     parser.add_argument("--from", dest="date_from", required=False, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--to", dest="date_to", required=False, help="End date (YYYY-MM-DD)")
     parser.add_argument("--caller", help="Filter by caller name")
-    parser.add_argument("--product-type", choices=["type_a", "type_b", "type_c", "type_d"], help="Filter products by type")
+    parser.add_argument("--product-type", choices=["type_a", "type_b", "type_c", "type_d", "type_e", "type_f", "type_g"], help="Filter products by type")
     parser.add_argument("--chart", choices=[
         "calls_over_time",
         "caller_performance",

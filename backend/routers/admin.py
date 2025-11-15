@@ -43,7 +43,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 ALLOWED_SCRIPTS = {
     "manage_users": "/app/backend/scripts/manage_users.py",
     "stats": "/app/backend/scripts/generate_stats.py",
-    "test_data": "/app/backend/scripts/generate_test_data.py",
+#    "test_data": "/app/backend/scripts/generate_test_data.py",
     "inspect_db": "/app/backend/scripts/inspect_db.py",    
 }
 

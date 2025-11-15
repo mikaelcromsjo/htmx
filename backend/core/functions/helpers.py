@@ -478,6 +478,10 @@ def utc_to_local(dt, tz_name: str = DEFAULT_TZ, fmt: str = "%Y-%m-%d %H:%M") -> 
         tz_name: target timezone (default: Stockholm)
         fmt: output string format
     """
+
+    if dt == None:
+        return None
+
     # If input is a string, parse it as ISO format
     if isinstance(dt, str):
         try:

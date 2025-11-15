@@ -30,6 +30,8 @@
     {% if product.type_c %}{% set _ = types.append('Föreläsning') %}{% endif %}
     {% if product.type_d %}{% set _ = types.append('Aktivism') %}{% endif %}
     {% if product.type_e %}{% set _ = types.append('Konferens') %}{% endif %}
+    {% if product.type_f %}{% set _ = types.append('Medlemskap') %}{% endif %}
+    {% if product.type_g %}{% set _ = types.append('Prenumeration') %}{% endif %}
     {{ types | join(', ') if types else '' }}
 </div>
 
