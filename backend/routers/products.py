@@ -46,11 +46,10 @@ def products_list(
         query = query.where(Product.name.contains(filter))
     products = db.execute(query).scalars().all()
     return templates.TemplateResponse(
-        "products/list.html", {"request": request, "products": products, "is_admin": user.admin,
+        "products/list.html", {
+            "request": request, "products": products, "is_admin": user.admin, "products_map": constants.products_map,
 }
     )
-
-
 
 # -----------------------------
 # Product Detail Modal (HTMX fragment)
@@ -63,7 +62,10 @@ def new_product(
     product = Product.empty()
 
     return templates.TemplateResponse(
-        "products/edit.html", {"request": request, "product": product, "editable": True}
+        "products/edit.html", {
+            "request": request, 
+            "product": product, 
+            "editable": True}
     )               
 
 # -----------------------------
@@ -82,10 +84,6 @@ def product_detail(
     product = db.get(Product, product_id)
     if not product:
         product = Product().empty()
-
-    print ("name", product.name)
-    print ("type", product.type_id)
-
 
     if list == "short":
 
@@ -204,7 +202,8 @@ async def upsert_product(
         "products/list.html",
         {
             "request": request, 
-            "products": products
+            "products": products,
+            "products_map": constants.products_map,
          },
     )
     # Set the popup message in a custom header

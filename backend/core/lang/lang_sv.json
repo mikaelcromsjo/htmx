@@ -54,8 +54,8 @@
   "Name": "Namn",
   "Command": "Kommando",
   "Select": "Välj",
-  "Edit": "Redigera",
-  "Delete": "Radera",
+  "Edit": "🖋️",
+  "Delete": "🗑️",
   "New Customer": "Ny kund",
   "Filter": "Filter",
   "Toggle Select Column": "Valkolumn",
@@ -205,5 +205,6 @@
   "Product Information": "Produktinformation",
   " Search name, number or phone.": " Search name, number or phone.",
   "New Event": "New Event",
-  "Product Type": "Product Type"
+  "Product Type": "Product Type",
+  "Product Typ": "Product Typ"
 }
