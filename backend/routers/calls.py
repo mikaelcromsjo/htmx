@@ -328,7 +328,7 @@ async def save_call(
     ).first()
 
     # Check if product_customer exists
-    if (product_id and product_status):
+    if (product_id and (product_status or product_type_status)):
         if not product_customer:
             print("No existing ProductCustomer found. Creating a new one.")
             product_customer = ProductCustomer(
@@ -339,8 +339,10 @@ async def save_call(
             print("Found existing ProductCustomer:", product_customer)
 
         # Update status
-        product_customer.status = product_status
-        product_customer.type_status = product_type_status
+        if product_status:
+            product_customer.status = product_status
+        if product_type_status:
+            product_customer.type_status = product_type_status
         print("Setting ProductCustomer.type_status =", product_type_status)
 
         # Add to DB and commit
