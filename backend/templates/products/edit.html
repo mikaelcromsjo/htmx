@@ -29,13 +29,13 @@
     {% endif %}
 
 
-    {% if not product.id %}
+    {% if product.id %} <!-- not -->
 
     <div class="mb-2">
         <label class="block font-semibold">{{ "Product Type" | t }}</label>
         <select name="type_id" class="border p-1 w-full">
           {% for pid, product in products.items() %}
-              <option value="{{ pid }}">
+              <option value="{{ pid }}" {% if pid in product.type_id %}selected{% endif %}>
                 {{ product.name }}
               </option>
           {% endfor %}
