@@ -25,7 +25,6 @@ def get_selected_ids(request: Request, selected_ids: Optional[SelectedIDs]) -> L
         return selected_ids.ids
 
     # Otherwise, pull from session
-    return
     return request.session.get("selected_ids", [])
 
 

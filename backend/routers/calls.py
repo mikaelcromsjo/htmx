@@ -56,7 +56,7 @@ def call_center_dashboard(
     )
 
 
-@router.get("/customers", response_class=HTMLResponse, name="calls_customers_list")
+@router.post("/customers", response_class=HTMLResponse, name="calls_customers_list")
 def call_customers_list(
     request: Request,
     selected_ids: Optional[SelectedIDs] = None,
@@ -67,10 +67,13 @@ def call_customers_list(
     ids = get_selected_ids(request, selected_ids)
     customers = get_customers(db, user, ids)
 
-    return render(
+    response = render(
         "calls/customers_list.html",
         {"request": request, "customers": customers}, 
     )
+    response.headers["HX-Popup-Message"] = "Loaded"
+    return response
+
 
 @router.get("/products_list", response_class=HTMLResponse, name="calls_products_list")
 def call_poducts_list(

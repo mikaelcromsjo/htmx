@@ -900,12 +900,11 @@ Alpine.store('customers', {
                 if (cb.checked) cb.checked = false;
             });
         },
-
         getSelectedIds() {
             return Object.keys(this.selected)
                          .filter(id => this.selected[id])
                          .map(id => parseInt(id));
-        }
+        },
       });
 
     Alpine.store('productFilters', {
@@ -962,8 +961,9 @@ function reloadCallsDashboard() {
   htmx.ajax('GET', '/calls/dashboard', { target: '#calls_content' });
 }
 
+
 function reloadCallsCustomers() {
-  htmx.ajax('GET', '/calls/customers/', { target: '#calls-customer-list' });
+  document.getElementById('reload-customers-btn').click();
 }
 
 function reloadCallsProducts() {
@@ -976,7 +976,7 @@ function reloadAlarms() {
 
 function reloadCustomers() {
   htmx.ajax('GET', '/customers/', { target: '#customer_content' });
-  htmx.ajax('GET', '/calls/customers/', { target: '#calls-customer-list' });
+  reloadCallsCustomers()
 }
 
 function reloadProducts() {

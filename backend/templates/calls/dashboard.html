@@ -283,41 +283,41 @@
 
 <script>
   function enableCall() {
-    const buttons = document.querySelectorAll('.call-disable');
-    buttons.forEach(button => {
+    const inputs = document.querySelectorAll('.call-disable');
+    inputs.forEach(button => {
       button.disabled = false;
     });
   }
   function enableProduct() {
-    const buttons = document.querySelectorAll('.product-disable');
-    buttons.forEach(button => {
+    const inputs = document.querySelectorAll('.product-disable');
+    inputs.forEach(button => {
       button.disabled = false;
     });
   }
   function enableCustomer() {
-    const buttons = document.querySelectorAll('.customer-disable');
-    buttons.forEach(button => {
+    const inputs = document.querySelectorAll('.customer-disable');
+    inputs.forEach(button => {
       button.disabled = false;
     });
   }
 
   function disableCall() {
-    const buttons = document.querySelectorAll('.call-disable');
-    buttons.forEach(button => {
+    const inputs = document.querySelectorAll('.call-disable');
+    inputs.forEach(button => {
       button.disabled = true;
     });
   }
 
   function disableProduct() {
-    const buttons = document.querySelectorAll('.product-disable');
-    buttons.forEach(button => {
+    const inputs = document.querySelectorAll('.product-disable');
+    inputs.forEach(button => {
       button.disabled = true;
     });
   }
 
   function disableCustomer() {
-    const buttons = document.querySelectorAll('.customer-disable');
-    buttons.forEach(button => {
+    const inputs = document.querySelectorAll('.customer-disable');
+    inputs.forEach(button => {
       button.disabled = true;
     });
   }
@@ -329,21 +329,21 @@
 
 <script>
 
-  const buttons = document.querySelectorAll('.can-highlight');
+  let h_buttons = document.querySelectorAll('.can-highlight');
 
-  buttons.forEach(btn => {
+  h_buttons.forEach(btn => {
     btn.addEventListener('click', () => {
-      buttons.forEach(b => b.classList.remove('highlight'));
+      h_buttons.forEach(b => b.classList.remove('highlight'));
       btn.classList.add('highlight');
     });
   });
 
-  function removeHightlight() {
-    buttons.forEach(b => b.classList.remove('highlight'));
+  function removeHighlight() {
+    h_buttons.forEach(b => b.classList.remove('highlight'));
   }
 
   function highlightButton(button) {
-    removeHightlight(); // Remove highlight from all buttons first
+    removeHighlight(); // Remove highlight from all buttons first
     button.classList.add('highlight'); // Add highlight to the clicked or specified button
   }
 

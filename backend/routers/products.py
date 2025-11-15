@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Request, Form, HTTPException
 from fastapi import APIRouter, Depends, Form, Request, HTTPException, Query
 
 import data.constants as constants
+from datetime import datetime, timezone
 
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy import Column, Integer, String, DateTime, JSON, select
@@ -37,14 +38,19 @@ router = APIRouter(prefix="/products", tags=["products"])
 @router.get("/", response_class=HTMLResponse, name="products_list")
 def products_list(
     request: Request,
-    filter: Optional[str] = None,
     db: Session = Depends(get_db),
     user = Depends(get_current_user)
 ):
+
+    # list all that has not ended now() - 30 days
+    product_date_filter_start = datetime.now(timezone.utc) - timedelta(days=5)    
     query = select(Product)
-    if filter:
-        query = query.where(Product.name.contains(filter))
+
+    if product_date_filter_start:
+        query = query.where(Product.end_date >= product_date_filter_start)
+
     products = db.execute(query).scalars().all()
+
     return templates.TemplateResponse(
         "products/list.html", {
             "request": request, "products": products, "is_admin": user.admin, "products_map": constants.products_map
@@ -256,7 +262,9 @@ async def set_filter(
 
     products = db.execute(query).scalars().all()
 
-    return templates.TemplateResponse(
+    response = templates.TemplateResponse(
         "products/list.html",
-        {"request": request, "products": products}
+        {"request": request, "products": products, "products_map": constants.products_map}
     )
+    response.headers["HX-Popup-Message"] = "Updated"
+    return response
