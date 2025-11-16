@@ -229,10 +229,39 @@
       </div>
 
       <!-- Alarm -->
-      <button type="button" class="customer-disable auto-save px-4 py-2 rounded
+      <button type="button" class="customer-disable px-4 py-2 rounded
                  bg-blue-600 text-white hover:bg-blue-500 disabled:bg-blue-800 disabled:opacity-100" disabled
         onclick="showAlarmModal()">
         {{ "Alarm" | t }}
+      </button>
+
+
+      <!-- SMS modal -->
+      <div id="sms_modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-xl p-6 w-80">
+          <h2 class="text-lg font-semibold mb-4">{{ "Send SMS" | t }}</h2>
+          {{ "Message" | t }}
+          <textarea id="sms_message" name="sms_message" class="form-control mb-3 w-full p-2 border rounded"
+            rows="3"></textarea>
+
+          <div class="flex justify-end space-x-2">
+            <button type="button" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+              onclick="document.getElementById('sms_modal').classList.add('hidden')">
+              {{ 'Cancel' | t }}
+            </button>
+            <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              onclick="sms(); document.getElementById('sms_modal').classList.add('hidden')">
+              {{ 'Send SMS' | t }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+            <!-- SMS -->
+      <button type="button" class="customer-disable px-4 py-2 rounded
+                 bg-gray-600 text-white hover:bg-gray-500 disabled:bg-gray-800 disabled:opacity-100" disabled
+        onclick="showSmsModal()">
+        {{ "SMS" | t }}
       </button>
 
       <button type="submit" class="customer-disable auto-save px-4 py-2 rounded
@@ -371,6 +400,15 @@
     modal.classList.remove("hidden");
   }
 
+  function showSmsModal() {
+    const modal = document.getElementById("sms_modal");
+    const note = document.getElementById("sms_message");
+
+    note.value = "";
+    modal.classList.remove("hidden");
+  }
+
+
 </script>
 
 <script>
@@ -407,6 +445,21 @@
   setupSplit(['col1', 'col2', 'col3', 'col4'], 'layout-topRow');
   setupSplit(['col5', 'col6', 'col7'], 'layout-bottomRow');
   setupRowSplit(['topRow', 'bottomRow'], 'row-split');
+
+</script>
+
+<script>
+function sms() {
+    console.log("sms clicked")
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+        console.log("WebSocket not connected yet");
+        return;
+    }
+    const message = document.querySelector("#sms_message").value;
+    console.log("message",message);
+    ws.send(JSON.stringify({ sms: true, message: message }));
+}
+
 
 </script>
 

@@ -212,7 +212,10 @@
   "Likes Subscription": "Visa prenumerationer",
   "Likes Membership": "Visa medlemskap",
   "Interested in": "Intereserad av:",
-  "Product Typ": "Produkttyp",
+  "Product Typ": "Product Typ",
   "Selected Customers": "Valda kunder",
-  "Selected": "Valda"
+  "Selected": "Vald",
+  "Send SMS": "Skicka SMS",
+  "SMS": "SMS",
+  "Message": "Meddelande"
 }

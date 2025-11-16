@@ -54,6 +54,7 @@ let wsToken;
 const nameEl = document.querySelector("#name");
 const numberEl = document.querySelector("#number");
 const callHref = document.querySelector("#call_href");
+const smsHref = document.querySelector("#sms_href");
 
 async function fetchToken() {
     const res = await fetch(`${location.protocol}//${location.host}/get-ws-token`, {
@@ -92,7 +93,28 @@ async function connectWS() {
                 if (data.name) {
                     nameEl.textContent = data.name;
                     numberEl.textContent = data.number;
+                    let old = callHref.href;
+                        console.log("old",old)
                     callHref.href = "tel:" + data.number;
+                        console.log("href",callHref.href)
+                        if (data.number && data.number.length > 2) {
+                            callHref.style.display = "block";
+
+                            if (old !== callHref.href) {
+                                console.log("change");
+                                smsHref.href = "";
+                                smsHref.style.display = "none";
+                            }
+                        } else {
+                            callHref.style.display = "none";
+                            smsHref.style.display = "none";
+                        }
+                 
+                }
+                if (data.sms) {
+                    smsHref.href = "sms://" + numberEl.textContent + "?body="+ data.message;
+                    smsHref.visible=true;
+                    smsHref.style.display = "block";
                 }
             };
 

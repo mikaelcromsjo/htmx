@@ -607,9 +607,9 @@ async def websocket_endpoint(websocket: WebSocket):
 #            await websocket.send_json("pong")
             call = payload.get("call")
             number = payload.get("number")
-            if call:
-                print(f"Call")
-
+            sms = payload.get("sms")
+            message = payload.get("message")
+            if (call):
                 for ws in active_connections.get(user_id, []):
                     try:
                         print("Sending to web sockets")
@@ -618,7 +618,19 @@ async def websocket_endpoint(websocket: WebSocket):
                     except RuntimeError:
                         # WebSocket is closed, mark for removal
                         to_remove.append(ws)
-                
+            elif (sms):
+                print(f"SMS")
+
+                for ws in active_connections.get(user_id, []):
+                    try:
+                        print("Sending to web sockets")
+                        await ws.send_json({ "sms": "true", "message": message })
+
+                    except RuntimeError:
+                        # WebSocket is closed, mark for removal
+                        to_remove.append(ws) 
+
+
     except WebSocketDisconnect:
         active_connections[user_id].remove(websocket)
         if not active_connections[user_id]:
