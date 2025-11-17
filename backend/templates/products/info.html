@@ -267,6 +267,27 @@
                 {{ "Load Selected Customers" | t }}
             </button>
 
+                <!-- SMS -->
+
+        <button id="mass-sms-btn"
+            class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200"
+            hx-post="/customers/data"
+            hx-ext="json-enc"
+            :hx-vals="JSON.stringify({
+                selected_ids: $store.customers.getSelectedIds()
+            })"
+            hx-swap="none"
+            hx-on="htmx:afterRequest: 
+                console.log('test', event.detail.xhr.responseText);
+                Alpine.store('customers')
+                    .setSelectedCustomerData(JSON.parse(event.detail.xhr.responseText));
+                showSmsModal(multiple=true);
+            ">
+                {{ "SMS" | t }}
+            </button>
+
+
+
 
 <button onclick="printTable('customer-table')" class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">{{ "Print" | t }}</button>
 
