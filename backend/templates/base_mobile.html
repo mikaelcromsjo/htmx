@@ -123,6 +123,7 @@ if (data.type === 'sms' && data.sms_type === 'multiple') {
 
     sms_button.href = "sms:" + data.numbers + "?&body=" + encodeURIComponent(data.message);
     sms_button.style.display = "block";
+    call_button.style.display = "none";
 
 } 
 else if (data.type === "sms") {
