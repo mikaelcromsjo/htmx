@@ -59,13 +59,13 @@
     <!-- Start Date -->
     <div class="mb-2">
         <label class="block">{{ "Start Date" | t }}</label>
-        <input type="datetime-local" lang="sv"  name="start_date" data-save="true" value="{{ product.start_date | date() }}" class="border p-1 w-full"/>
+        <input type="datetime-local" lang="sv"  name="start_date" data-save="true" value="{{ product.start_date | date }}" class="border p-1 w-full"/>
     </div>
 
     <!-- End Date -->
     <div class="mb-2">
         <label class="block">{{ "End Date" | t }}</label>
-        <input type="datetime-local" lang="sv"  name="end_date" data-save="true" value="{{ product.end_date | date() }}" class="border p-1 w-full"/>
+        <input type="datetime-local" lang="sv"  name="end_date" data-save="true" value="{{ product.end_date | date }}" class="border p-1 w-full"/>
     </div>
 
     <!-- Description -->

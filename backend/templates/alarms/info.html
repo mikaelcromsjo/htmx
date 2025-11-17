@@ -7,11 +7,11 @@
 {% endif %}
 
 {% if alarm.date %}
-<div class="mb-1"><strong>{{ "Date" | t }}:</strong> {{ alarm.date.strftime('%Y-%m-%d %H:%M') }}</div>
+<div class="mb-1"><strong>{{ "Date" | t }}:</strong> {{ alarm.date | date }}</div>
 {% endif %}
 
 {% if alarm.deminder %}
-<div class="mb-1"><strong>{{ "Reminder" | t }}:</strong> {{ alarm.reminder.strftime('%Y-%m-%d %H:%M') }}</div>
+<div class="mb-1"><strong>{{ "Reminder" | t }}:</strong> {{ alarm.reminder | date }}</div>
 {% endif %}
 
 {% if alarm.customer %}
@@ -27,5 +27,5 @@
 
 <br/>
 {% if alarm.reminder_sent %}
-<div class="mb-1"><strong>{{ "Reminder Sent" | t }}:</strong> {{ alarm.reminder_sent.strftime('%Y-%m-%d %H:%M') }}</div>
+<div class="mb-1"><strong>{{ "Reminder Sent" | t }}:</strong> {{ alarm.reminder_sent | date }}</div>
 {% endif %}

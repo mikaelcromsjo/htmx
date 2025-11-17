@@ -8,11 +8,12 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from datetime import datetime, timezone
-
+import zoneinfo
 import data.constants as constants
 
 from core.database import get_db
 from templates import templates
+from core.functions.helpers import local_to_utc, utc_to_local
 
 
 from models.models import Customer, Call, Product, ProductCustomer, Caller, Alarm
@@ -47,7 +48,14 @@ def call_center_dashboard(
     customers = get_customers(db, user, ids)
 #    query = db.query(Call)
 #    calls = query.all()
+
+    # list all that has not ended now() - 30 days
+
+    product_date_filter_start = datetime.now(timezone.utc) - timedelta(days=constants.SHOW_PRODUCTS_X_DAYS)
+
     query = db.query(Product)
+    if product_date_filter_start:
+        query = query.where(Product.end_date >= product_date_filter_start)
     products = query.all()
 
     return render(
@@ -296,8 +304,11 @@ async def save_call(
 
     if product_alarm_date:
         try:
-            naive_dt = datetime.strptime(product_alarm_date, "%Y-%m-%dT%H:%M")
-            product_alarm_date = naive_dt.astimezone(timezone.utc)            
+#            naive_dt = datetime.strptime(product_alarm_date, "%Y-%m-%dT%H:%M")
+#            product_alarm_date = naive_dt.astimezone(timezone.utc)            
+
+            product_alarm_date = local_to_utc(product_alarm_date)
+
         except ValueError:
             product_alarm_date = datetime.now(timezone.utc)
 
@@ -497,6 +508,7 @@ def list_customer_products(customer_id: int, request: Request, db: Session = Dep
     """
     Return HTMX fragment with all products associated with a customer.
     """
+    
     products = (
         db.query(models.CustomerProduct)
         .filter(models.CustomerProduct.customerId == customer_id)

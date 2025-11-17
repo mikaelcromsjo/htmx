@@ -2,6 +2,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from pathlib import Path
 import os
+from zoneinfo import ZoneInfo  # Python 3.9+
+import data.constants as constants
 
 from typing import Type
 from typing import Any, Union
@@ -442,11 +444,8 @@ def formatPhoneNr(number: str, country_code: str = '+46') -> str:
     return number
 
 from datetime import datetime, timezone
-from zoneinfo import ZoneInfo  # Python 3.9+
 
-DEFAULT_TZ = "Europe/Stockholm"
-
-def local_to_utc(datetime_local_str: str, tz_name: str = DEFAULT_TZ) -> datetime:
+def local_to_utc(datetime_local_str: str, tz_name: str = constants.DEFAULT_TZ) -> datetime:
     """
     Convert a datetime-local string (YYYY-MM-DDTHH:MM) or date string (YYYY-MM-DD)
     from user's timezone to UTC-aware datetime.
@@ -469,10 +468,9 @@ def local_to_utc(datetime_local_str: str, tz_name: str = DEFAULT_TZ) -> datetime
     except Exception as e:
         raise ValueError(f"Invalid datetime-local format: {datetime_local_str}") from e
 
-def utc_to_local(dt, tz_name: str = DEFAULT_TZ, fmt: str = "%Y-%m-%d %H:%M") -> str:
+def utc_to_local(dt, fmt: str = "%Y-%m-%d %H:%M", tz_name: str = constants.DEFAULT_TZ) -> str:
     """
     Convert a UTC datetime or UTC string to user's local timezone string.
-
     Parameters:
         dt: datetime or ISO8601 string in UTC
         tz_name: target timezone (default: Stockholm)

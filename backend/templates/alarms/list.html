@@ -21,7 +21,7 @@
                         @click="$store.modal.open = true"
                         class="cursor-pointer hover:bg-gray-100">
                         <td class="px-2 py-1 border">{{ loop.index }}</td>
-                        <td class="px-2 py-1 border">{{ alarm.date }}</td>
+                        <td class="px-2 py-1 border">{{ alarm.date | date }}</td>
                         <td class="px-2 py-1 border">{{ alarm.reminder }}</td>
                         <td class="px-2 py-1 border">{{ alarm.customer.first_name }} {{ alarm.customer.last_name }}</td>
                         <td class="px-2 py-1 border">{{ alarm.product.name }}</td>
@@ -30,7 +30,7 @@
 
                             <!--
                             <button hx-get="{{ url_for('alarm_detail', alarm_id=alarm.id) }}"
-                                hx-target="#modal-container" hx-swap="innerHTML" @click="$store.modal.open = true">
+                                hx-target="#modal-container" hx-swap="innerHTML" @clicks"$store.modal.open = true">
                                 {{ "Edit" | t }}
                             </button>
 -->

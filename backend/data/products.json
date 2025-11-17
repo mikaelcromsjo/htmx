@@ -13,7 +13,8 @@
     "name": "Prenumeration",
     "items": {
       "1": "Ej betald",
-      "2": "Betald"
+      "2": "Betald",
+      "3": "Utgått"
     }
   },
   "p3": {

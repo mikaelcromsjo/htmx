@@ -43,7 +43,7 @@ def products_list(
 ):
 
     # list all that has not ended now() - 30 days
-    product_date_filter_start = datetime.now(timezone.utc) - timedelta(days=5)    
+    product_date_filter_start = datetime.now(timezone.utc) - timedelta(days=constants.SHOW_PRODUCTS_X_DAYS)
     query = select(Product)
 
     if product_date_filter_start:
@@ -167,7 +167,11 @@ async def upsert_product(
     
     if not user.admin:
         raise HTTPException(status_code=401, detail="Error. Only Admin can edit products")
-    
+
+    # make input dates utc
+    update_data.start_date = local_to_utc(update_data.start_date)
+    update_data.end_date = local_to_utc(update_data.end_date)
+
     # Determine if this is an update or create
     product_id = update_data.model_dump().get("id")
     if product_id:

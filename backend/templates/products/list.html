@@ -27,7 +27,7 @@
                         <td class="px-2 py-1 border">{{ loop.index  }}</td>
                         <td class="px-2 py-1 border">{{ product.name }}</td>
                         <td class="px-2 py-1 border">{{ products_map.get(product.type_id, {}).get('name', '') }}</td>
-                        <td class="px-2 py-1 border">{{ product.start_date }}</td>
+                        <td class="px-2 py-1 border">{{ product.start_date | date }}</td>
                         <td class="px-2 py-1 border text-center" @click.stop x-show="is_admin">
 
                             <button hx-get="{{ url_for('product_detail', product_id=product.id) }}"

@@ -1,7 +1,13 @@
 import json
 from pathlib import Path
+from zoneinfo import ZoneInfo  # Python 3.9+
 
 DATA_DIR = Path("./data")
+
+# put in admin #TODO
+# 
+DEFAULT_TZ = "Europe/Stockholm"
+SHOW_PRODUCTS_X_DAYS = 5;
 
 def load_json(filename):
     path = DATA_DIR / filename

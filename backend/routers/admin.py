@@ -271,6 +271,7 @@ def create_customer_from_row(row: dict, db):
         comment=row.get("comment"),
         sub_caller=row.get("sub_caller"),
         organisations=_parse_id_list(row.get("organisations")),
+        filters=_parse_id_list(row.get("filters")),
         categories=_parse_id_list(row.get("categories")),
         personality_type=int(row.get("personality_type") or 0) or None,
         controlled=_parse_bool(row.get("controlled")),
@@ -358,7 +359,7 @@ from fastapi.responses import HTMLResponse
 from pathlib import Path
 import json
 import importlib
-import data.constants as constants  # Your preloaded data
+import data.constants as constants 
 
 DATA_DIR = Path("./data")
 

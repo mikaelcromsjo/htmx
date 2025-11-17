@@ -1,6 +1,7 @@
 # alarms.py
 from fastapi import APIRouter, Depends, Request, Form, HTTPException
 from fastapi import APIRouter, Depends, Form, Request, HTTPException, Query
+from core.functions.helpers import local_to_utc, utc_to_local
 
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy import Column, Integer, String, DateTime, JSON, select
@@ -73,8 +74,13 @@ from datetime import datetime
 
 def get_google_calendar_link(alarm):
     event_title = f"Påminnelse: Ring Kund: {alarm.customer.first_name} {alarm.customer.last_name}"
-    start_time = alarm.date.strftime('%Y%m%dT%H%M%S')  # local time
-    end_time = alarm.date.strftime('%Y%m%dT%H%M%S')    # same as start if no duration
+#    start_time = alarm.date.strftime('%Y%m%dT%H%M%S')  # local time 
+#    end_time = alarm.date.strftime('%Y%m%dT%H%M%S')    # same as start if no duration
+
+    start_time = utc_to_local(alarm.date,'%Y%m%dT%H%M%S') 
+    end_time = utc_to_local(alarm.date,'%Y%m%dT%H%M%S')
+
+
     details = alarm.note or ""
     reminder_minutes = int((alarm.date - alarm.reminder).total_seconds() // 60) if alarm.reminder else 10
 
