@@ -12,12 +12,12 @@ SHOW_PRODUCTS_X_DAYS = 5;
 def load_json(filename):
     path = DATA_DIR / filename
 
-    # If file does not exist → create it with empty JSON
+    # If file does not exist → create it with empty JSON object
     if not path.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
-            json.dump([], f, indent=2)
-        return []
+            json.dump({}, f, indent=2)
+        return {}
 
     # If the file exists → try loading it
     try:
@@ -26,8 +26,8 @@ def load_json(filename):
     except (json.JSONDecodeError, OSError):
         # If corrupted or unreadable → reset it
         with open(path, "w", encoding="utf-8") as f:
-            json.dump([], f, indent=2)
-        return []
+            json.dump({}, f, indent=2)
+        return {}
 
 
 # --- Load data ---
