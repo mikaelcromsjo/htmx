@@ -1,8 +1,7 @@
 <div x-data x-init='
   Alpine.store("productCustomer").status = String({{ product_status | tojson }} || "0");
-'>
-<div x-data x-init='
   Alpine.store("productCustomer").type_status = String({{ product_type_status | tojson }} || "0");
+
 '>
 
 <div class="mb-1"><strong>{{ "Name" | t }}:</strong> {{ product.name }}</div>
