@@ -76,7 +76,7 @@
 <!-- Customer Calls fragment -->
 <div id="calls" hx-swap-oob="true">
   {% for call in calls %}
-  <div 
+  <div tabindex="0"
     class="p-2 cursor-pointer border-b"
     :class="{
       'bg-green-100 text-gray-900 font-bold': {{ call.status }} === 1 && $store.call.id !== {{ call.id }},

@@ -1,59 +1,55 @@
-<div
-  x-data="{ 
-    isVisible(product) { 
-      let filters = Alpine.store('productFilters'); 
-      if (!filters) return true; 
-      return Object.keys(filters).some(type => filters[type] && product[type]); 
-    } 
-  }"
->
-  <div 
-    id="product-list" 
-    x-data="{ prevCustomer: null }" 
-    x-effect="
-      console.log('Click Product');
-      const currentCustomer = Alpine.store('customer').id;
-      if (currentCustomer && currentCustomer !== prevCustomer) {
-        prevCustomer = currentCustomer;
-        // Find the active product row
-        const activeRow = $el.querySelector('.bg-blue-100.font-bold.text-blue-600');
-        if (activeRow) {
-          $nextTick(() => { activeRow.click(); });
-        }
-      }
-    "
-  >
-    {% for product in products %}
-    <div 
-      x-show="{{ 'true' if product.extra_visilble_all else 'false' }} || isVisible({
-        filter_a: {{ 'true' if product.type_a else 'false' }},
-        filter_b: {{ 'true' if product.type_b else 'false' }},
-        filter_c: {{ 'true' if product.type_c else 'false' }},
-        filter_d: {{ 'true' if product.type_d else 'false' }},
-        filter_e: {{ 'true' if product.type_e else 'false' }},
-        filter_f: {{ 'true' if product.type_f else 'false' }},
-        filter_g: {{ 'true' if product.type_g else 'false' }}
-      })"
-      class="p-2 cursor-pointer border-b"
-      :class="{
-        'bg-blue-100 font-bold text-blue-600': Alpine.store('product').id === {{ product.id }},
-        'bg-white font-normal text-gray-900': Alpine.store('product').id !== {{ product.id }}
-      }"
-      @click="
-        Alpine.store('productCustomer').status = '-';
-        Alpine.store('productCustomer').type_status = '-';
-        Alpine.store('product').id = {{ product.id }};
-        Alpine.store('product').type_id = '{{ product.type_id }}';
-        if (Alpine.store('customer').id)
-            enableProduct();
-      "
-      hx-get="{{ url_for('calls_product_detail', product_id=product.id) }}?list=short"
-      hx-target="#product-details"
-      hx-swap="innerHTML"
-      :hx-vals="JSON.stringify(Alpine.store('customer')?.id ? { customer_id: Alpine.store('customer').id } : {})"
+<div x-data="{ search: '', prevCustomer: null }">
+    <!-- Search Box -->
+    <input 
+        type="text" 
+        placeholder="Search product..." 
+        x-model="search"
+        class="border p-2 mb-2 w-full"
+    />
+
+    <!-- Product List -->
+    <div id="product-list" 
+         x-effect="
+            const currentCustomer = Alpine.store('customer').id;
+            if (currentCustomer && currentCustomer !== prevCustomer) {
+                prevCustomer = currentCustomer;
+                const activeRow = $el.querySelector('.bg-blue-100.font-bold.text-blue-600');
+                if (activeRow) $nextTick(() => { activeRow.click(); });
+            }
+         "
     >
-      {{ product.name }}
+        {% for product in products %}
+        <div tabindex="0"
+             x-show="(
+                {{ 'true' if product.extra_visilble_all else 'false' }} || 
+                ( (Alpine.store('productFilters').filter_a && {{ 'true' if product.type_a else 'false' }}) ||
+                  (Alpine.store('productFilters').filter_b && {{ 'true' if product.type_b else 'false' }}) ||
+                  (Alpine.store('productFilters').filter_c && {{ 'true' if product.type_c else 'false' }}) ||
+                  (Alpine.store('productFilters').filter_d && {{ 'true' if product.type_d else 'false' }}) ||
+                  (Alpine.store('productFilters').filter_e && {{ 'true' if product.type_e else 'false' }}) ||
+                  (Alpine.store('productFilters').filter_f && {{ 'true' if product.type_f else 'false' }}) ||
+                  (Alpine.store('productFilters').filter_g && {{ 'true' if product.type_g else 'false' }})
+                )
+             ) && ('{{ product.name.lower() }}'.includes(search.toLowerCase()))"
+             class="p-2 cursor-pointer border-b"
+             :class="{
+                'bg-blue-100 font-bold text-blue-600': Alpine.store('product').id === {{ product.id }},
+                'bg-white font-normal text-gray-900': Alpine.store('product').id !== {{ product.id }}
+             }"
+             @click="
+                Alpine.store('productCustomer').status = '-';
+                Alpine.store('productCustomer').type_status = '-';
+                Alpine.store('product').id = {{ product.id }};
+                Alpine.store('product').type_id = '{{ product.type_id }}';
+                if (Alpine.store('customer').id) enableProduct();
+             "
+             hx-get="{{ url_for('calls_product_detail', product_id=product.id) }}?list=short"
+             hx-target="#product-details"
+             hx-swap="innerHTML"
+             :hx-vals="JSON.stringify(Alpine.store('customer')?.id ? { customer_id: Alpine.store('customer').id } : {})"
+        >
+            {{ product.name }}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-  </div>
 </div>

@@ -1,38 +1,86 @@
-{% for customer in customers %}
+<div x-data="{ search: '', selectedId: null }">
+    <!-- Search Box -->
+     
+    <input 
+        type="text" 
+        placeholder="{{ "Search customer..." | t }}" 
+        x-model="search"
+        class="border p-2 mb-2 w-full"
+    />
+
+    <!-- Customer List -->
+    {% for customer in customers %}
+{% set number = 0 %}  {# Default fallback value #}
+{% if customer.last_call_date is not none %}
+    {# Convert to date safely #}
+    {% set last_call = customer.last_call_date %}
+    {% set last_call_date = last_call.date() if last_call.__class__.__name__ == 'datetime' else None %}
+
+    {% if last_call_date is not none %}
+        {% set delta_days = (now().date() - last_call_date).days %}
+
+        {% if delta_days == 0 %}
+            {% set number = 600 %}
+        {% elif delta_days == 1 %}
+            {% set number = 500 %}
+        {% elif delta_days == 2 %}
+            {% set number = 400 %}
+        {% elif delta_days <= -1 %}
+            {% set number = 0 %}
+        {% elif delta_days <= 7 %}
+            {% set number = 300 %}
+        {% elif delta_days <= 14 %}
+            {% set number = 200 %}
+        {% elif delta_days <= 21 %}
+            {% set number = 100 %}
+        {% elif delta_days <= 28 %}
+            {% set number = 50 %}
+        {% else %}
+            {% set number = 0 %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+                                
+
 <div 
-    class="p-2 flex justify-between items-center cursor-pointer border-b"
+    tabindex="0"
+    class="focus:bg-green-100 p-2 flex items-center cursor-pointer border-b"
+    x-show="('{{ customer.first_name }} {{ customer.last_name }}').toLowerCase().includes(search.toLowerCase())"
     :class="{
-        'bg-green-100 font-bold text-green-600': Alpine.store('customer').id === {{ customer.id }},
-        'bg-white font-normal text-gray-900': Alpine.store('customer').id !== {{ customer.id }}
+        'bg-green-100 font-bold text-green-600': selectedId === {{ customer.id }},
+        'bg-white font-normal text-gray-900': selectedId !== {{ customer.id }}
     }"
     @click="
-        if (Alpine.store('customer').id != {{ customer.id }}) {
-            Alpine.store('customer').id = {{ customer.id }};            
-            $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
-            document.querySelector('#save-form').reset(); 
-            document.getElementById('current_call').value = '';
-            Alpine.store('call').id  =  '';
-            disableCall();
-            disableProduct();
-            enableCustomer();
-            removeHighlight();
-            document.getElementById('status_value').value='';                    
-        }
+        selectedId = {{ customer.id }};
+        Alpine.store('customer').id = {{ customer.id }};
+        $nextTick(() => htmx.trigger('#customer-calls', 'load-customer'));
+        document.querySelector('#save-form').reset();
+        document.getElementById('current_call').value = '';
+        Alpine.store('call').id = '';
+        disableCall();
+        disableProduct();
+        enableCustomer();
+        removeHighlight();
+        document.getElementById('status_value').value='';
     "
-    hx-swap="none"
 >
-    <span>{{ customer.first_name }} {{ customer.last_name }}</span>
+    <!-- Index bubble -->
+    <span class="px-2 mr-2 bg-green-{{number}} rounded">{{ loop.index }}</span>
 
+    <!-- Customer name aligned left and takes full remaining space -->
+    <span class="flex-1">{{ customer.first_name }} {{ customer.last_name }}</span>
+
+    <!-- Edit icon on the right -->
     <span 
-        class="ml-2 flex items-center justify-center w-5 h-5 cursor-pointer"
+        class="ml-2 flex items-center w-5 h-5 cursor-pointer"
         hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}"
         hx-target="#modal-container"
         hx-swap="innerHTML"
         @click.stop="$store.modal.open = true"
     >
-        <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708L4.207 14.793l-3 1a.5.5 0 0 1-.637-.637l1-3L12.146.854zM11.207 2L2 11.207V13h1.793L14 3.793 11.207 2z"/>
-        </svg>
+        🖋️
     </span>
 </div>
-{% endfor %}
+
+    {% endfor %}
+</div>

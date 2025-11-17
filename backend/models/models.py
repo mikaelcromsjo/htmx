@@ -235,6 +235,7 @@ class Call(BaseMixin, Base):
     id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     caller_id = Column(Integer, ForeignKey("callers.id"), nullable=False)    
+    caller = relationship("Caller")
     call_date = Column(DateTime, nullable=False)
     status = Column(JSON, default=[])
     note = Column(String, nullable=False)

@@ -271,13 +271,15 @@
             {%- endif -%}
             {%- if call -%}
 
-            <button @click="
+            <button 
+            @click="
                         active = 'customers';                        
                     " :class="{'bg-gray-200': active === 'customers'}" class="px-3 py-2 rounded hover:bg-gray-200">
               {{ "Customers" | t }}
             </button>
 
-            <button @click="
+            <button 
+                        @click="
                         active = 'products';
                     " :class="{'bg-gray-200': active === 'products'}" class="px-3 py-2 rounded hover:bg-gray-200">
               {{ "Products" | t }}
@@ -1160,3 +1162,17 @@ if (visibleIds.length === 0) {
       newWindow.print();
     }
   </script>
+
+<script>
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const el = document.activeElement;
+
+        // Only trigger click if element is focusable and has a click listener
+        if (el && el.tabIndex >= 0 && typeof el.click === 'function') {
+            el.click();
+        }
+    }
+});
+</script>
