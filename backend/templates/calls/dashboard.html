@@ -139,8 +139,8 @@
         </div>
 
 
-<div class="flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light" x-data="{ isTypeEnabled: false }"
-     x-effect="isTypeEnabled = String($store.productCustomer.status) === '3'">         
+<div class="flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light" x-data="{ isTypeEnabled: '0' }"
+     x-effect="isTypeEnabled = 0; isTypeEnabled = String($store.productCustomer.status) === '3'">
           <!-- Load Product Specific optons -->
 
 
