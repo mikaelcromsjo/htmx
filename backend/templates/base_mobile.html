@@ -119,7 +119,7 @@ if (data.type === 'sms' && data.sms_type === 'multiple') {
 
 // <a href="sms://open?addresses=+12223334444,+12223334445?&body=Message%20Line%201%E2%80%A8Message%20Line%202">Send SMS to multi #s</a>
     name_label.textContent = "Fler mottagare";
-    numer_label.textContent = "...";
+    numer_label.textContent = "...";    
 
     sms_button.href = "sms:" + data.numbers + "?&body=" + encodeURIComponent(data.message);
     sms_button.style.display = "block";
