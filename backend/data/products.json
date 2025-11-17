@@ -1,0 +1,29 @@
+{
+  "p1": {
+    "name": "Event",
+    "items": {
+      "3": "Ej Betald",
+      "4": "Betald",
+      "5": "Betalar senare",
+      "6": "Deltog ej",
+      "7": "Deltog"
+    }
+  },
+  "p2": {
+    "name": "Prenumeration",
+    "items": {
+      "1": "Ej betald",
+      "2": "Betald",
+      "3": "Utgått"
+    }
+  },
+  "p3": {
+    "name": "Medlemskap",
+    "items": {
+      "1": "Ej Betald",
+      "2": "Guld",
+      "3": "Silver",
+      "4": "Platinum"
+    }
+  }
+}
