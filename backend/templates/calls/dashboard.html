@@ -398,7 +398,15 @@ function showSmsModal(multiple = false) {
         .filter(c => c.phone && c.phone.trim() !== "") // only keep if phone is non-empty
         .map(c => `${c.name} ${c.phone}`)
         .join("<br/>");
-        multipleValue.innerHTML = recipients + "<br/><br/>";
+
+        const maxLen = 50;
+        let displayRecipients = recipients;
+
+        if (recipients.length > maxLen) {
+            displayRecipients = recipients.substring(0, maxLen) + "...";
+        }
+
+        multipleValue.innerHTML = displayRecipients + "<br/><br/>";
           }
     modal.classList.remove("hidden");
 }
