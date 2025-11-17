@@ -399,7 +399,7 @@ function showSmsModal(multiple = false) {
         .map(c => `${c.name} ${c.phone}`)
         .join("<br/>");
 
-        const maxLen = 50;
+        const maxLen = 200;
         let displayRecipients = recipients;
 
         if (recipients.length > maxLen) {
