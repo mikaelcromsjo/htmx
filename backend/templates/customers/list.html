@@ -22,21 +22,24 @@
                             <th x-show="is_admin" class="w-[20%] px-2 py-1 border">{{ "Caller" | t }}</th>
                             <th class="w-[20%] px-2 py-1 border">{{ "Command" | t }}</th>
                             <th class="w-[5%] px-2 py-1 border text-center" @click.stop>
-                                <input type="checkbox" x-show="query == ''" @change="const checkAll = $event.target.checked;
-                            document.querySelectorAll('.customer-checkbox').forEach(cb => {
-                                if (cb.checked !== checkAll) {        // only toggle boxes that differ
-                                    cb.checked = checkAll;
-                                    cb.dispatchEvent(new Event('change')); // triggers Alpine toggle
-                                }
-                            })
-                        ">
+                                <input type="checkbox" @change="
+                                    if ($event.target.checked) {
+                                        $store.customers.selectVisible();
+                                    } else {
+                                        $store.customers.clearVisible();
+                                    }
+                                ">
+                                
                             </th>
 
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for customer in customers %}
-                        <tr hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short"
+                    <tbody x-init="$store.customers.initInTable()">
+                            {% for customer in customers %}
+                        <tr                                      data-id="{{ customer.id }}"
+
+                            x-show="$store.customers.isRowVisible({{customer.id}})"
+                            hx-get="{{ url_for('customer_detail', customer_id=customer.id) }}?list=short"
                             hx-target="#modal-container" 
                             hx-trigger="click" class="cursor-pointer" :class="{
                             'bg-green-100 font-bold text-green-600': selectedRow === {{ loop.index }},
@@ -101,10 +104,11 @@
                                     </button>
                                 </td>
 
-                                <td class="px-2 py-1 border text-center" @click.stop>
-                                    <input type="checkbox" class="customer-checkbox"
-                                        :checked="$store.customers.selected[{{ customer.id }}] || false"
-                                        @change="$store.customers.toggle({{ customer.id }})">
+                                <td 
+                                     
+                                    class="px-2 py-1 border text-center" @click.stop>
+                                    <input data-id="{{ customer.id }}" type="checkbox" class="customer-checkbox"
+                            x-model="$store.customers.selected[{{ customer.id }}]">
                                 </td>
                         </tr>
                         {% endfor %}

@@ -2,191 +2,199 @@
 <html lang="en" x-cloak>
 
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{{ "Dashboard" | t }}{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link id="favicon" rel="icon" type="image/x-icon" href="static/images/favicon.ico">    
+  <meta charset="UTF-8">
+  <title>{% block title %}{{ "Dashboard" | t }}{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link id="favicon" rel="icon" type="image/x-icon" href="static/images/favicon.ico">
 
-<!---    <link rel="stylesheet" href="/static/css/bootstrap.min.css"> -->
-    <link rel="stylesheet" href="/static/css/tailwind.css">
+  <!---    <link rel="stylesheet" href="/static/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="/static/css/tailwind.css">
 
-    <!-- Include Tagify     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" />
+  <!-- Include Tagify     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" />
  -->
-    <script src="/static/js/tagify.js"></script>
-    <link rel="stylesheet" href="/static/css/tagify.css" />
+  <script src="/static/js/tagify.js"></script>
+  <link rel="stylesheet" href="/static/css/tagify.css" />
 
-    <!-- HTMX and Alpine.js from /static -->
-    <script src="/static/htmx.min.js"></script>
-    <script src="/static/alpine.min.js" defer></script>
+  <!-- HTMX and Alpine.js from /static -->
+  <script src="/static/htmx.min.js"></script>
+  <script src="/static/alpine.min.js" defer></script>
 
-    <!-- Local Bootstrap JS -->
-<!--    <script src="/static/js/bootstrap.bundle.min.js"></script>
+  <!-- Local Bootstrap JS -->
+  <!--    <script src="/static/js/bootstrap.bundle.min.js"></script>
         <script src="https://unpkg.com/split.js/dist/split.min.js"></script> -->
 
-        <script src="/static/js/split.js"></script>
+  <script src="/static/js/split.js"></script>
 
 
 
-    <style>
-
-@media print {
+  <style>
+    @media print {
       table {
         border-collapse: collapse;
         width: 100%;
       }
-      th, td {
+
+      th,
+      td {
         border: 1px solid black !important;
         padding: 8px;
       }
     }
 
 
-.custom-radio {
-  position: relative;
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-  display: inline-block;
-}
+    .custom-radio {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      display: inline-block;
+    }
 
-/* Hide the real radio input */
-.custom-radio input[type="radio"] {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
+    /* Hide the real radio input */
+    .custom-radio input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
 
-/* Show nothing when unchecked */
-.custom-radio input[type="radio"]::after {
-  content: "✔"; 
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #0078ff;
-  transition: opacity 0.1s ease-in-out; /* fade transition */
-  opacity: 0;
-}
+    /* Show nothing when unchecked */
+    .custom-radio input[type="radio"]::after {
+      content: "✔";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #0078ff;
+      transition: opacity 0.1s ease-in-out;
+      /* fade transition */
+      opacity: 0;
+    }
 
-/* Show a ✓ when checked */
-.custom-radio input[type="radio"]:hover::after {
-opacity: .6;
-}
+    /* Show a ✓ when checked */
+    .custom-radio input[type="radio"]:hover::after {
+      opacity: .6;
+    }
 
-/* Show a little ✓ when checked */
-.custom-radio input[type="radio"]:checked::after {
-opacity: 1;
-}
-
-
-        .highlight {
-            outline: 2px solid black !important;
-            /* just a visible black outline */
-            outline-offset: 2px;
-            /* optional spacing */
-        }
-
-.full-table {
-  max-height: 55vh;        /* or fixed height: height: 90vh; */
-  overflow-y: auto;        /* enable vertical scrolling */
-  overflow-x: auto;        /* enable horizontal scrolling */
-  display: block;          /* required for overflow to work */
-}
- 
-
-input:disabled {
- opacity:50%;       
-}
-
-.full-table thead {
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 0;
-  box-shadow:
-    inset 1px 0 0 #ccc,      /* left border */
-    inset -1px 0 0 #ccc,     /* right border */
-    inset 0 1px 0 #ccc,      /* top border */
-    inset 0 -1px 0 #ccc;     /* bottom border */
-}
-
-.full-table th ,
-.full-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
+    /* Show a little ✓ when checked */
+    .custom-radio input[type="radio"]:checked::after {
+      opacity: 1;
+    }
 
 
-.full-table tr:nth-child(even) {
-}
+    .highlight {
+      outline: 2px solid black !important;
+      /* just a visible black outline */
+      outline-offset: 2px;
+      /* optional spacing */
+    }
 
-.full-table tr:hover {
-}
+    .full-table {
+      max-height: 55vh;
+      /* or fixed height: height: 90vh; */
+      overflow-y: auto;
+      /* enable vertical scrolling */
+      overflow-x: auto;
+      /* enable horizontal scrolling */
+      display: block;
+      /* required for overflow to work */
+    }
 
-.tags-look .tagify__dropdown__item{
-    display: inline-block;
-    vertical-align: middle;
-    border-radius: 3px;
-    padding: .3em .5em;
-    border: 1px solid #CCC;
-    background: #F3F3F3;
-    margin: .2em;
-    font-size: .85em;
-    color: black;
-    transition: 0s;
-}
 
-.tags-look .tagify__dropdown__item--active{
-    border-color: black;
-}
+    input:disabled {
+      opacity: 50%;
+    }
 
-.tags-look .tagify__dropdown__item:hover{
-    background: lightyellow;
-    border-color: gold;
-}
+    .full-table thead {
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 0;
+      box-shadow:
+        inset 1px 0 0 #ccc,
+        /* left border */
+        inset -1px 0 0 #ccc,
+        /* right border */
+        inset 0 1px 0 #ccc,
+        /* top border */
+        inset 0 -1px 0 #ccc;
+      /* bottom border */
+    }
 
-.tags-look .tagify__dropdown__item--hidden {
-    max-width: 0;
-    max-height: initial;
-    padding: .3em 0;
-    margin: .2em 0;
-    white-space: nowrap;
-    text-indent: -20px;
-    border: 0;
-}
+    .full-table th,
+    .full-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
 
-.input-error {
-    border: 2px solid red;
-    background-color: #ffe6e6;
-    transition: background-color 0.3s, border-color 0.3s;
-}
 
-.error-msg {
-    color: red;
-    font-size: 0.9em;
-    margin-left: 5px;
-    display: block;
-}
+    .full-table tr:nth-child(even) {}
 
-.inverted {
-  filter: invert(1) hue-rotate(180deg);
-}
+    .full-table tr:hover {}
 
-    </style>
+    .tags-look .tagify__dropdown__item {
+      display: inline-block;
+      vertical-align: middle;
+      border-radius: 3px;
+      padding: .3em .5em;
+      border: 1px solid #CCC;
+      background: #F3F3F3;
+      margin: .2em;
+      font-size: .85em;
+      color: black;
+      transition: 0s;
+    }
+
+    .tags-look .tagify__dropdown__item--active {
+      border-color: black;
+    }
+
+    .tags-look .tagify__dropdown__item:hover {
+      background: lightyellow;
+      border-color: gold;
+    }
+
+    .tags-look .tagify__dropdown__item--hidden {
+      max-width: 0;
+      max-height: initial;
+      padding: .3em 0;
+      margin: .2em 0;
+      white-space: nowrap;
+      text-indent: -20px;
+      border: 0;
+    }
+
+    .input-error {
+      border: 2px solid red;
+      background-color: #ffe6e6;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .error-msg {
+      color: red;
+      font-size: 0.9em;
+      margin-left: 5px;
+      display: block;
+    }
+
+    .inverted {
+      filter: invert(1) hue-rotate(180deg);
+    }
+  </style>
 
 </head>
 
 <body class="bg-white min-h-screen flex flex-col">
 
-    
- <div x-data="{ is_admin: {{ 1 if is_admin else 0 }}, active: localStorage.getItem('activeTab') || 'customers', loaded: {} }"
-     x-init="
+
+  <div
+    x-data="{ is_admin: {{ 1 if is_admin else 0 }}, active: localStorage.getItem('activeTab') || 'customers', loaded: {} }"
+    x-init="
         // Watch active tab and save/load content
         $watch('active', value => {            
             localStorage.setItem('activeTab', value);
@@ -198,250 +206,217 @@ input:disabled {
             }                
         });
 //        $nextTick(() => { $refs.all.forEach(el => el.click()); });     
-    "
-  >
+    ">
 
 
 
 
-<header class="bg-white shadow sticky top-0 z-10" x-data="{ open: false }">
-  <div class="w-full mx-auto px-4 py-1 flex items-center justify-between">
+    <header class="bg-white shadow sticky top-0 z-10" x-data="{ open: false }">
+      <div class="w-full mx-auto px-4 py-1 flex items-center justify-between">
 
-    <!-- App name -->
-    <div class="text-xl font-semibold">
-      {{ "APPNAME" | t }}
-    </div>
+        <!-- App name -->
+        <div class="text-xl font-semibold">
+          {{ "APPNAME" | t }}
+        </div>
 
-    <!-- Mobile menu toggle -->
-    <button @click="open = !open" class="md:hidden p-2 rounded hover:bg-gray-100">
-      <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-           viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-      <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-           viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    </button>
+        <!-- Mobile menu toggle -->
+        <button @click="open = !open" class="md:hidden p-2 rounded hover:bg-gray-100">
+          <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
 
-    <!-- NAVIGATION (Desktop) -->
-    <nav class="hidden md:flex items-center space-x-4">
-      <!-- User Info -->
-      <div class="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded">
-        <span>{{ caller }}</span>
-        <form method="get" action="/logout" class="inline">
-          <button type="submit" class="text-gray-600 hover:text-red-600">
-            {{ "Logout" | t }}
-          </button>
-        </form>
-      </div>
+        <!-- NAVIGATION (Desktop) -->
+        <nav class="hidden md:flex items-center space-x-4">
+          <!-- User Info -->
+          <div class="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded">
+            <span>{{ caller }}</span>
+            <form method="get" action="/logout" class="inline">
+              <button type="submit" class="text-gray-600 hover:text-red-600">
+                {{ "Logout" | t }}
+              </button>
+            </form>
+          </div>
 
-      <!-- Shared buttons template -->
-      <template x-ref="navButtons">
+          <!-- Shared buttons template -->
+          <template x-ref="navButtons">
 
 
-        {%- set call = 1 -%}
-        {%- set faktura = 0 -%}
+            {%- set call = 1 -%}
+            {%- set faktura = 0 -%}
 
-        {%- if faktura -%}
-        <button 
-          @click="
+            {%- if faktura -%}
+            <button @click="
             active = 'user';
-          "
-          :class="{'bg-gray-200': active === 'user'}"
-          class="px-3 py-2 rounded hover:bg-gray-200">
-          {{ "User" | t }}
-        </button>
+          " :class="{'bg-gray-200': active === 'user'}" class="px-3 py-2 rounded hover:bg-gray-200">
+              {{ "User" | t }}
+            </button>
 
-        <button 
-          @click="
+            <button @click="
             active = 'companies';
-          "
-          :class="{'bg-gray-200': active === 'companies'}"
-          class="px-3 py-2 rounded hover:bg-gray-200">
-          {{ "Companies" | t }}
-        </button>
+          " :class="{'bg-gray-200': active === 'companies'}" class="px-3 py-2 rounded hover:bg-gray-200">
+              {{ "Companies" | t }}
+            </button>
 
-        <button 
-          @click="
+            <button @click="
             active = 'invoice';
-          "
-          :class="{'bg-gray-200': active === 'invoice'}"
-          class="px-3 py-2 rounded hover:bg-gray-200">
-          {{ "Invoices" | t }}
-        </button>
-        {%- endif -%}
-        {%- if call -%}
+          " :class="{'bg-gray-200': active === 'invoice'}" class="px-3 py-2 rounded hover:bg-gray-200">
+              {{ "Invoices" | t }}
+            </button>
+            {%- endif -%}
+            {%- if call -%}
 
-                <button 
-                    @click="
+            <button @click="
                         active = 'customers';                        
-                    "
-                    :class="{'bg-gray-200': active === 'customers'}"
-                    class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "Customers" | t }}
-                </button>
+                    " :class="{'bg-gray-200': active === 'customers'}" class="px-3 py-2 rounded hover:bg-gray-200">
+              {{ "Customers" | t }}
+            </button>
 
-                <button 
-                    @click="
+            <button @click="
                         active = 'products';
-                    "
-                    :class="{'bg-gray-200': active === 'products'}"
-                    class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "Products" | t }}
-                </button>
+                    " :class="{'bg-gray-200': active === 'products'}" class="px-3 py-2 rounded hover:bg-gray-200">
+              {{ "Products" | t }}
+            </button>
 
-                <button 
-                    @click="
+            <button @click="
                         active = 'calls';
-                    "
-                    :class="{'bg-gray-200': active === 'calls'}"
-                    class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "Call Center" | t }}
-                </button>
+                    " :class="{'bg-gray-200': active === 'calls'}" class="px-3 py-2 rounded hover:bg-gray-200">
+              {{ "Call Center" | t }}
+            </button>
 
-                <button 
-                    @click="
+            <button @click="
                         active = 'alarms';
-                    "
-                    :class="{'bg-gray-200': active === 'alarms'}"
-                    class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "Alarms" | t }}
-                </button>
-                <button 
-                    x-show = is_admin
-                    @click="
+                    " :class="{'bg-gray-200': active === 'alarms'}" class="px-3 py-2 rounded hover:bg-gray-200">
+              {{ "Alarms" | t }}
+            </button>
+            <button x-show=is_admin @click="
                         active = 'admin';
-                    "
-                    hx-get="{{ url_for('admin_dashboard') }}" 
-                    hx-target="#admin_content"                    
-                    :class="{'bg-gray-200': active === 'admin'}"
-                    class="px-3 py-2 rounded hover:bg-gray-200">
-                    {{ "Admin" | t }}
-                </button>
+                    " hx-get="{{ url_for('admin_dashboard') }}" hx-target="#admin_content"
+              :class="{'bg-gray-200': active === 'admin'}" class="px-3 py-2 rounded hover:bg-gray-200">
+              {{ "Admin" | t }}
+            </button>
 
 
             {%- endif -%}
 
 
-      </template>
+          </template>
 
-      <!-- Render them -->
-      <div x-html="$refs.navButtons.innerHTML"></div>
+          <!-- Render them -->
+          <div x-html="$refs.navButtons.innerHTML"></div>
 
-  <button id="toolboxToggle">
-    ⚙️
-  </button>
-
-    </nav>
-  </div>
-
-  <!-- NAVIGATION (Mobile dropdown) -->
-  <div x-show="open" x-transition class="md:hidden border-t bg-white">
-    <div class="px-4 py-3 space-y-3">
-      <!-- User Info -->
-      <div class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded">
-        <span>{{ user }} {{ caller }}</span>
-        <form method="get" action="/logout">
-          <button type="submit" class="text-sm text-gray-600 hover:text-red-600">
-            {{ "Logout" | t }}
+          <button id="toolboxToggle">
+            ⚙️
           </button>
-        </form>
+
+        </nav>
       </div>
 
-      <!-- Reuse same buttons -->
-      <div x-html="$refs.navButtons.innerHTML" 
-           @click="open = false" 
-           class="flex flex-col gap-2"></div>
-    </div>
-  </div>
-</header>
+      <!-- NAVIGATION (Mobile dropdown) -->
+      <div x-show="open" x-transition class="md:hidden border-t bg-white">
+        <div class="px-4 py-3 space-y-3">
+          <!-- User Info -->
+          <div class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded">
+            <span>{{ user }} {{ caller }}</span>
+            <form method="get" action="/logout">
+              <button type="submit" class="text-sm text-gray-600 hover:text-red-600">
+                {{ "Logout" | t }}
+              </button>
+            </form>
+          </div>
+
+          <!-- Reuse same buttons -->
+          <div x-html="$refs.navButtons.innerHTML" @click="open = false" class="flex flex-col gap-2"></div>
+        </div>
+      </div>
+    </header>
 
 
     <!-- Hidden HTMX triggers -->
     <div style="display:none">
-        <div x-ref="tabContent">
-        <button hx-trigger="load" x-ref="users" hx-get="{{ url_for('user') }}" hx-target="#user_content" hx-push-url="false"></button>
-        <button hx-trigger="load" x-ref="customers" hx-get="{{ url_for('customers_list') }}" hx-target="#customer_content" hx-push-url="false"></button>
-        <button hx-trigger="load" x-ref="products" hx-get="{{ url_for('products_list') }}" hx-target="#product_content" hx-push-url="false"></button>
-        <button hx-trigger="load" x-ref="calls" hx-get="{{ url_for('calls_dashboard') }}" hx-target="#calls_content" hx-push-url="false"></button>
-        <button hx-trigger="load" x-ref="invoices" hx-get="{{ url_for('invoices_list') }}" hx-target="#invoice_content" hx-push-url="false"></button>
-        <button hx-trigger="load" x-ref="companies" hx-get="{{ url_for('companies_list') }}" hx-target="#companies_content" hx-push-url="false"></button>
-        <button hx-trigger="load" x-ref="alarms" hx-get="{{ url_for('alarms_list') }}" hx-target="#alarm_content" hx-push-url="false"></button>
-        <button hx-trigger="load" x-ref="admin" hx-get="{{ url_for('admin_dashboard') }}" hx-target="#admin_content" hx-push-url="false"></button>
-        </div>
+      <div x-ref="tabContent">
+        <button hx-trigger="load" x-ref="users" hx-get="{{ url_for('user') }}" hx-target="#user_content"
+          hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="customers" hx-get="{{ url_for('customers_list') }}"
+          hx-target="#customer_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="products" hx-get="{{ url_for('products_list') }}" hx-target="#product_content"
+          hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="calls" hx-get="{{ url_for('calls_dashboard') }}" hx-target="#calls_content"
+          hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="invoices" hx-get="{{ url_for('invoices_list') }}" hx-target="#invoice_content"
+          hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="companies" hx-get="{{ url_for('companies_list') }}"
+          hx-target="#companies_content" hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="alarms" hx-get="{{ url_for('alarms_list') }}" hx-target="#alarm_content"
+          hx-push-url="false"></button>
+        <button hx-trigger="load" x-ref="admin" hx-get="{{ url_for('admin_dashboard') }}" hx-target="#admin_content"
+          hx-push-url="false"></button>
+      </div>
     </div>
     <!-- Main content -->
     <main class="bg-white mx-auto p-1 w-full">
-        <div id="user_content" x-show="active === 'user'" class="bg-white rounded shadow p-4">
-        </div>
-        <div id="customer_content" x-show="active === 'customers'" class="bg-white rounded shadow p-4">
-        </div>
-        <div id="companies_content" x-show="active === 'companies'" class="bg-white rounded shadow p-4">
-        </div>
-        <div id="product_content" x-show="active === 'products'" class="bg-white rounded shadow p-4">
-        </div>
-        <div id="calls_content" x-show="active === 'calls'" class="bg-white rounded shadow p-4">
-        </div>
-        <div id="alarm_content" x-show="active === 'alarms'" class="bg-white rounded shadow p-4">
-        </div>
-        <div id="invoice_content" x-show="active === 'invoice'" class="bg-white rounded shadow p-4">
-        </div>
-        <div id="admin_content" x-show="active === 'admin'" class="bg-white rounded shadow p-4">
-        </div>
+      <div id="user_content" x-show="active === 'user'" class="bg-white rounded shadow p-4">
+      </div>
+      <div id="customer_content" x-show="active === 'customers'" class="bg-white rounded shadow p-4">
+      </div>
+      <div id="companies_content" x-show="active === 'companies'" class="bg-white rounded shadow p-4">
+      </div>
+      <div id="product_content" x-show="active === 'products'" class="bg-white rounded shadow p-4">
+      </div>
+      <div id="calls_content" x-show="active === 'calls'" class="bg-white rounded shadow p-4">
+      </div>
+      <div id="alarm_content" x-show="active === 'alarms'" class="bg-white rounded shadow p-4">
+      </div>
+      <div id="invoice_content" x-show="active === 'invoice'" class="bg-white rounded shadow p-4">
+      </div>
+      <div id="admin_content" x-show="active === 'admin'" class="bg-white rounded shadow p-4">
+      </div>
 
     </main>
-</div>
+  </div>
 
-      <!-- SMS modal -->
-      <div id="sms_modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-9999">
-        <div class="bg-white rounded-2xl shadow-xl p-6 w-80">
-          <h2 class="text-lg font-semibold mb-4">{{ "Send SMS" | t }}</h2>
-          {{ "Message" | t }}
-          <textarea id="sms_message" name="sms_message" class="form-control mb-3 w-full p-2 border rounded"
-            rows="3"></textarea>
+  <!-- SMS modal -->
+  <div id="sms_modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-9999">
+    <div class="bg-white rounded-2xl shadow-xl p-6 w-80">
+      <h2 class="text-lg font-semibold mb-4">{{ "Send SMS" | t }}</h2>
+      {{ "Message" | t }}
+      <textarea id="sms_message" name="sms_message" class="form-control mb-3 w-full p-2 border rounded"
+        rows="3"></textarea>
 
-          <div id="sms_multiple">
-          </div>
-          
-
-          <div class="flex justify-end space-x-2">
-            <button type="button" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-              onclick="document.getElementById('sms_modal').classList.add('hidden'); document.querySelector('#sms_message').value = '';">
-              {{ 'Cancel' | t }}
-            </button>
-            <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-             onclick="sms(document.getElementById('sms_multiple').innerHTML > ''); document.getElementById('sms_modal').classList.add('hidden')"
-            >
-            {{ 'Send SMS' | t }}
-            </button>
-          </div>
-        </div>
+      <div id="sms_multiple">
       </div>
 
 
-<!-- Global Modal Container -->
-<div 
-  x-data
-  x-show="$store.modal.open"
-  x-transition.opacity
-  @keydown.escape.window="$store.modal.open = false"
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-  style="display: none;"
->
-  <!-- Modal box -->
-  <div 
-    class="bg-white rounded-xl shadow-lg w-full max-w-7xl mx-4 flex flex-col"
-    style="max-height: 90vh; overflow: hidden;"
-    x-transition.scale
-  >
-    <!-- Modal header -->
-    <div class="flex justify-between items-center p-4 border-b flex-shrink-0">
-      <h5 class="text-lg font-semibold" x-text="$store.modal.title"></h5>
-      <div class="flex items-center gap-2">
-        <!-- Save button -->
+      <div class="flex justify-end space-x-2">
+        <button type="button" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+          onclick="document.getElementById('sms_modal').classList.add('hidden'); document.querySelector('#sms_message').value = '';">
+          {{ 'Cancel' | t }}
+        </button>
+        <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          onclick="sms(document.getElementById('sms_multiple').innerHTML > ''); document.getElementById('sms_modal').classList.add('hidden')">
+          {{ 'Send SMS' | t }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Global Modal Container -->
+  <div x-data x-show="$store.modal.open" x-transition.opacity @keydown.escape.window="$store.modal.open = false"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="display: none;">
+    <!-- Modal box -->
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-7xl mx-4 flex flex-col"
+      style="max-height: 90vh; overflow: hidden;" x-transition.scale>
+      <!-- Modal header -->
+      <div class="flex justify-between items-center p-4 border-b flex-shrink-0">
+        <h5 class="text-lg font-semibold" x-text="$store.modal.title"></h5>
+        <div class="flex items-center gap-2">
+          <!-- Save button 
         <button 
           type="button"
           class="text-green-600 p-1 rounded hover:bg-green-100"
@@ -453,496 +428,524 @@ input:disabled {
           "
         >
           <i class="bi bi-save fs-3"></i>
+        </button>-->
+
+          <!-- Close button -->
+          <button type="button" class="text-gray-500 hover:text-gray-700 p-1 rounded"
+            @click="$store.modal.open = false">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal body -->
+      <div id="modal-container" class="p-4 overflow-y-auto flex-grow" style="min-height: 0;"
+        x-effect="if ($store.modal.open) $nextTick(() => { $el.scrollTop = 0; });">
+        <!-- HTMX content goes here -->
+      </div>
+
+      <div class="p-4 border-t flex-shrink-0 flex justify-end gap-2">
+        <button type="button" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          @click="$store.modal.open = false">
+          {{ "Close" | t }}
         </button>
 
-        <!-- Close button -->
-        <button 
-          type="button"
-          class="text-gray-500 hover:text-gray-700 p-1 rounded"
-          @click="$store.modal.open = false"
-        >
-          ✕
-        </button>
+        <!-- Close o 200 responce -->
+        <div x-data>
+          <!-- Button shows only if submit text is not empty -->
+          <template x-if="$store.modal.submit && $store.modal.submit !== ''">
+            <button type="button"
+              class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-500 disabled:bg-green-800"
+              @click="document.querySelector('#modal-container form').requestSubmit();">
+              <span x-text="$store.modal.submit"></span>
+            </button>
+          </template>
+        </div>
       </div>
     </div>
-
-    <!-- Modal body -->
-    <div 
-      id="modal-container" 
-      class="p-4 overflow-y-auto flex-grow"
-      style="min-height: 0;"  
-      x-effect="if ($store.modal.open) $nextTick(() => { $el.scrollTop = 0; });"
-    >
-      <!-- HTMX content goes here -->
-    </div>
-
-    <div class="p-4 border-t flex-shrink-0 flex justify-end gap-2">
-      <button 
-        type="button" 
-        class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-        @click="$store.modal.open = false"
-      >
-        {{ "Close" | t }}
-      </button>
-
-    <!-- Close o 200 responce -->
-<div x-data>
-  <!-- Button shows only if submit text is not empty -->
-  <template x-if="$store.modal.submit && $store.modal.submit !== ''">
-    <button 
-      type="button"
-      class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-500 disabled:bg-green-800"
-      @click="document.querySelector('#modal-container form').requestSubmit();"
-    >
-      <span x-text="$store.modal.submit"></span>
-    </button>
-  </template>    
-    </div>
-    </div>
   </div>
-</div>
 
 
 
-{%- if call -%}
-<!-- Mobile View/Desktop -->
-    <script>
-        if (/Mobi|Android/i.test(navigator.userAgent)) {
-                window.location.href = "/calls/number";
-        }
-    </script>
-{%- endif -%}
-
-<div id="popup"
-     class="hidden fixed top-0 left-1/2 -translate-x-1/2 z-50 px-5 py-2 rounded border border-red-300 bg-red-100 text-red-800 transition-opacity duration-300">
-</div>
-
-<!-- Centered modern alarm popup -->
-<div
-  x-data="{ show: false, message: '' }"
-  x-show="show"
-  x-transition.duration.300ms
-  @show-alert.window="message = $event.detail; show = true; setTimeout(() => show = false, 8000)"
-  class="fixed inset-0 flex items-center justify-center z-[9999]" style="display:none" 
->
-  <!-- Dimmed background (click to close) -->
-  <div 
-    class="absolute inset-0"
-    @click="show = false"
-  ></div>
-
-  <!-- Popup content -->
-  <div style="padding:50px" class="relative bg-red-600 text-white min-w-[400px] max-w-lg w-full m-8 px-8 py-6 rounded-xl shadow-2xl flex flex-col items-center space-y-3 transform transition-all scale-100">
-    <h2 class="text-2xl font-bold">Alarm</h2>
-    <p class="text-center text-white text-lg" x-text="message"></p>
-  </div>
-</div>
-
-
-<div class="fixed top-10 right-4 z-50 flex flex-col items-end pointer-events-none">
-
-  <!-- Toolbox buttons (hidden by default) -->
-  <div id="toolboxButtons" class="pointer-events-auto flex flex-col gap-2 mt-2 items-end opacity-0 scale-0 transform transition-all origin-top-right">
-    <button id="btnFullscreen" class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🔲</button>
-    <button id="btnFontIncrease" class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🔠</button>
-    <button id="btnFontDecrease" class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🔡</button>
-    <button id="btnBgToggle" class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🌙</button>
-  </div>
-</div>
-
-<script>
-  const toolboxToggle = document.getElementById('toolboxToggle');
-  const toolboxButtons = document.getElementById('toolboxButtons');
-  const btnFullscreen = document.getElementById('btnFullscreen');
-  const btnFontIncrease = document.getElementById('btnFontIncrease');
-  const btnFontDecrease = document.getElementById('btnFontDecrease');
-  const btnBgToggle = document.getElementById('btnBgToggle');
-  const body = document.body;
-
-  let fontSize = Number(localStorage.getItem('fontSize')) || 16;
-  console.log(localStorage.getItem('fontSize'));
-  document.documentElement.style.fontSize = fontSize + 'px';
-  console.log(document.documentElement.style.fontSize);
-  let isDark = localStorage.getItem('isDark') == "true";
-  setDark();
-  let open = false;
-
-  // Toggle toolbox
-toolboxToggle.addEventListener('click', () => {
-  open = !open;
-
-  if (open) {
-    // show toolbox
-    toolboxButtons.style.display = 'flex';
-    requestAnimationFrame(() => {
-      toolboxButtons.classList.remove('opacity-0', 'scale-0', 'pointer-events-none');
-      toolboxButtons.classList.add('opacity-100', 'scale-100');
-    });
-  } else {
-    // start fade/scale out
-    toolboxButtons.classList.remove('opacity-100', 'scale-100');
-    toolboxButtons.classList.add('opacity-0', 'scale-0', 'pointer-events-none');
-
-    // wait for transition to finish, then hide
-    toolboxButtons.addEventListener(
-      'transitionend',
-      () => {
-        if (!open) toolboxButtons.style.display = 'none';
-      },
-      { once: true }
-    );
-  }
-});
-
-  // Fullscreen toggle
-  btnFullscreen.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else {
-      document.exitFullscreen();
+  {%- if call -%}
+  <!-- Mobile View/Desktop -->
+  <script>
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      window.location.href = "/calls/number";
     }
-  });
+  </script>
+  {%- endif -%}
 
-  // Font size increase
-  btnFontIncrease.addEventListener('click', () => {
-    fontSize = Math.min(25, fontSize + 2);
+  <div id="popup"
+    class="hidden fixed top-0 left-1/2 -translate-x-1/2 z-50 px-5 py-2 rounded border border-red-300 bg-red-100 text-red-800 transition-opacity duration-300">
+  </div>
+
+  <!-- Centered modern alarm popup -->
+  <div x-data="{ show: false, message: '' }" x-show="show" x-transition.duration.300ms
+    @show-alert.window="message = $event.detail; show = true; setTimeout(() => show = false, 8000)"
+    class="fixed inset-0 flex items-center justify-center z-[9999]" style="display:none">
+    <!-- Dimmed background (click to close) -->
+    <div class="absolute inset-0" @click="show = false"></div>
+
+    <!-- Popup content -->
+    <div style="padding:50px"
+      class="relative bg-red-600 text-white min-w-[400px] max-w-lg w-full m-8 px-8 py-6 rounded-xl shadow-2xl flex flex-col items-center space-y-3 transform transition-all scale-100">
+      <h2 class="text-2xl font-bold">Alarm</h2>
+      <p class="text-center text-white text-lg" x-text="message"></p>
+    </div>
+  </div>
+
+
+  <div class="fixed top-10 right-4 z-50 flex flex-col items-end pointer-events-none">
+
+    <!-- Toolbox buttons (hidden by default) -->
+    <div id="toolboxButtons"
+      class="pointer-events-auto flex flex-col gap-2 mt-2 items-end opacity-0 scale-0 transform transition-all origin-top-right">
+      <button id="btnFullscreen"
+        class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🔲</button>
+      <button id="btnFontIncrease"
+        class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🔠</button>
+      <button id="btnFontDecrease"
+        class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🔡</button>
+      <button id="btnBgToggle"
+        class="w-12 h-12 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-200 transition">🌙</button>
+    </div>
+  </div>
+
+  <script>
+    const toolboxToggle = document.getElementById('toolboxToggle');
+    const toolboxButtons = document.getElementById('toolboxButtons');
+    const btnFullscreen = document.getElementById('btnFullscreen');
+    const btnFontIncrease = document.getElementById('btnFontIncrease');
+    const btnFontDecrease = document.getElementById('btnFontDecrease');
+    const btnBgToggle = document.getElementById('btnBgToggle');
+    const body = document.body;
+
+    let fontSize = Number(localStorage.getItem('fontSize')) || 16;
+    console.log(localStorage.getItem('fontSize'));
     document.documentElement.style.fontSize = fontSize + 'px';
-    localStorage.setItem('fontSize', fontSize);
-  });
+    console.log(document.documentElement.style.fontSize);
+    let isDark = localStorage.getItem('isDark') == "true";
+    setDark();
+    let open = false;
 
-  // Font size decrease
-  btnFontDecrease.addEventListener('click', () => {
-    fontSize = Math.max(10, fontSize - 2);
-    document.documentElement.style.fontSize = fontSize + 'px';
-    localStorage.setItem('fontSize', fontSize);
-  });
+    // Toggle toolbox
+    toolboxToggle.addEventListener('click', () => {
+      open = !open;
 
-  // Background toggle
-btnBgToggle.addEventListener('click', () => {
-  isDark = !isDark;
-  setDark();
-});
+      if (open) {
+        // show toolbox
+        toolboxButtons.style.display = 'flex';
+        requestAnimationFrame(() => {
+          toolboxButtons.classList.remove('opacity-0', 'scale-0', 'pointer-events-none');
+          toolboxButtons.classList.add('opacity-100', 'scale-100');
+        });
+      } else {
+        // start fade/scale out
+        toolboxButtons.classList.remove('opacity-100', 'scale-100');
+        toolboxButtons.classList.add('opacity-0', 'scale-0', 'pointer-events-none');
 
-  function setDark() {
-    localStorage.setItem('isDark', isDark);
-    console.log("asd");
-    if (isDark) {
+        // wait for transition to finish, then hide
+        toolboxButtons.addEventListener(
+          'transitionend',
+          () => {
+            if (!open) toolboxButtons.style.display = 'none';
+          },
+          { once: true }
+        );
+      }
+    });
+
+    // Fullscreen toggle
+    btnFullscreen.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    });
+
+    // Font size increase
+    btnFontIncrease.addEventListener('click', () => {
+      fontSize = Math.min(25, fontSize + 2);
+      document.documentElement.style.fontSize = fontSize + 'px';
+      localStorage.setItem('fontSize', fontSize);
+    });
+
+    // Font size decrease
+    btnFontDecrease.addEventListener('click', () => {
+      fontSize = Math.max(10, fontSize - 2);
+      document.documentElement.style.fontSize = fontSize + 'px';
+      localStorage.setItem('fontSize', fontSize);
+    });
+
+    // Background toggle
+    btnBgToggle.addEventListener('click', () => {
+      isDark = !isDark;
+      setDark();
+    });
+
+    function setDark() {
+      localStorage.setItem('isDark', isDark);
+      console.log("asd");
+      if (isDark) {
         document.documentElement.style.filter = 'invert(1) hue-rotate(180deg)';
         document.querySelectorAll('img, video, iframe').forEach(el => {
-        el.style.filter = 'invert(1) hue-rotate(180deg)'; // cancel inversion for media
+          el.style.filter = 'invert(1) hue-rotate(180deg)'; // cancel inversion for media
         });
-    } else {
+      } else {
         document.documentElement.style.filter = '';
         document.querySelectorAll('img, video, iframe').forEach(el => {
-        el.style.filter = '';
+          el.style.filter = '';
         });
+      }
     }
-}
 
-</script>
-
-
-<script>
+  </script>
 
 
-function showPopup(evt) {
-    const xhr = evt.detail.xhr;
-    const status = xhr.status;
-    const popup = document.getElementById('popup');
-    if (!popup) return;
+  <script>
 
-    let messages = [];
-    let error_fields= [];
-    let isError = false;
 
-    // 1️⃣ Check HX-Popup-Message header first (always shown)
-    const hx_message = xhr.getResponseHeader("HX-Popup-Message");
-    if (hx_message) {
+    function showPopup(evt) {
+      const xhr = evt.detail.xhr;
+      const status = xhr.status;
+      const popup = document.getElementById('popup');
+      if (!popup) return;
+
+      let messages = [];
+      let error_fields = [];
+      let isError = false;
+
+      // 1️⃣ Check HX-Popup-Message header first (always shown)
+      const hx_message = xhr.getResponseHeader("HX-Popup-Message");
+      if (hx_message) {
         messages.push(hx_message);
         isError = status >= 400; // mark error if 4xx/5xx
-    } 
-    // 2️⃣ Otherwise, handle JSON responses
-    else if (xhr.getResponseHeader('Content-Type')?.includes('application/json')) {
+      }
+      // 2️⃣ Otherwise, handle JSON responses
+      else if (xhr.getResponseHeader('Content-Type')?.includes('application/json')) {
         try {
-            const data = JSON.parse(xhr.responseText);
+          const data = JSON.parse(xhr.responseText);
 
-            if (status >= 400) isError = true;
+          if (status >= 400) isError = true;
 
-if (data.detail) {
+          if (data.detail) {
 
-    if (Array.isArray(data.detail)) {
-        data.detail.forEach(err => {
-            // Debug log to confirm structure
-            console.log('Error detail:', err);
+            if (Array.isArray(data.detail)) {
+              data.detail.forEach(err => {
+                // Debug log to confirm structure
+                console.log('Error detail:', err);
 
-            let field = '';
+                let field = '';
 
-            if (Array.isArray(err.loc) && err.loc.length > 0) {
-                // Always take the last element (e.g. "email")
-                field = err.loc[err.loc.length - 1];
+                if (Array.isArray(err.loc) && err.loc.length > 0) {
+                  // Always take the last element (e.g. "email")
+                  field = err.loc[err.loc.length - 1];
+                }
+
+                // Capitalize first letter
+                //            field = field.charAt(0).toUpperCase() + field.slice(1);
+
+                const msg = err.msg || '${field}: Felaktigt fält';
+                messages.push(`${msg}`);
+                error_fields.push(`${field}`);
+
+              });
+            } else if (typeof data.detail === 'string') {
+              messages.push(data.detail);
             }
-
-            // Capitalize first letter
-//            field = field.charAt(0).toUpperCase() + field.slice(1);
-
-            const msg = err.msg || '${field}: Felaktigt fält';
-            messages.push(`${msg}`);
-            error_fields.push(`${field}`);
-             
-        });
-    } else if (typeof data.detail === 'string') {
-        messages.push(data.detail);
-    }
-}
-            // If 200 and no messages, show default success
-            if (status === 200 && messages.length === 0) {
-                messages.push("Ok!");
-                isError = false;
-            }
+          }
+          // If 200 and no messages, show default success
+          if (status === 200 && messages.length === 0) {
+            messages.push("Ok!");
+            isError = false;
+          }
         } catch (err) {
-            messages.push("Error parsing JSON response");
-            isError = true;
+          messages.push("Error parsing JSON response");
+          isError = true;
         }
-    }
-    // 3️⃣ Fallback for other content types
-    else if (status >= 400) {
+      }
+      // 3️⃣ Fallback for other content types
+      else if (status >= 400) {
         messages.push("Unexpected server response");
         isError = true;
-    }
+      }
 
-    // 4️⃣ Show popup if there’s anything to show
-    if (messages.length) {
+      // 4️⃣ Show popup if there’s anything to show
+      if (messages.length) {
         popup.innerText = messages.join('\n');
 
         popup.classList.remove(
-            'bg-green-100', 'text-green-800', 'border-green-300', 
-            'bg-red-100', 'text-red-800', 'border-red-300'
+          'bg-green-100', 'text-green-800', 'border-green-300',
+          'bg-red-100', 'text-red-800', 'border-red-300'
         );
 
         // Add new styles based on isError
         if (isError) {
-            popup.classList.add('bg-red-100', 'text-red-800', 'border-red-300');
+          popup.classList.add('bg-red-100', 'text-red-800', 'border-red-300');
         } else {
-            popup.classList.add('bg-green-100', 'text-green-800', 'border-green-300');
-        }        
+          popup.classList.add('bg-green-100', 'text-green-800', 'border-green-300');
+        }
 
 
-//        popup.classList.remove('alert-success', 'alert-danger');
-//        popup.classList.add(isError ? 'alert-danger' : 'alert-success');
+        //        popup.classList.remove('alert-success', 'alert-danger');
+        //        popup.classList.add(isError ? 'alert-danger' : 'alert-success');
         popup.style.display = 'block';
         popup.style.opacity = '1';
         popup.style.zIndex = 9999;
 
         setTimeout(() => {
-            popup.style.opacity = '0';
-            setTimeout(() => popup.style.display = 'none', 300);
+          popup.style.opacity = '0';
+          setTimeout(() => popup.style.display = 'none', 300);
         }, 2000);
 
         if (error_fields.length > 0) {
-            showValidationErrors(error_fields, messages);
-        } 
+          showValidationErrors(error_fields, messages);
+        }
+      }
+
     }
 
-}
+    // Attach to all HTMX requests globally
+    document.body.addEventListener('htmx:afterSwap', showPopup);
+    //        document.body.addEventListener('htmx:afterRequest', showPopup);
+  </script>
 
-        // Attach to all HTMX requests globally
-        document.body.addEventListener('htmx:afterSwap', showPopup);
-//        document.body.addEventListener('htmx:afterRequest', showPopup);
-    </script>
-
-    <script src="/static/js/json-enc.js"></script>
+  <script src="/static/js/json-enc.js"></script>
 
 
-    <!-- Global Alpine Confirm Dialog -->
-    <div x-data="confirmDialog()" @confirm-dialog.window="open($event)">
-        <template x-if="show">
-            <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div class="bg-white rounded-lg shadow-xl p-6 w-80">
-                    <h2 class="text-lg font-semibold">{{ "Confirm" | t }}</h2>
-                    <p class="mt-2 text-sm text-gray-600" x-text="message"></p>
-                    <div class="mt-4 flex justify-end space-x-2">
-                        <button @click="cancel()" class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300">
-                            {{ "Cancel" | t }}
-                        </button>
-                        <button @click="proceed()" class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700">
-                            {{ "Yes" | t }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </template>
-    </div>
+  <!-- Global Alpine Confirm Dialog -->
+  <div x-data="confirmDialog()" @confirm-dialog.window="open($event)">
+    <template x-if="show">
+      <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-80">
+          <h2 class="text-lg font-semibold">{{ "Confirm" | t }}</h2>
+          <p class="mt-2 text-sm text-gray-600" x-text="message"></p>
+          <div class="mt-4 flex justify-end space-x-2">
+            <button @click="cancel()" class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300">
+              {{ "Cancel" | t }}
+            </button>
+            <button @click="proceed()" class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700">
+              {{ "Yes" | t }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
 
-    <script>
-        document.addEventListener("alpine:init", () => {
-            // Register a directive like `x-confirm`
-            console.log("init event listener");
-            Alpine.directive("confirm", (el, { expression }) => {
-                el.addEventListener("click", (e) => {
-                    e.preventDefault(); // Stop immediate action
-                    el.dispatchEvent(new CustomEvent("confirm-dialog", {
-                        bubbles: true,
-                        detail: { message: expression, target: el }
-                    }));
-                });
-            });
+  <script>
+    document.addEventListener("alpine:init", () => {
+      // Register a directive like `x-confirm`
+      console.log("init event listener");
+      Alpine.directive("confirm", (el, { expression }) => {
+        el.addEventListener("click", (e) => {
+          e.preventDefault(); // Stop immediate action
+          el.dispatchEvent(new CustomEvent("confirm-dialog", {
+            bubbles: true,
+            detail: { message: expression, target: el }
+          }));
         });
-
-        function confirmDialog() {
-            return {
-                show: false,
-                message: "",
-                targetEl: null,
-                open(e) {
-                    this.targetEl = e.detail.target;
-                    this.message = e.detail.message;
-                    this.show = true;
-                },
-                cancel() {
-                    this.show = false;
-                    this.targetEl = null;
-                },
-                proceed() {
-                    this.show = false;
-                    if (this.targetEl) {
-                        htmx.trigger(this.targetEl, "confirmed");
-                    }
-                }
-            }
-        }
-    </script>
-  
-
-
-<script>
-let ws;
-let wsToken;
-const nameEl = document.querySelector("#name");
-const numberEl = document.querySelector("#number");
-const callHref = document.querySelector("#call_href");
-
-async function fetchToken() {
-    const res = await fetch(`${location.protocol}//${location.host}/get-ws-token`, {
-        credentials: "include"
+      });
     });
-    const data = await res.json();
-    wsToken = data.ws_token;
-}
 
-function createWebSocket(url) {
-    return new Promise((resolve, reject) => {
+    function confirmDialog() {
+      return {
+        show: false,
+        message: "",
+        targetEl: null,
+        open(e) {
+          this.targetEl = e.detail.target;
+          this.message = e.detail.message;
+          this.show = true;
+        },
+        cancel() {
+          this.show = false;
+          this.targetEl = null;
+        },
+        proceed() {
+          this.show = false;
+          if (this.targetEl) {
+            htmx.trigger(this.targetEl, "confirmed");
+          }
+        }
+      }
+    }
+  </script>
+
+
+
+  <script>
+    let ws;
+    let wsToken;
+    const nameEl = document.querySelector("#name");
+    const numberEl = document.querySelector("#number");
+    const callHref = document.querySelector("#call_href");
+
+    async function fetchToken() {
+      const res = await fetch(`${location.protocol}//${location.host}/get-ws-token`, {
+        credentials: "include"
+      });
+      const data = await res.json();
+      wsToken = data.ws_token;
+    }
+
+    function createWebSocket(url) {
+      return new Promise((resolve, reject) => {
         const socket = new WebSocket(url);
 
         socket.onopen = () => resolve(socket);
         socket.onerror = () => reject(new Error(`Cannot connect via ${url}`));
-    });
-}
+      });
+    }
 
-async function connectWS() {
-    await fetchToken();
+    async function connectWS() {
+      await fetchToken();
 
-    const protocols = ["wss", "ws"];
-    let connected = false;
+      const protocols = ["wss", "ws"];
+      let connected = false;
 
-    for (let proto of protocols) {
+      for (let proto of protocols) {
         const url = `${proto}://${location.host}/calls/ws?token=${wsToken}`;
         try {
-            ws = await createWebSocket(url);
-            console.log(`WebSocket connected via ${proto}!`);
-            connected = true;
+          ws = await createWebSocket(url);
+          console.log(`WebSocket connected via ${proto}!`);
+          connected = true;
 
 
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                console.log("Recieved", data)
-                if (data.call) {
-                    enableCall();
-                }
-                if (data.type === 'alarm') {
-                    const message = `${data.customer}: ${data.note || "Alarm"}`;
-                    window.dispatchEvent(new CustomEvent("show-alert", { detail: message }));
-                }
+          ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log("Recieved", data)
+            if (data.call) {
+              enableCall();
+            }
+            if (data.type === 'alarm') {
+              const message = `${data.customer}: ${data.note || "Alarm"}`;
+              window.dispatchEvent(new CustomEvent("show-alert", { detail: message }));
+            }
 
-            };
+          };
 
-            // Handle close
-            ws.onclose = () => {
-                console.log(`WebSocket (${proto}) closed. Reconnecting in 1s...`);
-                setTimeout(connectWS, 1000);
-            };
+          // Handle close
+          ws.onclose = () => {
+            console.log(`WebSocket (${proto}) closed. Reconnecting in 1s...`);
+            setTimeout(connectWS, 1000);
+          };
 
-            // Ping
-            setInterval(() => {
-                if (ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify({ type: "ping" }));
-                }
-            }, 10000);
+          // Ping
+          setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: "ping" }));
+            }
+          }, 10000);
 
-            break; // exit loop once connected
+          break; // exit loop once connected
         } catch (err) {
-            console.warn(`${proto} connection failed, trying next...`);
+          console.warn(`${proto} connection failed, trying next...`);
         }
-    }
+      }
 
-    if (!connected) {
+      if (!connected) {
         console.error("Failed to connect via both WSS and WS. Retrying in 5s...");
         setTimeout(connectWS, 5000);
+      }
     }
-}
 
 
-// Start automatically
-connectWS();
-</script>
-  
+    // Start automatically
+    connectWS();
+  </script>
 
-<script defer>
+
+  <script defer>
 
     document.addEventListener('alpine:init', () => {
 
-Alpine.store('customers', {
+      Alpine.store('customers', {
         selected: JSON.parse(localStorage.getItem('selectedCustomers') || '{}'),
-        showSelect: 'true',
+        showSelect: true,
+        visible: {},
+        inTable: {}, 
 
-        selectedCustomerData: [], 
+        init() {
+                Alpine.effect(() => {
+                    localStorage.setItem('selectedCustomers', JSON.stringify(this.selected));
+                });
+                Alpine.effect(() => {
+        // This will re-run whenever Alpine updates reactive dependencies
+        this.initInTable();
+    });
+            },
+            // Initialize inTable from table rows
+        initInTable() {
+
+        const checkboxes = document.querySelectorAll('.customer-checkbox');
+
+        this.inTable = {}; // reset
+        this.visible = {};
+        checkboxes.forEach(cb => {
+            const id = cb.dataset.id;
+            if (id) this.inTable[id] = true; // just mark as present
+        });
+
+    },
+getVisibleIds() {
+    const visibleIds = Object.keys(this.visible)
+        .filter(id => this.visible[id])
+        .map(id => parseInt(id));
+
+    // If no rows are visible (filter empty), return all inTable IDs
+if (visibleIds.length === 0) {
+    return Object.keys(this.inTable).map(id => parseInt(id));
+}
+    return visibleIds;
+},
+        selectVisible() {
+          const visibleIds = this.getVisibleIds();
+            visibleIds.forEach(id => this.selected[id] = true);
+        },
+
+        clearVisible() {
+            const visibleIds = this.getVisibleIds();
+            visibleIds.forEach(id => this.selected[id] = false);
+        }, 
+        isRowVisible(id) {
+          return Object.keys(this.visible).length === 0 || this.visible[id] === true;
+        },
+
+        selectedCustomerData: [],
         setSelectedCustomerData(data) {
-                    this.selectedCustomerData = data;
-                },
+          this.selectedCustomerData = data;
+        },
         getSelectedCustomerData() {
-            return this.selectedCustomerData;
+          return this.selectedCustomerData;
         },
 
-        toggle(id) {
-            this.selected[id] = !this.selected[id];
-            localStorage.setItem('selectedCustomers', JSON.stringify(this.selected));
-        },
 
         toggleSelect() {
-            this.showSelect = !this.showSelect;
-            localStorage.setItem('showSelect', JSON.stringify(this.showSelect));
+          this.showSelect = !this.showSelect;
+          localStorage.setItem('showSelect', JSON.stringify(this.showSelect));
         },
 
         clearSelectedIds() {
-            for (const id in this.selected) {
-                if (this.selected.hasOwnProperty(id)) {
-                    this.selected[id] = false;
-                }
+          // Set all selected IDs to false in the store
+          for (const id in this.selected) {
+            if (this.selected.hasOwnProperty(id)) {
+              this.selected[id] = false;
             }
+          }
+          localStorage.removeItem('selectedCustomers');
 
-            localStorage.removeItem('selectedCustomers');
-
-            document.querySelectorAll('.customerproduct-checkbox').forEach(cb => {
-                if (cb.checked) cb.checked = false;
-            });
         },
         getSelectedIds() {
-            return Object.keys(this.selected)
-                         .filter(id => this.selected[id])
-                         .map(id => parseInt(id));
+          return Object.keys(this.selected)
+            .filter(id => this.selected[id])
+            .map(id => parseInt(id));
         },
       });
 
-    Alpine.store('productFilters', {
+      Alpine.store('productFilters', {
         filter_a: true,
         filter_b: true,
         filter_c: true,
@@ -950,191 +953,198 @@ Alpine.store('customers', {
         filter_e: true,
         filter_f: true,
         filter_g: true
-    });
+      });
 
-    Alpine.store('product', {
+      Alpine.store('product', {
         id: "",
         type_id: "",
-    });
+      });
 
-    Alpine.store('customer', {
+      Alpine.store('customer', {
         comment: "",
         id: "",
-    });
+      });
 
-    Alpine.store('call', {
+      Alpine.store('call', {
         comment: "",
         id: "",
-    });
+      });
 
-    Alpine.store('productCustomer', {
+      Alpine.store('productCustomer', {
         status: "",
         type_status: "",
-    });
+      });
 
-    Alpine.store('modal', {
+      Alpine.store('modal', {
         title: "",
         submit: "",
         open: false
+      });
+
     });
 
-});
+  </script>
 
-</script>
-
-<!-- empty title when modal.open is false-->
-<div x-data x-effect="if (!$store.modal.open) {
+  <!-- empty title when modal.open is false-->
+  <div x-data x-effect="if (!$store.modal.open) {
             $store.modal.title = '';
             $store.modal.submit = '';
         }"></div>
 
-<meta name="htmx-history-cache-size" content="0">
+  <meta name="htmx-history-cache-size" content="0">
 
-<script>
+  <script>
 
-function reloadCallsDashboard() {
-  htmx.ajax('GET', '/calls/dashboard', { target: '#calls_content' });
-}
-
-
-function reloadCallsCustomers() {
-  document.getElementById('reload-customers-btn').click();
-}
-
-function reloadCallsProducts() {
-  htmx.ajax('GET', '/calls/products_list/', { target: '#calls-product-list' });
-}
-
-function reloadAlarms() {
-  htmx.ajax('GET', '/alarms/', { target: '#alarm_content' });
-}
-
-function reloadCustomers() {
-  htmx.ajax('GET', '/customers/', { target: '#customer_content' });
-  reloadCallsCustomers()
-}
-
-function reloadProducts() {
-  htmx.ajax('GET', '/products/', { target: '#product_content' });
-  htmx.ajax('GET', '/calls/products/', { target: '#calls-product-list' });
-}
+    function reloadCallsDashboard() {
+      htmx.ajax('GET', '/calls/dashboard', { target: '#calls_content' });
+    }
 
 
-// Attach product listeners once, so custom products still work
-document.body.addEventListener('callsCustomersReload', reloadCallsCustomers);
-document.body.addEventListener('callsProductsReload', reloadCallsProducts);
-document.body.addEventListener('callsDashboardReload', reloadCallsDashboard);
-document.body.addEventListener('alarmsReload', reloadAlarms);
-document.body.addEventListener('customersReload', reloadCustomers);
-document.body.addEventListener('productsReload', reloadProducts);
+    function reloadCallsCustomers() {
+      document.getElementById('reload-customers-btn').click();
+    }
+
+    function reloadCallsProducts() {
+      htmx.ajax('GET', '/calls/products_list/', { target: '#calls-product-list' });
+    }
+
+    function reloadAlarms() {
+      htmx.ajax('GET', '/alarms/', { target: '#alarm_content' });
+    }
+
+    function reloadCustomers() {
+      htmx.ajax('GET', '/customers/', { target: '#customer_content' });
+      reloadCallsCustomers()
+    }
+
+    function reloadProducts() {
+      htmx.ajax('GET', '/products/', { target: '#product_content' });
+      htmx.ajax('GET', '/calls/products/', { target: '#calls-product-list' });
+    }
 
 
-function showValidationErrors(error_fields, messages) {
-    // First, clear previous error highlights and messages
-    document.querySelectorAll(".input-error").forEach(field => {
+    // Attach product listeners once, so custom products still work
+    document.body.addEventListener('callsCustomersReload', reloadCallsCustomers);
+    document.body.addEventListener('callsProductsReload', reloadCallsProducts);
+    document.body.addEventListener('callsDashboardReload', reloadCallsDashboard);
+    document.body.addEventListener('alarmsReload', reloadAlarms);
+    document.body.addEventListener('customersReload', reloadCustomers);
+    document.body.addEventListener('productsReload', reloadProducts);
+
+
+    function showValidationErrors(error_fields, messages) {
+      // First, clear previous error highlights and messages
+      document.querySelectorAll(".input-error").forEach(field => {
         field.classList.remove("input-error");
-    });
-    document.querySelectorAll(".error-msg").forEach(msg => {
+      });
+      document.querySelectorAll(".error-msg").forEach(msg => {
         msg.remove();
-    });
+      });
 
-    // Apply new error highlights and messages
-    error_fields.forEach((fieldName, index) => {
+      // Apply new error highlights and messages
+      error_fields.forEach((fieldName, index) => {
         console.log(`[name="${fieldName}"]`);
         const field = document.querySelector(`[name="${fieldName}"]`);
         if (field) {
-            field.classList.add("input-error");
+          field.classList.add("input-error");
 
-            // Add error message
-            let errorSpan = document.createElement("span");
-            errorSpan.className = "error-msg";
-            errorSpan.textContent = messages[index];
-            field.parentNode.insertBefore(errorSpan, field.nextSibling);
+          // Add error message
+          let errorSpan = document.createElement("span");
+          errorSpan.className = "error-msg";
+          errorSpan.textContent = messages[index];
+          field.parentNode.insertBefore(errorSpan, field.nextSibling);
 
-            // Remove error when user types
-            field.addEventListener("input", () => {
-                field.classList.remove("input-error");
-                if (errorSpan) errorSpan.remove();
-            }, { once: true });
+          // Remove error when user types
+          field.addEventListener("input", () => {
+            field.classList.remove("input-error");
+            if (errorSpan) errorSpan.remove();
+          }, { once: true });
         }
-    });
-}
+      });
+    }
 
-</script>
+  </script>
 
-<script>
+  <script>
 
-function initTagify(el) {
-    const input = el.querySelector('input');
-    if (!input) return;
+    function initTagify(el) {
+      const input = el.querySelector('input');
+      if (!input) return;
 
-    const object_type = el.dataset.objectType;
-    if (!object_type) return;
-    if (input._tagify) return;
+      const object_type = el.dataset.objectType;
+      if (!object_type) return;
+      if (input._tagify) return;
 
-    
-    const tagify = new Tagify(input, {
+
+      const tagify = new Tagify(input, {
         whitelist: [], // fetched from /tags/all
-dropdown: {
-            maxItems: 20,           // <- mixumum allowed rendered suggestions
-            classname: 'tags-look', // <- custom classname for this dropdown, so it could be targeted
-            enabled: 0,             // <- show suggestions on focus
-            closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
+        dropdown: {
+          maxItems: 20,           // <- mixumum allowed rendered suggestions
+          classname: 'tags-look', // <- custom classname for this dropdown, so it could be targeted
+          enabled: 0,             // <- show suggestions on focus
+          closeOnSelect: false    // <- do not hide the suggestions dropdown once an item has been selected
         },
         enforceWhitelist: false,
         delimiters: ",",
-    });
+      });
 
-    // --- Preload global suggestions ---
-    fetch(`/tags/all?object_type=${encodeURIComponent(object_type)}`)
+      // --- Preload global suggestions ---
+      fetch(`/tags/all?object_type=${encodeURIComponent(object_type)}`)
         .then(res => res.json())
         .then(data => tagify.settings.whitelist = data)
         .catch(err => console.error(`[Tagify:${object_type}] preload suggestions error:`, err));
 
-    // --- Dynamic filtering while typing ---
-    tagify.on('input', debounce(e => {
+      // --- Dynamic filtering while typing ---
+      tagify.on('input', debounce(e => {
         const q = e.detail.value;
         if (!q) return;
         const filtered = tagify.settings.whitelist.filter(tag => tag.toLowerCase().includes(q.toLowerCase()));
         tagify.dropdown.show.call(tagify, q, filtered);
-    }, 200));
+      }, 200));
 
-    input._tagify = tagify;
-}
+      input._tagify = tagify;
+    }
 
 
-function debounce(fn, delay) {
-    let timer;
-    return (...args) => {
+    function debounce(fn, delay) {
+      let timer;
+      return (...args) => {
         clearTimeout(timer);
         timer = setTimeout(() => fn(...args), delay);
-    };
-}
+      };
+    }
 
-function searchTable() {
-    return {
+    function searchTable() {
+      return {
         query: '',
         filterRows() {
-            const rows = document.querySelectorAll('tbody tr');
-            const q = this.query.toLowerCase();
-            rows.forEach(row => {
-                const text = [
-                    row.cells[1].textContent,
-                    row.cells[2].textContent,
-                    row.cells[3].textContent
-                ].join(' ').toLowerCase();
-                row.style.display = text.includes(q) ? '' : 'none';
-            });
+          const rows = document.querySelectorAll('tbody tr');
+          const q = this.query.toLowerCase();
+          rows.forEach(row => {
+            const id = parseInt(row.dataset.id);
+            const text = [
+              row.cells[1].textContent,
+              row.cells[2].textContent,
+              row.cells[3].textContent
+            ].join(' ').toLowerCase();
+            if (text.includes(q)) {
+              Alpine.store('customers').visible[id] = true;
+            }
+            else {
+              Alpine.store('customers').visible[id] = false;
+            }
+            //                row.style.display = text.includes(q) {? '' : 'none';
+          });
         }
+      }
     }
-}
-</script>
+  </script>
 
-<script>
+  <script>
     function printTable(tableId) {
       const table = document.getElementById(tableId).outerHTML;
       const newWindow = window.open("");
-newWindow.document.write(`
+      newWindow.document.write(`
         <html>
           <head>
             <title>Print Table</title>
@@ -1150,4 +1160,3 @@ newWindow.document.write(`
       newWindow.print();
     }
   </script>
-

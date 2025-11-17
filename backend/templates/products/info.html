@@ -218,8 +218,7 @@
                     <td x-show="$store.customers.showSelect" class="px-2 py-1 border text-center" 
                         @click.stop>
                         <input x-show="'{{ enableRow }}' == 'True'" type="checkbox" class="customerproduct-checkbox"
-                            :checked="$store.customers.selected[{{ ec.customer.id }}] || false"
-                            @change="$store.customers.toggle({{ ec.customer.id }})">
+                            x-model="$store.customers.selected[{{ ec.customer.id }}]">
                     </td>
 
   </tr>
@@ -259,7 +258,6 @@
                 class="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200">
                 {{ "Clear Customers" | t }}
         </button>
-
 
             <button :hx-vals="JSON.stringify({ selected_ids: $store.customers.getSelectedIds() })" hx-post="/calls/customers"
                 hx-ext="json-enc" hx-target="#calls-customer-list"

@@ -37,7 +37,10 @@ def get_customers(db: Session, user, ids: List[int]) -> List[Customer]:
         query = query.filter(Customer.caller_id == user.caller.id)
     if ids:
         query = query.filter(Customer.id.in_(ids))
-    query = query.order_by(Customer.first_name.asc(), Customer.last_name.asc())
+    query = query.order_by(
+        Customer.first_name.collate("NOCASE").asc(),
+        Customer.last_name.collate("NOCASE").asc()
+    )
     return query.all()
 
 def assign_customers_caller(db: Session, ids: List[int], caller_id: int):
@@ -79,7 +82,10 @@ def get_user_customers(db, request, user):
     if sql_filters:
         query = query.filter(*sql_filters)
 
-    query = query.order_by(Customer.first_name.asc(), Customer.last_name.asc())
+    query = query.order_by(
+        Customer.first_name.collate("NOCASE").asc(),
+        Customer.last_name.collate("NOCASE").asc()
+    )
     rows = query.all()
 
     # Apply Python-side "exact" matching
