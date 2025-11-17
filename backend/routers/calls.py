@@ -75,6 +75,7 @@ def call_customers_list(
     return response
 
 
+
 @router.get("/products_list", response_class=HTMLResponse, name="calls_products_list")
 def call_poducts_list(
     request: Request,
@@ -114,23 +115,17 @@ async def customer_data(
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
 
-
+    # !Websocket Server to frontend 
+    user_data.setdefault(user_id, {})["type"] = "customer_info"
     user_data.setdefault(user_id, {})["name"] = customer.first_name + " " + customer.last_name
     user_data.setdefault(user_id, {})["number"] = customer.phone
-    # Broadcast to all connected receivers
-
+    # Broadcast name and number to all connected Websockets frontend
     to_remove = []
-
-    print("send", user_id)
-
     for ws in active_connections.get(str(user_id), []):
-        print("send2")
-
         try:
             await ws.send_json(user_data[user_id])
         except RuntimeError:
             to_remove.append(ws)
-
     for ws in to_remove:
         active_connections[user_id].remove(ws)
 
@@ -176,7 +171,7 @@ def customer_calls(
     list: str | None = Query(default=None),
     db: Session = Depends(get_db)
 ):
-    print("List calls")    
+
     # Capture all query parameters as a dict
     query_params = dict(request.query_params)
 
@@ -597,6 +592,7 @@ async def websocket_endpoint(websocket: WebSocket):
     # Send initial value
     await websocket.send_json(user_data[user_id])
 
+    # Server !websocket relay messages
     try:
         while True:
             # Keep connection alive
@@ -605,26 +601,35 @@ async def websocket_endpoint(websocket: WebSocket):
             print(f"Recieved data {data}")  
             # Respond with "pong"
 #            await websocket.send_json("pong")
-            call = payload.get("call")
-            number = payload.get("number")
-            sms = payload.get("sms")
-            message = payload.get("message")
-            if (call):
+            type = payload.get("type")
+            if (type == "call"):
+                # clicked the call button on frintend (not uses anymore)
+                number = payload.get("number")
                 for ws in active_connections.get(user_id, []):
                     try:
                         print("Sending to web sockets")
-                        await ws.send_json({ "call": "true", "number": number })
+                        await ws.send_json({ "type": "call", "number": number })
 
                     except RuntimeError:
                         # WebSocket is closed, mark for removal
-                        to_remove.append(ws)
-            elif (sms):
-                print(f"SMS")
+                        to_remove.append(ws)                        
+            elif (type == "sms"):
+
+                sms_type = payload.get("sms_type")
+                message = payload.get("message")
+
+                if (sms_type == "multiple"):
+                    numbers = payload.get("numbers")
+                    data = { "type": "sms", "message": message, "numbers": numbers, "sms_type": sms_type }
+                    print(f"Multiple SMS")
+                else:
+                    data = { "type": "sms", "message": message }
+                    print(f"Multiple SMS")                
 
                 for ws in active_connections.get(user_id, []):
                     try:
                         print("Sending to web sockets")
-                        await ws.send_json({ "sms": "true", "message": message })
+                        await ws.send_json(data)
 
                     except RuntimeError:
                         # WebSocket is closed, mark for removal

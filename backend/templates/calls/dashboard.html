@@ -240,26 +240,6 @@
       </button>
 
 
-      <!-- SMS modal -->
-      <div id="sms_modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-xl p-6 w-80">
-          <h2 class="text-lg font-semibold mb-4">{{ "Send SMS" | t }}</h2>
-          {{ "Message" | t }}
-          <textarea id="sms_message" name="sms_message" class="form-control mb-3 w-full p-2 border rounded"
-            rows="3"></textarea>
-
-          <div class="flex justify-end space-x-2">
-            <button type="button" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-              onclick="document.getElementById('sms_modal').classList.add('hidden')">
-              {{ 'Cancel' | t }}
-            </button>
-            <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              onclick="sms(); document.getElementById('sms_modal').classList.add('hidden')">
-              {{ 'Send SMS' | t }}
-            </button>
-          </div>
-        </div>
-      </div>
 
             <!-- SMS -->
       <button type="button" class="customer-disable px-4 py-2 rounded
@@ -404,13 +384,24 @@
     modal.classList.remove("hidden");
   }
 
-  function showSmsModal() {
+function showSmsModal(multiple = false) {
     const modal = document.getElementById("sms_modal");
-    const note = document.getElementById("sms_message");
+    const message = document.getElementById("sms_message");
+    const multipleValue = document.getElementById("sms_multiple"); // renamed
 
-    note.value = "";
+    let recipients;
+    if (!multiple) {
+        recipients = "";
+        multipleValue.innerHTML = "";
+    } else {
+    recipients = Object.values(Alpine.store("customers").getSelectedCustomerData())
+        .filter(c => c.phone && c.phone.trim() !== "") // only keep if phone is non-empty
+        .map(c => `${c.name} ${c.phone}`)
+        .join("<br/>");
+        multipleValue.innerHTML = recipients + "<br/><br/>";
+          }
     modal.classList.remove("hidden");
-  }
+}
 
 
 </script>
@@ -453,15 +444,30 @@
 </script>
 
 <script>
-function sms() {
+function sms(multiple = false) {
     console.log("sms clicked")
+
+  let sms_type = "single";
+  let numbers = "";
+
+  if (multiple){
+    console.log("sms multiple")
+      let type = "multiple_sms_android";
+      numbers = Object.values(Alpine.store("customers").getSelectedCustomerData())
+      .filter(c => c.phone && c.phone.trim() !== "") // only keep if phone is non-empty
+      .map(c => `${c.phone}`)
+      .join(",");
+      sms_type = "multiple";
+  }
+
     if (!ws || ws.readyState !== WebSocket.OPEN) {
         console.log("WebSocket not connected yet");
         return;
     }
     const message = document.querySelector("#sms_message").value;
     console.log("message",message);
-    ws.send(JSON.stringify({ sms: true, message: message }));
+    ws.send(JSON.stringify({ type: "sms", message: message, sms_type: sms_type, numbers: numbers }));
+    document.querySelector("#sms_message").value = "";
 }
 
 

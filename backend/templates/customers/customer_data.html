@@ -1,0 +1,16 @@
+
+
+{% set customer_numbers = [] %}
+
+{% for customer in customers %}
+    {% set _ = customer_numbers.append({
+        'name': customer.first_name ~ ' ' ~ customer.last_name,
+        'number': customer.number
+    }) %}
+{% endfor %}
+
+<div
+    x-data="{ customers: {{ customer_numbers | tojson }} }"
+    x-init="showSmsModal(customers)"
+>
+</div>

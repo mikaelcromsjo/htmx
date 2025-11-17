@@ -31,7 +31,7 @@
     </main>
 
       <div class="flex items-center gap-2 bg-gray-50 px-3 py-1 rounded">
-        <span>{{ caller }}</span>
+        <span>{{ user.caller.name }}</span>
         <form method="get" action="/logout" class="inline">
           <button type="submit" class="text-gray-600 hover:text-red-600">
             {{ "Logout" | t }}
@@ -51,10 +51,10 @@
 <script>
 let ws;
 let wsToken;
-const nameEl = document.querySelector("#name");
-const numberEl = document.querySelector("#number");
-const callHref = document.querySelector("#call_href");
-const smsHref = document.querySelector("#sms_href");
+const name_label = document.querySelector("#name");
+const numer_label = document.querySelector("#number");
+const call_button = document.querySelector("#call_href");
+const sms_button = document.querySelector("#sms_href");
 
 async function fetchToken() {
     const res = await fetch(`${location.protocol}//${location.host}/get-ws-token`, {
@@ -86,37 +86,51 @@ async function connectWS() {
             console.log(`WebSocket connected via ${proto}!`);
             connected = true;
 
-            // Set message handler
+            // Set message handler Recieve !Websocket customer_info on mobile frontend
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                console.log("data",data);
-                if (data.name) {
-                    nameEl.textContent = data.name;
-                    numberEl.textContent = data.number;
-                    let old = callHref.href;
-                        console.log("old",old)
-                    callHref.href = "tel:" + data.number;
-                        console.log("href",callHref.href)
-                        if (data.number && data.number.length > 2) {
-                            callHref.style.display = "block";
+                console.log("data", data);
 
-                            if (old !== callHref.href) {
-                                console.log("change");
-                                smsHref.href = "";
-                                smsHref.style.display = "none";
-                            }
-                        } else {
-                            callHref.style.display = "none";
-                            smsHref.style.display = "none";
-                        }
-                 
-                }
-                if (data.sms) {
-                    smsHref.href = "sms://" + numberEl.textContent + "?body="+ data.message;
-                    smsHref.visible=true;
-                    smsHref.style.display = "block";
-                }
-            };
+
+if (data.type === 'customer_info') {
+    call_button.style.display = "none";
+    let oldCallHref = call_button.href; // store previous value to se if it changes
+
+    console.log("info");
+    name_label.textContent = data.name;
+    numer_label.textContent = data.number;
+    call_button.href = "tel:" + data.number;
+
+    if (data.number) {
+        console.log("display");
+        call_button.style.display = "block";
+    }
+
+    if (oldCallHref !== call_button.href) {
+        console.log("change");
+        sms_button.href = "";
+        sms_button.style.display = "none";
+    }
+
+}
+
+if (data.type === 'sms' && data.sms_type === 'multiple') {
+    console.log("m");
+
+// <a href="sms://open?addresses=+12223334444,+12223334445?&body=Message%20Line%201%E2%80%A8Message%20Line%202">Send SMS to multi #s</a>
+    name_label.textContent = "Multipla";
+    numer_label.textContent = "";
+
+    sms_button.href = "sms:" + data.numbers + "?&body=" + encodeURIComponent(data.message);
+    sms_button.style.display = "block";
+
+} 
+else if (data.type === "sms") {
+    console.log("s");
+    sms_button.href = "sms:" + numer_label.textContent + "?&body=" + encodeURIComponent(data.message);
+    sms_button.style.display = "block";
+    }
+};
 
             // Handle close
             ws.onclose = () => {

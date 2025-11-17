@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Form, Request, HTTPException, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 import json
 from fastapi.responses import JSONResponse
+from functions.customers import get_selected_ids, get_customers, SelectedIDs
 
 from fastapi import FastAPI, Request, Form, status
 from sqlalchemy import Column, Integer, String, JSON
@@ -75,6 +76,31 @@ def customers_list(
 
         }
     )
+
+@router.post("/data", name="customers_data")
+def customers_data(
+    request: Request,
+    selected_ids: Optional[SelectedIDs] = None,
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
+):
+
+    ids = get_selected_ids(request, selected_ids)
+    customers = get_customers(db, user, ids)
+
+    # Convert SQLAlchemy objects → dict keyed by id
+    customers_data = {
+        c.id: {
+            "id": c.id,
+            "name": f"{c.first_name} {c.last_name}",
+            "phone": c.phone
+        }
+        for c in customers
+    }
+    response = JSONResponse(content=customers_data)
+    response.headers["HX-Popup-Message"] = "Loaded"
+    return response
+
 
 class AssignRequest(BaseModel):
     caller_id: int
