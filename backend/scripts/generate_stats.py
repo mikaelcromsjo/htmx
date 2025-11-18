@@ -34,11 +34,9 @@ LANG = {
             "no_answer": "No Answer",
             "outside": "Outside System",
             "total": "Total",
-            "not_interested": "Not Interested",
-            "interested": "Interested",
-            "comming": "Comming",
-            "paid": "Paid",
-            "attended": "Attended",
+            "not_interested": "No",
+            "interested": "Return",
+            "comming": "Yes",
         },
     },
     "sv": {
@@ -58,11 +56,9 @@ LANG = {
             "no_answer": "Inget svar",
             "outside": "Utanför systemet",
             "total": "Totalt",
-            "not_interested": "Ej intresserad",
-            "interested": "Intresserad",
-            "comming": "Kommer",
-            "paid": "Betalat",
-            "attended": "Deltagit",
+            "not_interested": "Nej",
+            "interested": "Återkom",
+            "comming": "Ja",
         },
     },
 }
@@ -220,8 +216,6 @@ def product_participation(session: Session, date_from, date_to, product_type, ca
             func.sum(case((ProductCustomer.status == 1, 1), else_=0)).label("not_interested"),
             func.sum(case((ProductCustomer.status == 2, 1), else_=0)).label("interested"),
             func.sum(case((ProductCustomer.status == 3, 1), else_=0)).label("comming"),
-            func.sum(case((ProductCustomer.status == 4, 1), else_=0)).label("paid"),
-            func.sum(case((ProductCustomer.status == 5, 1), else_=0)).label("attended"),
         )
         .join(Product, Product.id == ProductCustomer.product_id)
         .join(Customer, Customer.id == ProductCustomer.customer_id)
@@ -244,13 +238,11 @@ def product_participation(session: Session, date_from, date_to, product_type, ca
 
     callers = sorted({row.caller_name for row in data})
     products = sorted({row.product_name for row in data})
-    categories = ["not_interested", "interested", "comming", "paid", "attended"]
+    categories = ["not_interested", "interested", "comming"]
     colors = {
         "not_interested": "#d9534f",
         "interested": "#f0ad4e",
-        "comming": "#de7e5b",
-        "paid": "#5bc0de",
-        "attended": "#5cb85c",
+        "comming": "#de7e5b"
     }
 
     stats = {c: {e: {cat: 0 for cat in categories} for e in products} for c in callers}
