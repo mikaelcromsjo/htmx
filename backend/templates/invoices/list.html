@@ -6,9 +6,13 @@
         <table class="table-auto w-full border overflow-x-auto">
             <thead>
                 <tr>
-                    <th class="px-2 py-1 border">{{ "ID" | t }}</th>
-                    <th class="px-2 py-1 border">{{ "Number" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Invoice ID" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Invoice Number" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Date" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Note" | t }}</th>
                     <th class="px-2 py-1 border">{{ "Company" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Status" | t }}</th>
+                    <th class="px-2 py-1 border">{{ "Commands" | t }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,12 +30,29 @@
                     
                     <td class="px-2 py-1 border">{{ invoice.id }}</td>
                     <td class="px-2 py-1 border">{{ invoice.number }}</td>
-                    <td class="px-2 py-1 border">{{ invoice.company.extra.company_name }}</td>
-                    <td class="px-2 py-1 border text-center" 
+                    <td class="px-2 py-1 border">{{ invoice.date.strftime('%Y-%m-%d')  }}</td>
+                    <td class="px-2 py-1 border">{{ invoice.note }}</td>
+                    <td class="px-2 py-1 border">
+                    {{ invoice.company.extra.company_name if invoice.company else '' }} </td>  
+
+                    {% set status = '' %}
+
+                    {% if invoice.extra.status == '1' %}
+                        {% set status = "Processing" | t %}
+                    {% elif invoice.extra.status == '2' %}
+                        {% set status = "OK" | t %}
+                    {% elif invoice.extra.status == '3' %}
+                        {% set status = "Canceled" | t %}
+                    {% endif %}
+                    
+                    <td class="px-2 py-1 border">{{ status }}</td>
+
+               <td class="px-2 py-1 border text-center" 
                         @click.stop
                         >
 
-                        <button 
+                        <button x-show="{{invoice.extra.status}} == '1' || {{invoice.extra.status}} == '2' && {{ is_admin }} > 0"
+"
                             hx-get="{{ url_for('invoice_detail', invoice_id=invoice.id) }}"
                             hx-target="#modal-container"
                             hx-swap="innerHTML"
@@ -40,7 +61,7 @@
                             {{ "Edit" | t }}
                         </button>                
                         
-                        <button 
+                        <button x-show="{{invoice.extra.status}} == '1'"
                             hx-post="{{ url_for('delete_invoice', invoice_id=invoice.id) }}"
                             hx-on="htmx:afterRequest: showPopup(event); htmx.ajax('GET', '{{ url_for('invoices_list') }}', {target:'#invoice-container'});"
                             hx-trigger="confirmed"
@@ -48,7 +69,7 @@
                         >
                             {{ "Delete" | t }}
                         </button>
-<button @click="window.open('{{ url_for('invoice_detail', invoice_id=invoice.id) }}?list=pdf', '_blank')">
+<button x-show="{{invoice.extra.status}} == '2'" @click="window.open('{{ url_for('invoice_detail', invoice_id=invoice.id) }}?list=pdf', '_blank')">
     {{ "PDF" | t }}
 </button>      
 

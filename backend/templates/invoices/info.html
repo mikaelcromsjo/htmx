@@ -17,7 +17,7 @@
     </div>
     {% if invoice_data.note %}
     <div class="text-right text-gray-700">
-      <strong>{{ "Note" | t }}:</strong> <br>{{ invoice_data.note }}
+      <strong></strong> <br>{{ invoice_data.note }}
     </div>
     {% endif %}
   </div>
@@ -82,11 +82,11 @@
         </tr>
         <tr class="border-t">
           <td colspan="3" class="px-4 py-2 text-right">{{ "VAT" | t }} ({{ "%.0f"|format(vat_rate * 100) }}%)</td>
-          <td class="px-4 py-2 text-right">{{ "%.2f"|format(vat_amount) }}</td>
+          <td class="px-4 py-2 text-right">{{ "%.2f"|format(vat_amount) }} </td>
         </tr>
         <tr class="border-t bg-gray-100 font-bold text-indigo-600">
           <td colspan="3" class="px-4 py-2 text-right">{{ "Total" | t }}</td>
-          <td class="px-4 py-2 text-right">{{ "%.2f"|format(ns.subtotal + vat_amount) }}</td>
+          <td class="px-4 py-2 text-right">{{ "%.2f"|format(ns.subtotal + vat_amount) }} {{ invoice.extra.currency }}</td>
         </tr>
       </tfoot>
     </table>

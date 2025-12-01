@@ -56,6 +56,8 @@ def call_center_dashboard(
     query = db.query(Product)
     if product_date_filter_start:
         query = query.where(Product.end_date >= product_date_filter_start)
+    products = db.execute(query).scalars().all()
+
     products = query.all()
 
     return render(

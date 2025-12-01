@@ -120,7 +120,7 @@
             <input name="product_status" value="0" x-model="$store.productCustomer.status"
               class="hidden auto-save product-disable form-check-input" type="radio">
 
-          <label class="_inline-flex items-center space-x-1 form-check form-check-inline">
+          <label class="items-center space-x-1 form-check form-check-inline">
             <input name="product_status" value="1" x-model="$store.productCustomer.status" disabled
               class="auto-save product-disable form-check-input" type="radio">
             <span>{{ "Interested" | t }}</span>
@@ -140,7 +140,7 @@
 
 
 <div class="flex flex-wrap gap-2 p-2 mb-3 border rounded bg-light" x-data="{ isTypeEnabled: '0' }"
-     x-effect="isTypeEnabled = 0; isTypeEnabled = String($store.productCustomer.status) === '3'">
+     x-effect="isTypeEnabled = String($store.productCustomer.status) === '3'">
           <!-- Load Product Specific optons -->
 
 

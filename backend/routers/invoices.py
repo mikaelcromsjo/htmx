@@ -20,7 +20,7 @@ from core.database import get_db
 from templates import templates
 from core.database import engine
 from core.models.base import Base
-from models.models import Invoice, InvoiceUpdate
+from models.models import Invoice, InvoiceUpdate, InvoiceNumber
 from models.models import Update, Company
 from core.functions.helpers import populate
 from core.auth import get_current_user
@@ -77,6 +77,7 @@ def invoice_detail(
     invoice_id: int,
     list: str | None = Query(default=None),
     db: Session = Depends(get_db),
+    user = Depends(get_current_user),
 ):
     
     # Capture all query parameters as a dict
@@ -107,7 +108,8 @@ def invoice_detail(
         "bic": "43345678",
         "bankgiro": "bg-43345678",
         "plusgiro": "pg-43345678",
-        "note": "This is a test invoice for demonstration purposes."
+        "note": "",
+        
     }
 
 
@@ -191,11 +193,12 @@ def invoice_detail(
                 }
             )    
 
-
     else:
+        print("admin", user.admin)
+
         # Render full template
         return templates.TemplateResponse(
-            "invoices/edit.html", {"request": request, "invoice": invoice, "editable": True, "companies": companies}
+            "invoices/edit.html", {"request": request, "invoice": invoice, "editable": True, "companies": companies, "is_admin": user.admin }
         )
      
 
@@ -231,16 +234,19 @@ async def upsert_invoice(
     request: Request,
     update_data: Update,
     db: Session = Depends(get_db),
+    user = Depends(get_current_user)
 ):
 
     # Determine if this is an update or create
     invoice_id = update_data.model_dump().get("id")
+
     if invoice_id:
         try:
             invoice_id_int = int(invoice_id)
         except ValueError:
             raise HTTPException(status_code=400, detail="Invalid invoice ID")
         invoice = db.query(Invoice).filter(Invoice.id == invoice_id_int).first()
+
         if not invoice:
             raise HTTPException(status_code=404, detail="invoice not found")
     else:
@@ -249,13 +255,6 @@ async def upsert_invoice(
 
     data_dict = update_data.model_dump(exclude_unset=True)
 
-#    date_str = data_dict.get("date") 
-#    if date_str:
-#        data_dict["date"] = datetime.strptime(date_str, "%Y-%m-%d")
-#    else:
-#        data_dict["date"] = None
-
-    # Ensure 'extra' exists and is a dict
     if 'extra' not in data_dict or not isinstance(data_dict['extra'], dict):
         data_dict['extra'] = {}
 
@@ -271,6 +270,19 @@ async def upsert_invoice(
 
     # Populate DB model dynamically
     invoice = populate(data_dict, invoice, InvoiceUpdate)
+        
+    # Check status
+    status = invoice.extra.get("status") if invoice.extra else None
+
+    if status == "2" and not invoice.number:
+        # Get the next invoice number
+        seq = InvoiceNumber()
+        db.add(seq)
+        db.commit()          # commit to get autoincrement ID
+        db.refresh(seq)
+
+        invoice.number = str(seq.id)  # assign as string if needed
+
 
     db.add(invoice)
     db.commit()
@@ -297,5 +309,5 @@ def delete_invoice(invoice_id: str, db: Session = Depends(get_db)):
     
     db.delete(invoice)
     db.commit()
-    return {"detail": f"Invoice {invoice.name} deleted successfully"}
+    return {"detail": f"Invoice deleted successfully"}
 

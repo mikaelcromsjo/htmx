@@ -1,4 +1,17 @@
-<div x-data="{ search: '', prevCustomer: null }">
+<div x-data="{ search: '', _prevCustomer: null }" x-init="
+    $watch(() => Alpine.store('customer').id, (newId, oldId) => {
+        console.log('Customer Has updated!')
+        if (newId && newId !== oldId) {
+            console.log('Its NEW!')
+            // customer changed → trigger reload
+
+            const activeRow = $root.querySelector('.bg-blue-100.font-bold.text-blue-600');
+            if (activeRow) { 
+                $nextTick(() => activeRow.click()); 
+            }
+        }
+    });
+">
     <!-- Search Box -->
     <input 
         type="text" 
@@ -9,7 +22,7 @@
 
     <!-- Product List -->
     <div id="product-list" 
-         x-effect="
+         _x-effect="
             const currentCustomer = Alpine.store('customer').id;
             if (currentCustomer && currentCustomer !== prevCustomer) {
                 prevCustomer = currentCustomer;

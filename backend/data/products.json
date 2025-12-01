@@ -21,9 +21,7 @@
     "name": "Medlemskap",
     "items": {
       "1": "Ej Betald",
-      "2": "Guld",
-      "3": "Silver",
-      "4": "Platinum"
+      "2": "Betald"
     }
   }
 }

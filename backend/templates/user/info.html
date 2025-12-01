@@ -36,7 +36,7 @@
     <!-- Email -->
     <div class="mb-2">
         <label class="block font-semibold">{{ 'Email' | t }}</label>
-        <input type="email" name="user.email" value="{{ user.extra.email or '' }}" class="border p-1 w-full"/>
+        <input type="email" name="extra.email" value="{{ user.extra.email or '' }}" class="border p-1 w-full"/>
     </div>
 
     <!-- CC Email -->
@@ -51,11 +51,6 @@
         <input type="text" name="extra.phone" value="{{ user.extra.phone or '' }}" class="border p-1 w-full"/>
     </div>
 
-    <!-- VAT -->
-    <div class="mb-2">
-        <label class="block font-semibold">{{ 'VAT' | t }}</label>
-        <input type="text" name="extra.vat" value="{{ user.extra.vat or '' }}" class="border p-1 w-full"/>
-    </div>
 
     <h2 class="text-xl font-semibold">{{ "Bank Information" | t }}</h2>
 
@@ -89,12 +84,6 @@
         <label class="block font-semibold">{{ 'Clearing Number' | t }}</label>
         <input type="text" name="extra.clearing_number" value="{{ user.extra.clearing_number or '' }}" class="border p-1 w-full"/>
     </div>
-
-    <div class="mb-2">
-        <label class="block font-semibold">{{ 'Planet' | t }}</label>
-        <input type="text" name="extra.planet" value="{{ user.extra.planet or '' }}" class="border p-1 w-full"/>
-    </div>
-
 
     <!-- Save Button -->
     <div class="flex justify-end mt-4">

@@ -48,7 +48,6 @@
                         @click="selectedRow = {{ loop.index  }}; $store.modal.open = true">
 
 {% set number = 0 %}  {# Default fallback value #}
-
 {% if customer.last_call_date is not none %}
     {# Convert to date safely #}
     {% set last_call = customer.last_call_date %}

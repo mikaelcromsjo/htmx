@@ -247,29 +247,6 @@
           <template x-ref="navButtons">
 
 
-            {%- set call = 1 -%}
-            {%- set faktura = 0 -%}
-
-            {%- if faktura -%}
-            <button @click="
-            active = 'user';
-          " :class="{'bg-gray-200': active === 'user'}" class="px-3 py-2 rounded hover:bg-gray-200">
-              {{ "User" | t }}
-            </button>
-
-            <button @click="
-            active = 'companies';
-          " :class="{'bg-gray-200': active === 'companies'}" class="px-3 py-2 rounded hover:bg-gray-200">
-              {{ "Companies" | t }}
-            </button>
-
-            <button @click="
-            active = 'invoice';
-          " :class="{'bg-gray-200': active === 'invoice'}" class="px-3 py-2 rounded hover:bg-gray-200">
-              {{ "Invoices" | t }}
-            </button>
-            {%- endif -%}
-            {%- if call -%}
 
             <button 
             @click="
@@ -302,9 +279,6 @@
               :class="{'bg-gray-200': active === 'admin'}" class="px-3 py-2 rounded hover:bg-gray-200">
               {{ "Admin" | t }}
             </button>
-
-
-            {%- endif -%}
 
 
           </template>
@@ -350,10 +324,6 @@
           hx-push-url="false"></button>
         <button hx-trigger="load" x-ref="calls" hx-get="{{ url_for('calls_dashboard') }}" hx-target="#calls_content"
           hx-push-url="false"></button>
-        <button hx-trigger="load" x-ref="invoices" hx-get="{{ url_for('invoices_list') }}" hx-target="#invoice_content"
-          hx-push-url="false"></button>
-        <button hx-trigger="load" x-ref="companies" hx-get="{{ url_for('companies_list') }}"
-          hx-target="#companies_content" hx-push-url="false"></button>
         <button hx-trigger="load" x-ref="alarms" hx-get="{{ url_for('alarms_list') }}" hx-target="#alarm_content"
           hx-push-url="false"></button>
         <button hx-trigger="load" x-ref="admin" hx-get="{{ url_for('admin_dashboard') }}" hx-target="#admin_content"
@@ -366,15 +336,11 @@
       </div>
       <div id="customer_content" x-show="active === 'customers'" class="bg-white rounded shadow p-4">
       </div>
-      <div id="companies_content" x-show="active === 'companies'" class="bg-white rounded shadow p-4">
-      </div>
       <div id="product_content" x-show="active === 'products'" class="bg-white rounded shadow p-4">
       </div>
       <div id="calls_content" x-show="active === 'calls'" class="bg-white rounded shadow p-4">
       </div>
       <div id="alarm_content" x-show="active === 'alarms'" class="bg-white rounded shadow p-4">
-      </div>
-      <div id="invoice_content" x-show="active === 'invoice'" class="bg-white rounded shadow p-4">
       </div>
       <div id="admin_content" x-show="active === 'admin'" class="bg-white rounded shadow p-4">
       </div>

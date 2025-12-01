@@ -204,10 +204,6 @@ def company_detail(
             {
                 "request": request, 
                 "company": company, 
-                "categories": constants.categories, 
-                "organisations": organisations, 
-                "personalities": personalities, 
-                "callers": callers,
             }
         )  
          

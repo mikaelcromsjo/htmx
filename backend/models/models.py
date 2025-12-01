@@ -204,6 +204,11 @@ class ProductUpdate(BaseModel):
 # -----------------------------
 # SQLAlchemy ORM Invoice model
 # -----------------------------
+
+class InvoiceNumber(BaseMixin, Base):
+    __tablename__ = "invoice_numbers"
+    id = Column(Integer, primary_key=True, autoincrement=True, index=True)
+
 class Invoice(BaseMixin, Base):
     __tablename__ = "invoices"
 
