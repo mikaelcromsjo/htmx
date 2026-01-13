@@ -1,11 +1,9 @@
-version: "3.9"
-
 services:
   app:
     build: .
     container_name: fastapi_htmx_dev
     ports:
-      - "8010:443"   # host 8010 → container 443 (HTTPS)
+      - "8010:443"
     volumes:
       - ./backend:/app/backend
       - ./scripts:/app/scripts
@@ -14,10 +12,14 @@ services:
       - ./certs/server.key:/certs/server.key:ro
     environment:
       - DATABASE_URL=sqlite:////dbdata/app.db
-    # override CMD from Dockerfile if needed
-    command: uvicorn main:app --host 0.0.0.0 --port 443 \
-              --ssl-keyfile /certs/server.key \
-              --ssl-certfile /certs/server.crt
-
-volumes:
-  app_db:
+    command:
+      - uvicorn
+      - main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "443"
+      - --ssl-keyfile
+      - /certs/server.key
+      - --ssl-certfile
+      - /certs/server.crt
