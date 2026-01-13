@@ -486,7 +486,44 @@ def get_best_language_match(accept_language: str, supported: list[str]) -> str:
     return supported[0]  # fallback
 
 
+# Proxy Headers Middleware (lägg till denna)
+class ProxyHeadersMiddleware:
+    def __init__(self, app):
+        self.app = app
 
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http":
+            from starlette.requests import Request
+            request = Request(scope, receive=receive)
+            
+            # Hantera X-Forwarded headers från nginx
+            forwarded_proto = request.headers.get("x-forwarded-proto")
+            forwarded_host = request.headers.get("x-forwarded-host")
+            forwarded_port = request.headers.get("x-forwarded-port")
+            
+            if forwarded_proto:
+                scope["scheme"] = forwarded_proto
+                
+            if forwarded_host:
+                host_parts = forwarded_host.split(":")
+                if len(host_parts) == 2:
+                    scope["server"] = (host_parts[0], int(host_parts[1]))
+                else:
+                    port = int(forwarded_port) if forwarded_port else (443 if forwarded_proto == "https" else 80)
+                    scope["server"] = (forwarded_host, port)
+        
+        await self.app(scope, receive, send)
+
+# Lägg till middlewaren SIST (efter alla andra)
+app.add_middleware(ProxyHeadersMiddleware)
+
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+
+# Trusted hosts (skyddar mot host header attacks)
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["95.198.89.141", "95.198.89.141:8010", "localhost", "localhost:8010", "*"]
+)
 
 
 
