@@ -3,11 +3,13 @@ module.exports = {
   content: [
     "./backend/templates/**/*.html",
     "./backend/core/templates/**/*.html",
-    "./backend/**/*.js",
+    "./backend/**/*.html",      // Alla HTML-filer
+    "./backend/**/*.js",        // Alla JS-filer
+    "./backend/**/*.py",        // Jinja i Python-filer
   ],
   theme: {
     extend: {},
-colors: {
+    colors: {
       transparent: 'transparent',
       current: 'currentColor',
       black: '#1a1a1a',
@@ -118,10 +120,6 @@ colors: {
       },
     },
   },
-  safelist: [
-    {
-      pattern: /.*/, // include all classes (for dev only)
-    },
-  ],
+  // SAFELIST BORTTAGEN – nu purgar Tailwind unused classes!
   plugins: [],
 }
