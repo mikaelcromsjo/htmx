@@ -1129,14 +1129,14 @@ if (visibleIds.length === 0) {
 
 <script>
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        const el = document.activeElement;
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {  // Only addition
+      e.preventDefault();
+      const el = document.activeElement;
 
-        // Only trigger click if element is focusable and has a click listener
-        if (el && el.tabIndex >= 0 && typeof el.click === 'function') {
-            el.click();
-        }
+      // Your original logic unchanged
+      if (el && el.tabIndex >= 0 && typeof el.click === 'function') {
+        el.click();
+      }
     }
-});
+  });
 </script>
