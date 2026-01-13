@@ -25,4 +25,4 @@ services:
       - /certs/server.crt
 
 volumes:
-  app_db:
+  demo_app_db:
