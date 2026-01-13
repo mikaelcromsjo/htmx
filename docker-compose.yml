@@ -4,7 +4,6 @@ services:
     container_name: fastapi_htmx_dev
     ports:
       - "8010:443"   # use HTTPS instead of 8010
-      - "443:443"   # use HTTPS instead of 8010
     volumes:
       - ./backend:/app/backend
       - ./scripts:/app/scripts
