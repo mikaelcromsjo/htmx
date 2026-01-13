@@ -23,13 +23,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt uvicorn fastapi
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy app code
 COPY . .
 
-# Expose SSL port
-EXPOSE 443
+# Expose FastAPI port
+EXPOSE 8010
 
-# Start FastAPI with SSL (can be overridden in docker-compose)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "443", "--ssl-keyfile", "/certs/server.key", "--ssl-certfile", "/certs/server.crt"]
+# Start FastAPI
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8010", "--reload"]
