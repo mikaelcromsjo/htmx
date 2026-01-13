@@ -1,21 +1,32 @@
 #!/bin/bash
 # backup_selected.sh
 # Usage: ./backup_selected.sh
+# Backups backend/data and the real Docker DB volume
 
 set -e
 
 # --- Config ---
 BACKUP_DIR="./backup"
-VOLUME_NAME="app_db"
+CONTAINER_NAME="fastapi_htmx_dev"     # container running FastAPI
 BACKEND_DATA_DIR="./backend/data"
-DATE=$(date +%F)
+DATE=$(date +%F_%H%M%S)               # add timestamp to avoid overwriting
 BACKUP_FILE="${BACKUP_DIR}/backupfile-${DATE}.tar.gz"
-MAX_BACKUPS=7  # keep only latest 7
-OLDER_DIR="${BACKUP_DIR}/older"  # optional older backups
+MAX_BACKUPS=7                          # keep only latest 7
+OLDER_DIR="${BACKUP_DIR}/older"        # optional older backups
 
 # --- Ensure backup directories exist ---
 mkdir -p "$BACKUP_DIR"
 mkdir -p "$OLDER_DIR"
+
+# --- Determine the DB volume mounted in the container ---
+VOLUME_NAME=$(docker inspect $CONTAINER_NAME \
+  --format '{{ range .Mounts }}{{ if eq .Destination "/dbdata" }}{{ .Name }}{{ end }}{{ end }}')
+
+if [ -z "$VOLUME_NAME" ]; then
+  echo "Error: Could not determine DB volume for container $CONTAINER_NAME"
+  exit 1
+fi
+echo "Backing up volume: $VOLUME_NAME"
 
 # --- Temporary directory for combining volume and backend data ---
 TMP_DIR=$(mktemp -d)
@@ -23,12 +34,12 @@ TMP_DIR=$(mktemp -d)
 # --- Copy backend data ---
 cp -r "$BACKEND_DATA_DIR" "$TMP_DIR/backend_data"
 
-# --- Copy app_db volume ---
+# --- Copy DB volume ---
 docker run --rm \
   -v ${VOLUME_NAME}:/data \
   -v ${TMP_DIR}:/backup_tmp \
   busybox \
-  sh -c "cp -r /data /backup_tmp/app_db"
+  sh -c "cp -r /data /backup_tmp/${VOLUME_NAME}"
 
 # --- Create tar.gz backup ---
 tar czf "$BACKUP_FILE" -C "$TMP_DIR" .
