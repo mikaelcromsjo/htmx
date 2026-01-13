@@ -3,7 +3,7 @@ services:
     build: .
     container_name: fastapi_htmx_dev
     ports:
-      - "8020:8020"   # internal FastAPI port exposed to localhost
+      - "8020:8020"
     volumes:
       - ./backend:/app/backend
       - ./scripts:/app/scripts
