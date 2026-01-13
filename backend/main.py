@@ -242,9 +242,17 @@ def on_startup():
     logger.info("✅ Set up Alarms.")
     asyncio.create_task(alarm_scheduler())
 
+from pathlib import Path
 
 # Static files (CSS, JS, images) will be served from /static
-app.mount("/static", StaticFiles(directory="core/static"), name="static")
+# app.mount("/static", StaticFiles(directory="core/static"), name="static")
+
+# Absolut från main.py
+BASE_DIR = Path(__file__).parent
+STATIC_DIR = BASE_DIR / "core" / "static"
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
 
 # Jinja2 templates (HTML pages/fragments)
 from templates import templates
