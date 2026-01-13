@@ -3,26 +3,15 @@ services:
     build: .
     container_name: fastapi_htmx_dev
     ports:
-      - "8010:443"
+      - "8010:8010"
     volumes:
       - ./backend:/app/backend
       - ./scripts:/app/scripts
-      - demo_app_db:/dbdata      
-      - ./certs/server.crt:/certs/server.crt:ro
-      - ./certs/server.key:/certs/server.key:ro
+      - demo_app_db:/dbdata
     environment:
       - DATABASE_URL=sqlite:////dbdata/app.db
-    command:
-      - uvicorn
-      - main:app
-      - --host
-      - "0.0.0.0"
-      - --port
-      - "443"
-      - --ssl-keyfile
-      - /certs/server.key
-      - --ssl-certfile
-      - /certs/server.crt
+    command: uvicorn main:app --host 0.0.0.0 --port 8010 --reload
 
 volumes:
   demo_app_db:
+    external: true
