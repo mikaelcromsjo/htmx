@@ -210,7 +210,7 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=SESSION_SECRET,
     session_cookie="session",
-    https_only=False,
+    https_only=True,
 )
 
 # Function to list tables
