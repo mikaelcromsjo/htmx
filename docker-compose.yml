@@ -7,7 +7,7 @@ services:
     volumes:
       - ./backend:/app/backend
       - ./scripts:/app/scripts
-      - app_db:/dbdata
+      - demo_app_db:/dbdata      
       - ./certs/server.crt:/certs/server.crt:ro
       - ./certs/server.key:/certs/server.key:ro
     environment:
