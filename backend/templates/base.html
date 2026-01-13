@@ -435,14 +435,12 @@
 
 
 
-  {%- if call -%}
   <!-- Mobile View/Desktop -->
   <script>
     if (/Mobi|Android/i.test(navigator.userAgent)) {
       window.location.href = "/calls/number";
     }
   </script>
-  {%- endif -%}
 
   <div id="popup"
     class="hidden fixed top-0 left-1/2 -translate-x-1/2 z-50 px-5 py-2 rounded border border-red-300 bg-red-100 text-red-800 transition-opacity duration-300">
