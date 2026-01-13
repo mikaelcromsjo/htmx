@@ -32,6 +32,4 @@ COPY . .
 EXPOSE 443
 
 # Start FastAPI with SSL (can be overridden in docker-compose)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "443",
-     "--ssl-keyfile", "/certs/server.key",
-     "--ssl-certfile", "/certs/server.crt"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "443", "--ssl-keyfile", "/certs/server.key", "--ssl-certfile", "/certs/server.crt"]
