@@ -10,8 +10,7 @@ services:
       - demo_app_db:/dbdata
     environment:
       - DATABASE_URL=sqlite:////dbdata/app.db
-    command: >
-      uvicorn main:app --host 0.0.0.0 --port 8010 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8010 --reload
 
 volumes:
   demo_app_db:
