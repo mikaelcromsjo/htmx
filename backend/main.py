@@ -318,6 +318,15 @@ def todatetime(value, fmts=None):
 # Add the filter to Jinja
 templates.env.filters["todatetime"] = todatetime
 
+
+from fastapi.responses import FileResponse
+@app.get("/favicon.ico")
+def favicon():
+    favicon_path = "core/static/favicon.ico"
+    if os.path.exists(favicon_path):
+        return FileResponse(favicon_path)
+    return Response(status_code=204)
+
 @app.get("/login")
 async def login_get(request: Request):
         
