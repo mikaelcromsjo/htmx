@@ -23,3 +23,6 @@ services:
       - /certs/server.key
       - --ssl-certfile
       - /certs/server.crt
+
+volumes:
+  app_db:
